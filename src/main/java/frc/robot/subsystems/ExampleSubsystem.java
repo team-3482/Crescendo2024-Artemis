@@ -22,9 +22,11 @@ public class ExampleSubsystem extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          // string at end of line above is for local device name of limelight. leaving blank defaults to "limelight"
-          LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(""); 
-          System.out.println(llresults);
+          // string at end of line above is for local device name of limelight.
+          LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight"); 
+          // double[] botposeRed = llresults.targetingResults.botpose_wpired;
+          double tx = LimelightHelpers.getTX("");
+          System.out.println(tx);
         });
   }
 
