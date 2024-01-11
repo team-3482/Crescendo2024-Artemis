@@ -116,7 +116,7 @@ public class SwerveModule {
      */
     public double getAbsoluteEncoderRad() {
         // Turn rotations to radians
-        double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble() * SwerveModuleConstants.SENSOR_COEFFICENT;
+        double angle = this.turningEncoder.getPosition().getValueAsDouble() * SwerveModuleConstants.SENSOR_COEFFICENT;
         
         angle -= this.absoluteEncoderOffsetRot * SwerveModuleConstants.SENSOR_COEFFICENT;
         return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
@@ -126,7 +126,9 @@ public class SwerveModule {
      * Resets the encoder position to absolute encoder position
      */
     public void resetEncoders() {
-        this.turningEncoder.setPosition((getAbsoluteEncoderRad()));
+      SmartDashboard.putNumber("current pos " + this.turningEncoder.getDeviceID(), this.turningEncoder.getPosition().getValueAsDouble());
+      SmartDashboard.putNumber("current absolute pos " + this.turningEncoder.getDeviceID(), this.turningEncoder.getAbsolutePosition().getValueAsDouble());
+      this.turningEncoder.setPosition((getAbsoluteEncoderRad()));
     }
 
     /**
