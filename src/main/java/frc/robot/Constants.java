@@ -31,7 +31,7 @@ public final class Constants {
     public static int SWERVE_MODULE_ONE_ENCODER = 10;
     public static boolean SWERVE_MODULE_ONE_DRIVE_MOTOR_REVERSED = true;
     public static boolean SWERVE_MODULE_ONE_TURNING_MOTOR_REVERSED = true;
-    public static double SWERVE_MODULE_ONE_ENCODER_OFFSET_ROT = -0.003418;
+    public static double SWERVE_MODULE_ONE_ENCODER_OFFSET_ROT = -0.2571289;
     public static boolean SWERVE_MODULE_ONE_ABSOLUTE_ENCODER_REVERSED = false;
 
     // Module two
@@ -41,7 +41,7 @@ public final class Constants {
     public static int SWERVE_MODULE_TWO_ENCODER = 11;
     public static boolean SWERVE_MODULE_TWO_DRIVE_MOTOR_REVERSED = false;
     public static boolean SWERVE_MODULE_TWO_TURNING_MOTOR_REVERSED = true;
-    public static double SWERVE_MODULE_TWO_ENCODER_OFFSET_ROT = 0.003906;
+    public static double SWERVE_MODULE_TWO_ENCODER_OFFSET_ROT = 0.051270;
     public static boolean SWERVE_MODULE_TWO_ABSOLUTE_ENCODER_REVERSED = false;
 
     // Module three
@@ -51,7 +51,7 @@ public final class Constants {
     public static int SWERVE_MODULE_THREE_ENCODER = 12;
     public static boolean SWERVE_MODULE_THREE_DRIVE_MOTOR_REVERSED = true;
     public static boolean SWERVE_MODULE_THREE_TURNING_MOTOR_REVERSED = true;
-    public static double SWERVE_MODULE_THREE_ENCODER_OFFSET_ROT = 0.001709;
+    public static double SWERVE_MODULE_THREE_ENCODER_OFFSET_ROT = -0.496582;
     public static boolean SWERVE_MODULE_THREE_ABSOLUTE_ENCODER_REVERSED = false;
 
     // Module four
@@ -61,7 +61,7 @@ public final class Constants {
     public static int SWERVE_MODULE_FOUR_ENCODER = 13;
     public static boolean SWERVE_MODULE_FOUR_DRIVE_MOTOR_REVERSED = false;
     public static boolean SWERVE_MODULE_FOUR_TURNING_MOTOR_REVERSED = true;
-    public static double SWERVE_MODULE_FOUR_ENCODER_OFFSET_ROT = 0.000977;
+    public static double SWERVE_MODULE_FOUR_ENCODER_OFFSET_ROT = -0.147949;
     public static boolean SWERVE_MODULE_FOUR_ABSOLUTE_ENCODER_REVERSED = false;
 
     // Extra fields
