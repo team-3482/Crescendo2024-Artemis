@@ -26,7 +26,7 @@ public class SwerveSubsystem extends SubsystemBase {
             SwerveModuleConstants.SWERVE_MODULE_ONE_ENCODER,
             SwerveModuleConstants.SWERVE_MODULE_ONE_DRIVE_MOTOR_REVERSED,
             SwerveModuleConstants.SWERVE_MODULE_ONE_TURNING_MOTOR_REVERSED,
-            SwerveModuleConstants.SWERVE_MODULE_ONE_ENCODER_OFFSET_RAD,
+            SwerveModuleConstants.SWERVE_MODULE_ONE_ENCODER_OFFSET_ROT,
             SwerveModuleConstants.SWERVE_MODULE_ONE_ABSOLUTE_ENCODER_REVERSED);
 
     private SwerveModule moduleTwo = new SwerveModule(
@@ -35,7 +35,7 @@ public class SwerveSubsystem extends SubsystemBase {
             SwerveModuleConstants.SWERVE_MODULE_TWO_ENCODER,
             SwerveModuleConstants.SWERVE_MODULE_TWO_DRIVE_MOTOR_REVERSED,
             SwerveModuleConstants.SWERVE_MODULE_TWO_TURNING_MOTOR_REVERSED,
-            SwerveModuleConstants.SWERVE_MODULE_TWO_ENCODER_OFFSET_RAD,
+            SwerveModuleConstants.SWERVE_MODULE_TWO_ENCODER_OFFSET_ROT,
             SwerveModuleConstants.SWERVE_MODULE_TWO_ABSOLUTE_ENCODER_REVERSED);
 
     private SwerveModule moduleThree = new SwerveModule(
@@ -44,7 +44,7 @@ public class SwerveSubsystem extends SubsystemBase {
             SwerveModuleConstants.SWERVE_MODULE_THREE_ENCODER,
             SwerveModuleConstants.SWERVE_MODULE_THREE_DRIVE_MOTOR_REVERSED,
             SwerveModuleConstants.SWERVE_MODULE_THREE_TURNING_MOTOR_REVERSED,
-            SwerveModuleConstants.SWERVE_MODULE_THREE_ENCODER_OFFSET_RAD,
+            SwerveModuleConstants.SWERVE_MODULE_THREE_ENCODER_OFFSET_ROT,
             SwerveModuleConstants.SWERVE_MODULE_THREE_ABSOLUTE_ENCODER_REVERSED);
 
     private SwerveModule moduleFour = new SwerveModule(
@@ -53,7 +53,7 @@ public class SwerveSubsystem extends SubsystemBase {
             SwerveModuleConstants.SWERVE_MODULE_FOUR_ENCODER,
             SwerveModuleConstants.SWERVE_MODULE_FOUR_DRIVE_MOTOR_REVERSED,
             SwerveModuleConstants.SWERVE_MODULE_FOUR_TURNING_MOTOR_REVERSED,
-            SwerveModuleConstants.SWERVE_MODULE_FOUR_ENCODER_OFFSET_RAD,
+            SwerveModuleConstants.SWERVE_MODULE_FOUR_ENCODER_OFFSET_ROT,
             SwerveModuleConstants.SWERVE_MODULE_FOUR_ABSOLUTE_ENCODER_REVERSED);
 
     // Instance of Pigeon2 (the gyro) on the specifc swerve CAN bus
@@ -183,9 +183,10 @@ public class SwerveSubsystem extends SubsystemBase {
     public void setChasisSpeeds(ChassisSpeeds chassisSpeeds) {
 
         // Converts the chassis speeds to module states and sets them as the desired
-        // ones for the modules
+        // ones for the modulese
 
-        ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
+        // ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
+        ChassisSpeeds correctedChasisSpeed = chassisSpeeds;
 
         SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);

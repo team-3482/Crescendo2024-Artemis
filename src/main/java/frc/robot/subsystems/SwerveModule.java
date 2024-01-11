@@ -36,7 +36,7 @@ public class SwerveModule {
     // Instances of values used to help calculate encoder positions for the turning
     // motor
     private boolean absoluteEncoderReversed;
-    private double absoluteEncoderOffsetRad;
+    private double absoluteEncoderOffsetRot;
 
     /**
      * Creates an Instance of the Swerve Module with the specified options
@@ -53,7 +53,7 @@ public class SwerveModule {
     public SwerveModule(int driveMotorID, int turningMotorID, int turningEncoderID, boolean driveMotorReversed,
             boolean turningMotorReversed, double absoluteEcoderOffset,
             boolean absoluteEncoderReversed) {
-        this.absoluteEncoderOffsetRad = absoluteEcoderOffset;
+        this.absoluteEncoderOffsetRot = absoluteEcoderOffset;
         this.absoluteEncoderReversed = absoluteEncoderReversed;
 
         // Initializes the driving and turning motor
@@ -103,7 +103,10 @@ public class SwerveModule {
      * @return speed of the turning encoder (radians/second)
      */
     public double getTurningVelocity() {
-        return this.turningEncoder.getVelocity().getValueAsDouble();
+        double velocity = this.turningEncoder.getVelocity().getValueAsDouble();
+        // Turn revolutions into radians
+        velocity *= 2 * Math.PI;
+        return velocity;
     }
 
     /**
@@ -114,8 +117,8 @@ public class SwerveModule {
     public double getAbsoluteEncoderRad() {
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
         // Turn rotations to radians
+        angle -= this.absoluteEncoderOffsetRot;
         angle *= 2 * Math.PI;
-        angle -= this.absoluteEncoderOffsetRad;
         return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
@@ -132,12 +135,12 @@ public class SwerveModule {
      * @return current state of the swerve module
      */
     public SwerveModuleState getState() {
-        return new SwerveModuleState(this.driveMotor.getEncoder().getVelocity(),
+        return new SwerveModuleState(this.driveMotor.getEncoder().getVelocity()*2*Math.PI,
                 new Rotation2d((getTurningPosition())));
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(this.driveMotor.getEncoder().getPosition(),
+        return new SwerveModulePosition(this.driveMotor.getEncoder().getPosition()*2*Math.PI,
                 new Rotation2d(getTurningPosition()));
     }
 
@@ -160,6 +163,8 @@ public class SwerveModule {
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
+        SmartDashboard.putString("Swerve[" + this.turningEncoder.getDeviceID() + "] state", state.toString());
+        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] encoder values", this.getAbsoluteEncoderRad());
     }
 
     /**
@@ -185,6 +190,5 @@ public class SwerveModule {
 
         SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] Drive Voltage",  this.getDriveVoltage() );
         SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] Turn Voltage",  this.getTurnVoltage() );
-        
     }
 }
