@@ -27,9 +27,6 @@ public class ExampleCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(""); 
-    // string at end of line above is for local device name of limelight. leaving blank defaults to "limelight"
-    System.out.println(llresults);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
