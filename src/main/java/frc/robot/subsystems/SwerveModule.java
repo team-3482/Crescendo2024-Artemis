@@ -118,7 +118,7 @@ public class SwerveModule {
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
         // Turn rotations to radians
         angle -= this.absoluteEncoderOffsetRot;
-        angle *= 2 * Math.PI;
+        angle *= SwerveModuleConstants.SENSOR_COEFFICENT;
         return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 

@@ -24,6 +24,8 @@ public class SwerveDrive extends Command {
   private final Supplier<Double> turningSpeedFunction;
   private final Supplier<Boolean> fieldOrientedFunction;
   private final Supplier<Boolean> fineControlFunction;
+  private final Supplier<Boolean> forwardFunction;
+  private final Supplier<Boolean> sideFunction;
 
   // Instances of Rate Limiters to ensure that the robot moves smoothly
   private final SlewRateLimiter xLimiter;
@@ -45,13 +47,15 @@ public class SwerveDrive extends Command {
    */
   public SwerveDrive(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpeedFunction, Supplier<Double> ySpeedFunction,
       Supplier<Double> turningSpeedFunction, Supplier<Boolean> fieldOrientedFunction,
-      Supplier<Boolean> fineControlFunction) {
+      Supplier<Boolean> fineControlFunction, Supplier<Boolean> forwardFunction, Supplier<Boolean> sideFunction) {
     this.swerveSubsystem = swerveSubsystem;
     this.xSpeedFunction = xSpeedFunction;
     this.ySpeedFunction = ySpeedFunction;
     this.turningSpeedFunction = turningSpeedFunction;
     this.fieldOrientedFunction = fieldOrientedFunction;
     this.fineControlFunction = fineControlFunction;
+    this.forwardFunction = forwardFunction;
+    this.sideFunction = sideFunction;
 
     this.xLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
     this.yLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
@@ -94,6 +98,16 @@ public class SwerveDrive extends Command {
     } else {
       chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
     }
+
+    if(forwardFunction.get())
+    {
+      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(1,0, 0, swerveSubsystem.getRotation2d());
+    }
+    if(sideFunction.get())
+    {
+      chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 1, 0,swerveSubsystem.getRotation2d());
+    }
+    
     // Converts the chassis speeds to module states and sets them as the desired
     // ones for the modules
     swerveSubsystem.setChasisSpeeds(chassisSpeeds);

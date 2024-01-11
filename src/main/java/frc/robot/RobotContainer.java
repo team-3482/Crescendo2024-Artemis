@@ -62,7 +62,9 @@ public class RobotContainer {
         // driveController.getRawAxis(Constants.ControllerConstants.DRIVE_ROT_AXIS),
         () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
         () -> !driveController.getHID().getAButton(),
-        () -> driveController.getHID().getRightBumper()));
+        () -> driveController.getHID().getRightBumper(),
+        ()-> driveController.getHID().getXButton(), 
+        ()-> driveController.getHID().getBButton()));
 
     configureBindings();
   }

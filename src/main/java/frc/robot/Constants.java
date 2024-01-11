@@ -67,6 +67,8 @@ public final class Constants {
     // Extra fields
     public static String SWERVE_CAN_BUS = "swerve";
     public static int GRYO_ID = 14;
+
+    public static double SENSOR_COEFFICENT = 2 * Math.PI / 4096.0;
   }
 
   // Constants for the movement and kinematics of the swerve system
