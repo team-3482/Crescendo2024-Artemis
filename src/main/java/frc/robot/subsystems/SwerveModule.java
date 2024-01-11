@@ -160,6 +160,7 @@ public class SwerveModule {
                 / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
+        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
