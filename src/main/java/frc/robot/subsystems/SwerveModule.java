@@ -115,10 +115,10 @@ public class SwerveModule {
      * @return position of the turning CANcoder (in radians)
      */
     public double getAbsoluteEncoderRad() {
-        double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
         // Turn rotations to radians
-        angle -= this.absoluteEncoderOffsetRot;
-        angle *= SwerveModuleConstants.SENSOR_COEFFICENT;
+        double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble() * SwerveModuleConstants.SENSOR_COEFFICENT;
+        
+        angle -= this.absoluteEncoderOffsetRot * SwerveModuleConstants.SENSOR_COEFFICENT;
         return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
@@ -135,12 +135,12 @@ public class SwerveModule {
      * @return current state of the swerve module
      */
     public SwerveModuleState getState() {
-        return new SwerveModuleState(this.driveMotor.getEncoder().getVelocity()*2*Math.PI,
+        return new SwerveModuleState(this.driveMotor.getEncoder().getVelocity() * SwerveModuleConstants.SENSOR_COEFFICENT * 60 ,
                 new Rotation2d((getTurningPosition())));
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(this.driveMotor.getEncoder().getPosition()*2*Math.PI,
+        return new SwerveModulePosition(this.driveMotor.getEncoder().getPosition() * SwerveModuleConstants.SENSOR_COEFFICENT ,
                 new Rotation2d(getTurningPosition()));
     }
 
@@ -159,6 +159,7 @@ public class SwerveModule {
         double driveMotorSpeed = state.speedMetersPerSecond
                 / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
+        System.out.println("TURNING POSITION " + getTurningPosition() + " | State Angle " + state.angle.getRadians());
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
         SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 

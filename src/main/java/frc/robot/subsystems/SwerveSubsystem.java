@@ -177,7 +177,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public ChassisSpeeds getChassisSpeeds() {
         return SwerveKinematics.driveKinematics.toChassisSpeeds(getModuleStates());
-
     }
 
     public void setChasisSpeeds(ChassisSpeeds chassisSpeeds) {
