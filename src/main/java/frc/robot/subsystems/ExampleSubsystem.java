@@ -24,9 +24,11 @@ public class ExampleSubsystem extends SubsystemBase {
         () -> {
           // string at end of line above is for local device name of limelight.
           LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight"); 
-          // double[] botposeRed = llresults.targetingResults.botpose_wpired;
-          double tx = LimelightHelpers.getTX("");
-          System.out.println(tx);
+          double[] botposeRed = llresults.targetingResults.botpose_wpired;
+          double tx = LimelightHelpers.getTX("limelight");
+          double ty = LimelightHelpers.getTY("limelight");
+          
+          System.out.println("X: "+tx+" Y: "+ty);
         });
   }
 
