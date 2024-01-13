@@ -68,8 +68,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private Pigeon2 gyro = new Pigeon2(SwerveModuleConstants.GRYO_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
     private SwerveDriveOdometry odometer = new SwerveDriveOdometry(
-            SwerveKinematics.driveKinematics,
-            new Rotation2d(0), getModulePositions());
+        SwerveKinematics.driveKinematics,
+        new Rotation2d(0), getModulePositions());
   
     /**
     * Initializes a new SwerveSubsystem object,
