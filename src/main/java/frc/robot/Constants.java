@@ -10,14 +10,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-
-    // Constants used to run Auton code
-    public final static class AutonConstants {
-        public static String AUTON_PATH = "StraightLine1Meter";
-        // Mirrors field when true
-        public static boolean RED_TEAM = false;
-    }
-
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
     public final static class ControllerConstants {
