@@ -20,6 +20,6 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int leftShooterMotorId = 14;
     public static final int rightShooterMotorId = 13;
-    public static final double shooterSpeed = 0.25;
+    public static final double shooterSpeed = 0.60;
   }
 }
