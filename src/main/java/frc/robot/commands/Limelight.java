@@ -4,33 +4,37 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.LimelightHelpers;
 
 /** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
+public class Limelight extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ExampleSubsystem m_subsystem;
+  public double x;
+  public double y;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public ExampleCommand(ExampleSubsystem subsystem) {
-    m_subsystem = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
-  }
+  public Limelight() {}
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    final double tx = LimelightHelpers.getTX("limelight");
+    final double ty = LimelightHelpers.getTY("limelight");
+    
+    // limelight sets tx/ty to 0.0 if no AprilTag is found.
+    // this prevents our robot from getting incorrect position data and getting confused
+    if (tx != 0.0 && ty != 0.0){
+      x = tx;
+      y = ty;
+    }
+
+    SmartDashboard.putNumber("Limelight TX", tx);
+    SmartDashboard.putNumber("Limelight TY", ty);
   }
 
   // Called once the command ends or is interrupted.

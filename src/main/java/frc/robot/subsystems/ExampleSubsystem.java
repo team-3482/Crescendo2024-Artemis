@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
 
 public class ExampleSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -22,13 +21,7 @@ public class ExampleSubsystem extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          // string at end of line above is for local device name of limelight.
-          LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults("limelight"); 
-          double[] botposeRed = llresults.targetingResults.botpose_wpired;
-          double tx = LimelightHelpers.getTX("limelight");
-          double ty = LimelightHelpers.getTY("limelight");
-          
-          System.out.println("X: "+tx+" Y: "+ty);
+
         });
   }
 
