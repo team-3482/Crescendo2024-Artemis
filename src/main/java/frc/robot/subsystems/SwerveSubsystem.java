@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 
@@ -72,13 +78,27 @@ public class SwerveSubsystem extends SubsystemBase {
     * to allow the pigeon to turn on and load, 
     */
     public SwerveSubsystem() {
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::resetOdometry,
+            this::getChassisSpeeds,
+            this::setChassisSpeeds,
+            AutonConstants.IS_RED_TEAM,
+            new HolonomicPathFollowerConfig(
+                new PIDConstants(5.0, 0.0, 0.0),
+                new PIDConstants(5.0, 0.0, 0.0),
+                SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
+                PhysicalConstants.WHEEL_BASE / 2,
+                new ReplanningConfig()),
+            this);
+
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
             }
-            catch (Exception Error) {
-                Error.printStackTrace();
+            catch (Exception error) {
+                error.printStackTrace();
             }});
     }
 
@@ -218,7 +238,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * Converts the chassis speeds to module states and
      * sets them as the desired ones for the modules
      */
-    public void setChasisSpeeds(ChassisSpeeds chassisSpeeds) {
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
         ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
         SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);

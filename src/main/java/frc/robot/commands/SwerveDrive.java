@@ -110,7 +110,7 @@ public class SwerveDrive extends Command {
 
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
-        swerveSubsystem.setChasisSpeeds(chassisSpeeds);
+        swerveSubsystem.setChassisSpeeds(chassisSpeeds);
         // Ouputs the swerve system information
         swerveSubsystem.outputEncoderValues();
     }
