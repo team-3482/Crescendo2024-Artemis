@@ -115,10 +115,11 @@ public class SwerveModule {
      * @return position of the turning CANcoder (in radians)
      */
     public double getAbsoluteEncoderRad() {
+        double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
+        // angle -= this.absoluteEncoderOffsetRot;
+
+        angle *= SwerveModuleConstants.SENSOR_COEFFICENT;
         // Turn rotations to radians
-        double angle = this.turningEncoder.getPosition().getValueAsDouble() * SwerveModuleConstants.SENSOR_COEFFICENT;
-        
-        angle -= this.absoluteEncoderOffsetRot * SwerveModuleConstants.SENSOR_COEFFICENT;
         return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
@@ -126,9 +127,7 @@ public class SwerveModule {
      * Resets the encoder position to absolute encoder position
      */
     public void resetEncoders() {
-      SmartDashboard.putNumber("current pos " + this.turningEncoder.getDeviceID(), this.turningEncoder.getPosition().getValueAsDouble());
-      SmartDashboard.putNumber("current absolute pos " + this.turningEncoder.getDeviceID(), this.turningEncoder.getAbsolutePosition().getValueAsDouble());
-      this.turningEncoder.setPosition((getAbsoluteEncoderRad()));
+      // this.turningEncoder.setPosition(this.getAbsoluteEncoderRad());
     }
 
     /**
@@ -161,14 +160,14 @@ public class SwerveModule {
         double driveMotorSpeed = state.speedMetersPerSecond
                 / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
-        System.out.println("TURNING POSITION " + getTurningPosition() + " | State Angle " + state.angle.getRadians());
+        // System.out.println("TURNING POSITION " + getTurningPosition() + " | State Angle " + state.angle.getRadians());
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
         SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
-        SmartDashboard.putString("Swerve[" + this.turningEncoder.getDeviceID() + "] state", state.toString());
-        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] encoder values", this.getAbsoluteEncoderRad());
+        // SmartDashboard.putString("Swerve[" + this.turningEncoder.getDeviceID() + "] state", state.toString());
+        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] encoder values", this.getAbsoluteEncoderRad());
     }
 
     /**
@@ -191,8 +190,9 @@ public class SwerveModule {
      * Outputs information of the swerve module
      */
     public void outputEncoderPosition() {
-
-        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] Drive Voltage",  this.getDriveVoltage() );
-        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] Turn Voltage",  this.getTurnVoltage() );
+        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] Drive Voltage",  this.getDriveVoltage() );
+        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] Turn Voltage",  this.getTurnVoltage() );
+        SmartDashboard.putNumber("current pos " + this.turningEncoder.getDeviceID(), this.turningEncoder.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("current absolute pos " + this.turningEncoder.getDeviceID(), this.turningEncoder.getAbsolutePosition().getValueAsDouble());
     }
 }

@@ -184,8 +184,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modulese
 
-        // ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
-        ChassisSpeeds correctedChasisSpeed = chassisSpeeds;
+        ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
 
         SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);
