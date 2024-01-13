@@ -1,11 +1,6 @@
 package frc.robot.subsystems;
 
-// import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,8 +13,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 
@@ -79,21 +72,6 @@ public class SwerveSubsystem extends SubsystemBase {
     * to allow the pigeon to turn on and load, 
     */
     public SwerveSubsystem() {
-        AutoBuilder.configureHolonomic(
-            this::getPose,
-            this::resetOdometry,
-            this::getChassisSpeeds,
-            this::setChasisSpeeds,
-            AutonConstants.RED_TEAM,
-            new HolonomicPathFollowerConfig(
-            new PIDConstants(5.0, 0.0, 0.0),
-            new PIDConstants(5.0, 0.0, 0.0),
-            SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
-            PhysicalConstants.WHEEL_BASE / 2,
-            new ReplanningConfig()
-            ),
-            this);
-
         new Thread(() -> {
             try {
                 Thread.sleep(1000);

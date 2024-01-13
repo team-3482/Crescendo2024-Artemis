@@ -66,60 +66,12 @@ public class RobotContainer {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
     }
   
-    // public Command getAutonomousCommand() {
-    // // Create config for trajectory
-    // TrajectoryConfig config =
-    //   new TrajectoryConfig(
-    //     SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
-    //     SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED)
-    //     // Add kinematics to ensure max speed is actually obeyed
-    //     .setKinematics(SwerveKinematics.driveKinematics);
-    //
-    // // An example trajectory to follow. All units in meters.
-    // Trajectory exampleTrajectory =
-    //   TrajectoryGenerator.generateTrajectory(
-    //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
-    //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-    //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(3, 0, new Rotation2d(0)),
-    //     config);
-    //
-    // var thetaController =
-    //   new ProfiledPIDController(
-    //     SwerveKinematics.AUTO_PID_THETA_CONTROLLER_KP, 0, 0, SwerveKinematics.AUTO_PID_THETA_CONTROLLER_CONSTRAINTS);
-    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    //
-    // SwerveControllerCommand swerveControllerCommand =
-    //   new SwerveControllerCommand(
-    //     exampleTrajectory,
-    //     swerveSubsystem::getPose, // Functional interface to feed supplier
-    //     SwerveKinematics.driveKinematics,
-    //
-    //     // Position controllers
-    //     new PIDController(SwerveKinematics.AUTO_PID_XCONTROLLER_KP, 0, 0),
-    //     new PIDController(SwerveKinematics.AUTO_PID_YCONTROLLER_KP, 0, 0),
-    //     thetaController,
-    //     swerveSubsystem::setModuleStates,
-    //     swerveSubsystem);
-    //
-    // // Reset odometry to the initial pose of the trajectory, run path following
-    // // command, then stop at the end.
-    // return Commands.sequence(
-    //     new InstantCommand(() -> swerveSubsystem.resetOdometry(exampleTrajectory.getInitialPose())),
-    //     swerveControllerCommand,
-    //     // new InstantCommand(() -> swerveSubsystem.drive(0, 0, 0, false)));
-    //     new InstantCommand(() -> swerveSubsystem.setChasisSpeeds(new ChassisSpeeds(0, 0, 0))));
-    // }
-    
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile(AutonConstants.AUTON_PATH);
-        return AutoBuilder.followPath(path);
+        return Commands.run(() -> {});
     }
 }
