@@ -62,8 +62,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private Pigeon2 gyro = new Pigeon2(SwerveModuleConstants.GRYO_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
     private SwerveDriveOdometry odometer = new SwerveDriveOdometry(
-            SwerveKinematics.driveKinematics,
-            new Rotation2d(0), getModulePositions());
+        SwerveKinematics.driveKinematics,
+        new Rotation2d(0), getModulePositions());
   
     /**
     * Initializes a new SwerveSubsystem object,
@@ -77,8 +77,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 Thread.sleep(1000);
                 zeroHeading();
             }
-            catch (Exception Error) {
-                Error.printStackTrace();
+            catch (Exception error) {
+                error.printStackTrace();
             }});
     }
 
@@ -218,7 +218,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * Converts the chassis speeds to module states and
      * sets them as the desired ones for the modules
      */
-    public void setChasisSpeeds(ChassisSpeeds chassisSpeeds) {
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
         ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
         SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);
