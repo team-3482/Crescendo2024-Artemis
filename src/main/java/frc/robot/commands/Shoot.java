@@ -12,8 +12,8 @@ import frc.robot.subsystems.ShootSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class Shoot extends Command {
-  private CANSparkFlex leftMotor;
-  private CANSparkFlex rightMotor;
+  private static CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.leftShooterMotorId, MotorType.kBrushless);
+  private static CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.rightShooterMotorId, MotorType.kBrushless);
 
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ShootSubsystem m_subsystem;
@@ -32,8 +32,6 @@ public class Shoot extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    leftMotor = new CANSparkFlex(IntakeConstants.leftShooterMotorId, MotorType.kBrushless);
-    rightMotor = new CANSparkFlex(IntakeConstants.rightShooterMotorId, MotorType.kBrushless);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -45,7 +43,10 @@ public class Shoot extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    leftMotor.set(0);
+    rightMotor.set(0);
+  }
 
   // Returns true when the command should end.
   @Override
