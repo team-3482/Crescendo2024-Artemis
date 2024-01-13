@@ -13,8 +13,6 @@ public final class Constants {
     // Constants used to run Auton code
     public final static class AutonConstants {
         public static String AUTON_PATH_NAME = "StraightLine1Meter";
-        // Mirrors field when true
-        public static boolean IS_RED_TEAM = false;
     }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)

@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
@@ -83,13 +84,19 @@ public class SwerveSubsystem extends SubsystemBase {
             this::resetOdometry,
             this::getChassisSpeeds,
             this::setChassisSpeeds,
-            AutonConstants.IS_RED_TEAM,
             new HolonomicPathFollowerConfig(
                 new PIDConstants(5.0, 0.0, 0.0),
                 new PIDConstants(5.0, 0.0, 0.0),
                 SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
                 PhysicalConstants.WHEEL_BASE / 2,
                 new ReplanningConfig()),
+            () -> {
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
             this);
 
         new Thread(() -> {
