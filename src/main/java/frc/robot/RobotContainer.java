@@ -6,12 +6,14 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -64,6 +66,7 @@ public class RobotContainer {
     */
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+        driveController.x().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
     }
   
     /**
@@ -72,8 +75,11 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        PathPlannerPath path = PathPlannerPath.fromPathFile(AutonConstants.AUTON_PATH_NAME);
-        return AutoBuilder.followPath(path);
+        this.swerveSubsystem.zeroHeading();
+        // PathPlannerPath = PathPlannerPath.fromPathFile(AutonConstants.AUTON_PATH_NAME);
+        // SmartDashboard.putData("Path", path.toString());
+        // return AutoBuilder.followPath(path);
+        return new PathPlannerAuto("RunTest");
     }
 
     // public Command getAutonomousCommand() {

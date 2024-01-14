@@ -131,10 +131,18 @@ public class SwerveModule {
     */
     public SwerveModulePosition getPosition() {
         // Gets drive position as rotations
-        double position = this.driveMotor.getEncoder().getPosition();
+        double positionRot = this.driveMotor.getEncoder().getPosition();
         // Turns rotations to radians
-        position *= PhysicalConstants.ROT_TO_RAD;
-        return new SwerveModulePosition(position, new Rotation2d(getTurningPosition()));
+        // position *= PhysicalConstants.ROT_TO_RAD;
+        double positionMeters = positionRot * 6.12 * Math.PI * PhysicalConstants.SWERVE_WHEEL_DIAMETER * 2 / 3;
+        return new SwerveModulePosition(positionMeters, new Rotation2d(getTurningPosition()));
+    }
+
+    /**
+     * Zeros the position of the driving encoder
+     */
+    public void zeroDriveEncoder() {
+        this.driveMotor.getEncoder().setPosition(0);
     }
 
     /**
@@ -148,7 +156,7 @@ public class SwerveModule {
         double driveMotorSpeed = state.speedMetersPerSecond / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
-        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
+        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
@@ -185,9 +193,10 @@ public class SwerveModule {
     public void outputEncoderPosition() {
         int turnID = this.turningEncoder.getDeviceID();
         String id = "Swerve[" + turnID + "] ";
-        SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
-        SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
-        SmartDashboard.putNumber(id + "Turning position", this.turningEncoder.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber(id + "Turning absolute position", this.turningEncoder.getAbsolutePosition().getValueAsDouble());
+        SmartDashboard.putString(id + "Position", this.getPosition().toString());
+        // SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
+        // SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
+        // SmartDashboard.putNumber(id + "Turning position", this.turningEncoder.getPosition().getValueAsDouble());
+        // SmartDashboard.putNumber(id + "Turning absolute position", this.turningEncoder.getAbsolutePosition().getValueAsDouble());
     }
 }

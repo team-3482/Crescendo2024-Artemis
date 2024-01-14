@@ -22,9 +22,10 @@ import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
+// import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public class SwerveSubsystem extends SubsystemBase {
-  // Instance of swerve modules, initalized with specific value
+    // Instance of swerve modules, initalized with specific value
     private SwerveModule moduleOne = new SwerveModule(
         SwerveModuleConstants.One.DRIVE,
         SwerveModuleConstants.One.TURN,
@@ -71,7 +72,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveDriveOdometry odometer = new SwerveDriveOdometry(
         SwerveKinematics.driveKinematics,
         new Rotation2d(0), getModulePositions());
-  
+    
+    // private Field2d field = new Field2d();
     /**
     * Initializes a new SwerveSubsystem object,
     * configures PathPlannerLib AutoBuilder,
@@ -85,8 +87,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
-                new PIDConstants(5.0, 0.0, 0.0),
-                new PIDConstants(5.0, 0.0, 0.0),
+                new PIDConstants(20, 20, 0),
+                new PIDConstants(20, 20, 0),
                 SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
                 PhysicalConstants.WHEEL_BASE / 2,
                 new ReplanningConfig()),
@@ -114,6 +116,16 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void zeroHeading() {
         gyro.setYaw(0);
+    }
+
+    /**
+     * Zeros the position of the drive encoders
+     */
+    public void zeroDrivePositions() {
+        this.moduleOne.zeroDriveEncoder();
+        this.moduleTwo.zeroDriveEncoder();
+        this.moduleThree.zeroDriveEncoder();
+        this.moduleFour.zeroDriveEncoder();
     }
 
     /**
@@ -184,6 +196,7 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
+        // field.setRobotPose(getPose());
 
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
