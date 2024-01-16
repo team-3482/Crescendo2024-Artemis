@@ -39,6 +39,8 @@ public class Shoot extends Command {
   public void execute() {
     leftMotor.set(-IntakeConstants.shooterSpeed);
     rightMotor.set(IntakeConstants.shooterSpeed);
+
+    System.out.println(leftMotor.getEncoder());
   }
 
   // Called once the command ends or is interrupted.
