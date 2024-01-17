@@ -4,15 +4,15 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -20,6 +20,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class RobotContainer {
     // Singleton design pattern
     public static RobotContainer instance;
+    private final SendableChooser<Command> autoChooser;
 
     /**
     * Gets the instance of the RobotContainer
@@ -59,6 +60,9 @@ public class RobotContainer {
             ()-> driveController.getHID().getBButton()));
 
         configureBindings();
+
+        autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+        SmartDashboard.putData("Auto Mode", autoChooser);
     }
 
     /**
@@ -75,11 +79,11 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        this.swerveSubsystem.zeroHeading();
         // PathPlannerPath = PathPlannerPath.fromPathFile(AutonConstants.AUTON_PATH_NAME);
         // SmartDashboard.putData("Path", path.toString());
         // return AutoBuilder.followPath(path);
-        return new PathPlannerAuto("RunTest");
+        return autoChooser.getSelected();
+        // return new PathPlannerAuto("RunTest");
     }
 
     // public Command getAutonomousCommand() {
