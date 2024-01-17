@@ -46,21 +46,22 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
     }
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  @Override
-  public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
-
-    //port forward 5800-5807 for limelight
-    for (int port = 5800; port <= 5807; port++) {
-      PortForwarder.add(port, "limelight.local", port);
+    /**
+    * This function is run when the robot is first started up and should be used for any
+    * initialization code.
+    */
+    @Override
+    public void robotInit() {
+      // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+      // autonomous chooser on the dashboard.
+      m_robotContainer = new RobotContainer();
+      
+      //port forward 5800-5807 for limelight
+      for (int port = 5800; port <= 5807; port++) {
+        PortForwarder.add(port, "limelight.local", port);
+      }
     }
-  }
+
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
     public void disabledInit() {}
