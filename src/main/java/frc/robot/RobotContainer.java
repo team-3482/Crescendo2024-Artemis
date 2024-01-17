@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.SwerveDrive;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.*;
 
 public class RobotContainer {
     // Singleton design pattern
@@ -27,8 +27,9 @@ public class RobotContainer {
         return instance;
     }
 
-    // Instance of the Swerve Subsystem
+    // Instance of Subsystems
     private SwerveSubsystem swerveSubsystem;
+    private LimelightSubsystem limelightSubsystem;
     // Instance of the controller used to drive the robot
     private CommandXboxController driveController;
 
@@ -37,6 +38,7 @@ public class RobotContainer {
     */
     public RobotContainer() {
         this.swerveSubsystem = new SwerveSubsystem();
+        this.limelightSubsystem = new LimelightSubsystem();
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         
         // Sets the default command to driving swerve
@@ -60,6 +62,8 @@ public class RobotContainer {
     */
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+        driveController.x().whileTrue(Commands.run(() -> limelightSubsystem.printXY()));
+
     }
   
     /**
