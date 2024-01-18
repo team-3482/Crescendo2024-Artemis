@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.*;
+import frc.robot.commands.*;
 
 public class RobotContainer {
     // Singleton design pattern
@@ -71,6 +71,7 @@ public class RobotContainer {
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
         driveController.x().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
+        driveController.a().onTrue(new PathfindAprilTagCommand(limelightSubsystem));
     }
   
     /**
