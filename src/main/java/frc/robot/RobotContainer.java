@@ -62,8 +62,6 @@ public class RobotContainer {
     */
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-        driveController.x().whileTrue(Commands.run(() -> limelightSubsystem.printXY()));
-
     }
   
     /**
