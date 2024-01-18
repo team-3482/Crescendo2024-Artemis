@@ -62,7 +62,7 @@ public class RobotContainer {
         configureBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     /**
@@ -70,7 +70,7 @@ public class RobotContainer {
     */
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-        driveController.x().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
+        driveController.a().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
     }
   
     /**

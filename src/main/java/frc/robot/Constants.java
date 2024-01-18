@@ -11,9 +11,9 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
     // Constants used to run Auton code
-    public final static class AutonConstants {
-        public static String AUTON_PATH_NAME = "StraightLine1Meter";
-    }
+    // public final static class AutonConstants {
+    //     public static String AUTON_PATH_NAME = "StraightLine1Meter";
+    // }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
     public final static class ControllerConstants {
@@ -117,7 +117,7 @@ public final class Constants {
         public static double WHEEL_BASE = Units.inchesToMeters(21.5);
 
         public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5);
-        public static double SWERVE_GEAR_RATIO = 1 / (150.0 / 7);
+        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
         public static double ROT_TO_RAD = 2 * Math.PI;
     }
 }
