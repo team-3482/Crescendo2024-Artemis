@@ -11,10 +11,16 @@ import edu.wpi.first.math.util.Units;
 
 public final class Constants {
     // Constants used to run Auton code
-    // public final static class AutonConstants {
-    //     public static String AUTON_PATH_NAME = "StraightLine1Meter";
-    // }
-
+    public final static class AutonConstants {
+        // public static String AUTON_PATH_NAME = "StraightLine1Meter";
+        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 3;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 1;
+    }
+    
+    // Constants for limelight-related data
+    public final static class LimelightConstants {
+        public static double TIMEOUT = 5; // In seconds
+    }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
     public final static class ControllerConstants {
