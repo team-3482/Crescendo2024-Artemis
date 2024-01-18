@@ -20,8 +20,8 @@ public class PathfindAprilTagCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final LimelightSubsystem limelightSubsystem;
     private Command path;
-    private boolean noPath;
 
+    private boolean noPath;
     /**
     * Creates a new ExampleCommand.
     *
@@ -45,9 +45,7 @@ public class PathfindAprilTagCommand extends Command {
         }
         this.noPath = false;
 
-        Pose2d aprilTagPosition = new Pose2d(
-            xPos,
-            yPos,
+        Pose2d aprilTagPosition = new Pose2d(xPos, yPos,
             Rotation2d.fromDegrees(limelightSubsystem.getAngle()));
 
         PathConstraints constraints = new PathConstraints(
@@ -73,7 +71,7 @@ public class PathfindAprilTagCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         if (path != null) {
-            path.end(interrupted);
+            path.cancel();
         }
     }
 
