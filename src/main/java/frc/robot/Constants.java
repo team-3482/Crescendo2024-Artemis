@@ -20,6 +20,8 @@ public final class Constants {
     // Constants for limelight-related data
     public final static class LimelightConstants {
         public static double TIMEOUT = 5; // In seconds
+        public static String FRONT_LIMELIGHT = "limelight";
+        public static String BACK_LIMELIGHT = "";
     }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)

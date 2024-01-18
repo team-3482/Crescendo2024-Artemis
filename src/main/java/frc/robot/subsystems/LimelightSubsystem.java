@@ -4,7 +4,12 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,78 +17,78 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
-    private double xPos;
-    private double yPos;
-    private double angle;
-    private Timer timeout;
 
     /** Creates a new ExampleSubsystem. */
-    public LimelightSubsystem() {
-        this.timeout = new Timer();
+    public LimelightSubsystem() {}
+    
+    /**
+     * Horizontal Offset From Crosshair To Target
+     *
+     * @return offset
+     */
+    public double getTX() {
+        return LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT);
     }
     
     /**
-     * Gets the x-axis position of the nearest AprilTag
+     * Vertical Offset From Crosshair To Target
      *
-     * @return x-axis position
+     * @return offset
      */
-    public double getXPos() {
-        return this.xPos;
-    }
-    
-    /**
-     * Gets the y-axis position of the nearest AprilTag
-     *
-     * @return y-axis position
-     */
-    public double getYPos() {
-        return this.yPos;
+    public double getTY() {
+        return LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT);
     }
 
     /**
      * Gets the angle for the nearest AprilTag relative to TX
      *
-     * @return angle 
+     * @return angle (in degrees)
      */
     public double getAngle() {
-        return this.angle;
+        // Need to use TX and calculate the angle for the robot to turn to so that TX 
+        // is as close to 0 as possible (distance from crosshair to center of target)
+        return Units.radiansToDegrees(0); 
+    }
+
+    /**
+     * Gets the botpose relative to the current alliance, or Blue
+     * if no alliance is found
+     *
+     * @return botpose
+     */
+    public Pose2d getBotpose() {
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+            return LimelightHelpers.getBotPose2d_wpiRed(LimelightConstants.FRONT_LIMELIGHT);
+        }
+        return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.FRONT_LIMELIGHT);
     }
 
     @Override
     public void periodic() {
-        final double TX = LimelightHelpers.getTX("limelight");
-        final double TY = LimelightHelpers.getTY("limelight");
-        // Angle of AprilTag relative to TX
-        final double calculated_angle = Units.radiansToDegrees(Math.tan(TY / TX));
+        SmartDashboard.putNumber("AprilTag TX", LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT));
+        SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT));
 
-        // The limelight sets tx/ty to 0.0 if no AprilTag is found.
-        // This prevents our robot from getting incorrect position data and getting confused
+        SmartDashboard.putString("Limelight botpose (Pose2d)", this.getBotpose().toString());
+        SmartDashboard.putString("Limelight targetpose_robotspace (Pose2d)", ExtraHelpers.toPose2d(
+            NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
+            .getEntry("targetpose_robotspace").getDoubleArray(new double[6])).toString());
+        SmartDashboard.putString("Limelight botpose_targetspace (Pose2d)", ExtraHelpers.toPose2d(
+            NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
+            .getEntry("botpose_targetspace").getDoubleArray(new double[6])).toString());
+        // SmartDashboard.putNumber("Limelight Needed Angle", this.getAngle()); // Not yet implemented
+    }
 
-        // The timeout makes sure that the positions are reset to 0 if there is no AprilTag
-        // found for at least LimelightConstants.TIMEOUT time, so we can later check
-        // for 0 and the robot will not pathfind to outdated positions
-        if (TX == 0 && TY == 0) {
-            if (timeout.hasElapsed(LimelightConstants.TIMEOUT)) {
-                this.xPos = 0;
-                this.yPos = 0;
-                this.angle = 0;
+    private class ExtraHelpers extends LimelightHelpers {
+        public static Pose2d toPose2d(double[] inData) {
+            // From LimelightHelpers 397-406
+            if(inData.length < 6) {
+                System.err.println("Bad LL 2D Pose Data!");
+                return new Pose2d();
             }
-            else if (timeout.get() == 0) {
-                timeout.restart(); // Sets timer to 0 and starts it
-            }
+            Translation2d tran2d = new Translation2d(inData[0], inData[1]);
+            Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
+            return new Pose2d(tran2d, r2d);
         }
-        else {
-            this.xPos = TX;
-            this.xPos = TY;
-            this.angle = calculated_angle;
-            timeout.stop();
-            timeout.reset(); // Sets timer to 0
-        }
-
-        SmartDashboard.putNumber("Limelight TX", this.xPos);
-        SmartDashboard.putNumber("Limelight TY", this.yPos);
-        SmartDashboard.putNumber("Limelight TA", this.angle);
-        SmartDashboard.putNumber("Limeliht Timeout (s)", this.timeout.get());
     }
 }
-

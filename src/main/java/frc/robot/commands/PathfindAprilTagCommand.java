@@ -36,31 +36,31 @@ public class PathfindAprilTagCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        double xPos = limelightSubsystem.getXPos();
-        double yPos = limelightSubsystem.getYPos();
+        final double TX = limelightSubsystem.getTX();
+        final double TY = limelightSubsystem.getTY();
 
-        if (xPos == 0 && yPos == 0) {
+        // if (xPos == 0 && yPos == 0) {
             this.noPath = true;
             return;
-        }
-        this.noPath = false;
+        // }
+        // this.noPath = false;
 
-        Pose2d aprilTagPosition = new Pose2d(xPos, yPos,
-            Rotation2d.fromDegrees(limelightSubsystem.getAngle()));
+        // Pose2d aprilTagPosition = new Pose2d(xPos, yPos,
+            // Rotation2d.fromDegrees(limelightSubsystem.getAngle()));
 
-        PathConstraints constraints = new PathConstraints(
-            AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
-            AutonConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON,
-            SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND,
-            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        // PathConstraints constraints = new PathConstraints(
+        //     AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
+        //     AutonConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON,
+        //     SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND,
+        //     SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
 
-        this.path = AutoBuilder.pathfindToPose(
-            aprilTagPosition,
-            constraints,
-            0.0, // Goal end velocity in meters/sec
-            0.0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+        // this.path = AutoBuilder.pathfindToPose(
+            // aprilTagPosition,
+            // constraints,
+            // 0.0, // Goal end velocity in meters/sec
+            // 0.0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
         
-        path.schedule();
+        // path.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
