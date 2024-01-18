@@ -193,7 +193,7 @@ public class SwerveModule {
     public void outputEncoderPosition() {
         int turnID = this.turningEncoder.getDeviceID();
         String id = "Swerve[" + turnID + "] ";
-        SmartDashboard.putString(id + "Position", this.getPosition().toString());
+        SmartDashboard.putString(id + "Position", this.getPosition().distanceMeters + " m");
         // SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
         // SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
         // SmartDashboard.putNumber(id + "Turning position", this.turningEncoder.getPosition().getValueAsDouble());

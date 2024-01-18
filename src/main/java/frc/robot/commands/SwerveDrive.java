@@ -102,10 +102,10 @@ public class SwerveDrive extends Command {
         }
 
         if(forwardFunction.get()) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(1,0, 0, swerveSubsystem.getRotation2d());
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerveSubsystem.getRotation2d());
         }
         if(sideFunction.get()) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 1, 0,swerveSubsystem.getRotation2d());
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 1, 0, swerveSubsystem.getRotation2d());
         }
 
         // Converts the chassis speeds to module states and sets them as the desired
