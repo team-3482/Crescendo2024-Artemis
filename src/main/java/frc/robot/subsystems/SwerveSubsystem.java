@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,13 +15,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+// import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
+// import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public class SwerveSubsystem extends SubsystemBase {
-  // Instance of swerve modules, initalized with specific value
+    // Instance of swerve modules, initalized with specific value
     private SwerveModule moduleOne = new SwerveModule(
         SwerveModuleConstants.One.DRIVE,
         SwerveModuleConstants.One.TURN,
@@ -64,7 +72,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveDriveOdometry odometer = new SwerveDriveOdometry(
         SwerveKinematics.driveKinematics,
         new Rotation2d(0), getModulePositions());
-  
+    
+    // private Field2d field = new Field2d();
     /**
     * Initializes a new SwerveSubsystem object,
     * configures PathPlannerLib AutoBuilder,
@@ -72,6 +81,26 @@ public class SwerveSubsystem extends SubsystemBase {
     * to allow the pigeon to turn on and load, 
     */
     public SwerveSubsystem() {
+        AutoBuilder.configureHolonomic(
+            this::getPose,
+            this::resetOdometry,
+            this::getChassisSpeeds,
+            this::setChassisSpeeds,
+            new HolonomicPathFollowerConfig(
+                new PIDConstants(20, 20, 0),
+                new PIDConstants(20, 20, 0),
+                SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
+                PhysicalConstants.WHEEL_BASE / 2,
+                new ReplanningConfig()),
+            () -> {
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
+            this);
+
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -87,6 +116,16 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void zeroHeading() {
         gyro.setYaw(0);
+    }
+
+    /**
+     * Zeros the position of the drive encoders
+     */
+    public void zeroDrivePositions() {
+        this.moduleOne.zeroDriveEncoder();
+        this.moduleTwo.zeroDriveEncoder();
+        this.moduleThree.zeroDriveEncoder();
+        this.moduleFour.zeroDriveEncoder();
     }
 
     /**
@@ -157,6 +196,7 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
+        // field.setRobotPose(getPose());
 
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
