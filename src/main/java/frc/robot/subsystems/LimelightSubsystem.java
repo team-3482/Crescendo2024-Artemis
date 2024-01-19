@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
@@ -69,13 +68,7 @@ public class LimelightSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("AprilTag TX", LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT));
         SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT));
 
-        SmartDashboard.putString("Limelight botpose (Pose2d)", this.getBotpose().toString());
-        SmartDashboard.putString("Limelight targetpose_robotspace (Pose2d)", ExtraHelpers.toPose2d(
-            NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
-            .getEntry("targetpose_robotspace").getDoubleArray(new double[6])).toString());
-        SmartDashboard.putString("Limelight botpose_targetspace (Pose2d)", ExtraHelpers.toPose2d(
-            NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
-            .getEntry("botpose_targetspace").getDoubleArray(new double[6])).toString());
+        SmartDashboard.putString("Botpose field-relative (limelight)", this.getBotpose().toString());
         // SmartDashboard.putNumber("Limelight Needed Angle", this.getAngle()); // Not yet implemented
     }
 
