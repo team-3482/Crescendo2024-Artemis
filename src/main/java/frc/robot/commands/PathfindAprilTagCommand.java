@@ -7,6 +7,7 @@ package frc.robot.commands;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class PathfindAprilTagCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final LimelightSubsystem limelightSubsystem;
+    private final SwerveSubsystem swerveSubsystem;
     private Command path;
 
     private boolean noPath;
@@ -27,40 +29,45 @@ public class PathfindAprilTagCommand extends Command {
     *
     * @param subsystem The subsystem used by this command.
     */
-    public PathfindAprilTagCommand(LimelightSubsystem subsystem) {
-        this.limelightSubsystem = subsystem;
+    public PathfindAprilTagCommand(LimelightSubsystem limelightSubsystem, SwerveSubsystem swerveSubsystem) {
+        this.limelightSubsystem = limelightSubsystem;
+        this.swerveSubsystem = swerveSubsystem;
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(subsystem);
+        addRequirements(limelightSubsystem, swerveSubsystem);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        final double TX = limelightSubsystem.getTX();
-        final double TY = limelightSubsystem.getTY();
+        int tagID = limelightSubsystem.getID();
 
-        // if (xPos == 0 && yPos == 0) {
+        if (tagID == 0) {
             this.noPath = true;
             return;
-        // }
-        // this.noPath = false;
-
-        // Pose2d aprilTagPosition = new Pose2d(xPos, yPos,
-            // Rotation2d.fromDegrees(limelightSubsystem.getAngle()));
-
-        // PathConstraints constraints = new PathConstraints(
-        //     AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
-        //     AutonConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON,
-        //     SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND,
-        //     SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
-
-        // this.path = AutoBuilder.pathfindToPose(
-            // aprilTagPosition,
-            // constraints,
-            // 0.0, // Goal end velocity in meters/sec
-            // 0.0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+        }
+        this.noPath = false;
         
-        // path.schedule();
+        Pose2d botpose = limelightSubsystem.getBotpose();
+        swerveSubsystem.resetOdometry(botpose);
+
+        Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
+
+        Pose2d idealPosition = new Pose2d(idealPositionCoord[0], idealPositionCoord[1],
+            Rotation2d.fromDegrees(limelightSubsystem.getAngle()));
+
+        PathConstraints constraints = new PathConstraints(
+            AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
+            AutonConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON,
+            SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND,
+            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+
+        this.path = AutoBuilder.pathfindToPose(
+            idealPosition,
+            constraints,
+            0.0, // Goal end velocity in meters/sec
+            0.0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+        
+        path.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.

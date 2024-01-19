@@ -73,7 +73,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveKinematics.driveKinematics,
         new Rotation2d(0), getModulePositions());
     
-    // private Field2d field = new Field2d();
     /**
     * Initializes a new SwerveSubsystem object,
     * configures PathPlannerLib AutoBuilder,
@@ -116,6 +115,7 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void zeroHeading() {
         gyro.setYaw(0);
+        this.resetOdometry(getPose());
     }
 
     /**
@@ -126,6 +126,7 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.zeroDriveEncoder();
         this.moduleThree.zeroDriveEncoder();
         this.moduleFour.zeroDriveEncoder();
+        this.resetOdometry(getPose());
     }
 
     /**
@@ -196,10 +197,10 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
-        // field.setRobotPose(getPose());
 
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        SmartDashboard.putString("Robot Pose Meters", odometer.getPoseMeters().toString());
     }
 
     public static Twist2d log(Pose2d transform) {

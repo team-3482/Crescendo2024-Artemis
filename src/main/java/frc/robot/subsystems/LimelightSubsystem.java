@@ -16,7 +16,6 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
-
     /** Creates a new ExampleSubsystem. */
     public LimelightSubsystem() {}
     
@@ -48,6 +47,16 @@ public class LimelightSubsystem extends SubsystemBase {
         // is as close to 0 as possible (distance from crosshair to center of target)
         return Units.radiansToDegrees(0); 
     }
+    
+    /**
+     * Gets the ID of the nearest AprilTag
+     *
+     * @return ID
+     */
+    public int getID() {
+        return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
+            .getEntry("tid").getInteger(-1);
+    }
 
     /**
      * Gets the botpose relative to the current alliance, or Blue
@@ -68,7 +77,7 @@ public class LimelightSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("AprilTag TX", LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT));
         SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT));
 
-        SmartDashboard.putString("Botpose field-relative (limelight)", this.getBotpose().toString());
+        SmartDashboard.putString("Botpose (limelight)", this.getBotpose().toString());
         // SmartDashboard.putNumber("Limelight Needed Angle", this.getAngle()); // Not yet implemented
     }
 

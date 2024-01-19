@@ -71,7 +71,8 @@ public class RobotContainer {
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
         driveController.x().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
-        driveController.a().onTrue(new PathfindAprilTagCommand(limelightSubsystem));
+        driveController.a().whileTrue(Commands.run(() -> swerveSubsystem.resetOdometry(limelightSubsystem.getBotpose())));
+        driveController.b().onTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
     }
   
     /**
