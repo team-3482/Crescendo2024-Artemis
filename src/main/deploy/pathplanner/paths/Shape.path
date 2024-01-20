@@ -11,7 +11,7 @@
         "x": 2.1,
         "y": 5.0
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -27,7 +27,7 @@
         "x": 3.9999999999999987,
         "y": 5.0
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -36,14 +36,14 @@
         "y": 5.5
       },
       "prevControl": {
-        "x": 5.2622700665248665,
-        "y": 6.256194089996322
+        "x": 5.26227006652487,
+        "y": 6.2561940899963275
       },
       "nextControl": {
-        "x": 6.99014918761195,
-        "y": 4.48506902063768
+        "x": 6.542575334967688,
+        "y": 4.943844904397966
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -52,14 +52,30 @@
         "y": 4.5
       },
       "prevControl": {
-        "x": 5.5,
-        "y": 4.266358936109662
+        "x": 5.669947851823942,
+        "y": 4.483969502677335
       },
       "nextControl": {
-        "x": 5.5,
-        "y": 4.733641063890338
+        "x": 5.2622700665248665,
+        "y": 4.522424108461449
       },
-      "isLocked": false,
+      "isLocked": true,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.5,
+        "y": 4.5
+      },
+      "prevControl": {
+        "x": 5.356264087336922,
+        "y": 4.499128288345813
+      },
+      "nextControl": {
+        "x": 5.753156748043776,
+        "y": 4.501535313503197
+      },
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -68,14 +84,14 @@
         "y": 3.5
       },
       "prevControl": {
-        "x": 6.766263303518974,
-        "y": 4.5433129034197
+        "x": 6.526042161499081,
+        "y": 4.073315016859041
       },
       "nextControl": {
-        "x": 5.45135659120233,
-        "y": 2.7529894813622575
+        "x": 5.373384915123716,
+        "y": 2.8170740593753645
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -84,14 +100,14 @@
         "y": 4.0
       },
       "prevControl": {
-        "x": 3.6,
-        "y": 4.0
+        "x": 4.061164356425405,
+        "y": 3.97931543954691
       },
       "nextControl": {
-        "x": 3.4,
-        "y": 4.0
+        "x": 3.4000678641120574,
+        "y": 4.003683506057205
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -107,7 +123,7 @@
         "x": 1.9,
         "y": 4.0
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -123,7 +139,7 @@
         "x": 1.5,
         "y": 4.915001882525851
       },
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     },
     {
@@ -136,7 +152,7 @@
         "y": 5.0
       },
       "nextControl": null,
-      "isLocked": false,
+      "isLocked": true,
       "linkedName": null
     }
   ],
