@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutonConstants;
 // import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
@@ -86,7 +87,7 @@ public class SwerveSubsystem extends SubsystemBase {
             new HolonomicPathFollowerConfig(
                 new PIDConstants(20, 20, 0),
                 new PIDConstants(20, 20, 0),
-                SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND,
+                AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
                 PhysicalConstants.WHEEL_BASE / 2,
                 new ReplanningConfig()),
             () -> {
@@ -199,7 +200,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
         SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
-        SmartDashboard.putString("Robot Pose Meters", odometer.getPoseMeters().toString());
     }
 
     public static Twist2d log(Pose2d transform) {
@@ -287,7 +287,5 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.outputEncoderPosition();
         this.moduleThree.outputEncoderPosition();
         this.moduleFour.outputEncoderPosition();
-
-        SmartDashboard.putNumber("Gyro degrees:", getRotation2d().getDegrees());
     }
 }

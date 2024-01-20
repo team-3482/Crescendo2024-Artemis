@@ -41,17 +41,17 @@ public class PathfindAprilTagCommand extends Command {
     @Override
     public void initialize() {
         int tagID = limelightSubsystem.getID();
-
-        if (tagID == 0) {
+        
+        if (tagID <= 0) {
             this.noPath = true;
             return;
         }
         this.noPath = false;
         
+        Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
         Pose2d botpose = limelightSubsystem.getBotpose();
         swerveSubsystem.resetOdometry(botpose);
 
-        Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
 
         Pose2d idealPosition = new Pose2d(idealPositionCoord[0], idealPositionCoord[1],
             Rotation2d.fromDegrees(limelightSubsystem.getAngle()));

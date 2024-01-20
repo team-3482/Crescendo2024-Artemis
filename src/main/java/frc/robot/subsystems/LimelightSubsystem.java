@@ -55,7 +55,7 @@ public class LimelightSubsystem extends SubsystemBase {
      */
     public int getID() {
         return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
-            .getEntry("tid").getInteger(-1);
+            .getEntry("tid").getInteger(0);
     }
 
     /**
@@ -79,6 +79,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
         SmartDashboard.putString("Robot Location (limelight)", this.getBotpose().getTranslation().toString());
         SmartDashboard.putString("Robot Rotation (limelight)", this.getBotpose().getRotation().toString());
+        SmartDashboard.putNumber("Target ID (limelight)", this.getID());
     }
 
     private class ExtraHelpers extends LimelightHelpers {
