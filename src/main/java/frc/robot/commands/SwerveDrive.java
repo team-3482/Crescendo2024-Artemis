@@ -24,7 +24,7 @@ public class SwerveDrive extends Command {
     private final Supplier<Boolean> fieldOrientedFunction;
     private final Supplier<Boolean> fineControlFunction;
     private final Supplier<Boolean> forwardFunction;
-    private final Supplier<Boolean> sideFunction;
+    private final Supplier<Boolean> backFunction;
 
     // Instances of Rate Limiters to ensure that the robot moves smoothly
     private final SlewRateLimiter xLimiter;
@@ -47,7 +47,7 @@ public class SwerveDrive extends Command {
     public SwerveDrive(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpeedFunction,
         Supplier<Double> ySpeedFunction, Supplier<Double> turningSpeedFunction,
         Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> fineControlFunction, 
-        Supplier<Boolean> forwardFunction, Supplier<Boolean> sideFunction) {
+        Supplier<Boolean> forwardFunction, Supplier<Boolean> backFunction) {
 
         this.swerveSubsystem = swerveSubsystem;
         this.xSpeedFunction = xSpeedFunction;
@@ -56,7 +56,7 @@ public class SwerveDrive extends Command {
         this.fieldOrientedFunction = fieldOrientedFunction;
         this.fineControlFunction = fineControlFunction;
         this.forwardFunction = forwardFunction;
-        this.sideFunction = sideFunction;
+        this.backFunction = backFunction;
 
         this.xLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
         this.yLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
@@ -104,8 +104,8 @@ public class SwerveDrive extends Command {
         if(forwardFunction.get()) {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerveSubsystem.getRotation2d());
         }
-        if(sideFunction.get()) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 1, 0, swerveSubsystem.getRotation2d());
+        if(backFunction.get()) {
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(-1, 0, 0, swerveSubsystem.getRotation2d());
         }
 
         // Converts the chassis speeds to module states and sets them as the desired

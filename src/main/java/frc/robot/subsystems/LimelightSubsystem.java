@@ -55,7 +55,7 @@ public class LimelightSubsystem extends SubsystemBase {
      */
     public int getID() {
         return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
-            .getEntry("tid").getInteger(-1);
+            .getEntry("tid").getInteger(0);
     }
 
     /**
@@ -77,7 +77,8 @@ public class LimelightSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("AprilTag TX", LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT));
         SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT));
 
-        SmartDashboard.putString("Botpose (limelight)", this.getBotpose().toString());
+        SmartDashboard.putString("Botpose (limelight)", this.getBotpose().getTranslation().toString());
+        SmartDashboard.putNumber("tid (limelight)", this.getID());
         // SmartDashboard.putNumber("Limelight Needed Angle", this.getAngle()); // Not yet implemented
     }
 

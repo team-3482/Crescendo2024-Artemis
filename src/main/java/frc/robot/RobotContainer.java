@@ -57,7 +57,7 @@ public class RobotContainer {
             () -> !driveController.getHID().getAButton(),
             () -> driveController.getHID().getRightBumper(),
             () -> driveController.povUp().getAsBoolean(), // Replacing driveController.getHID.getXButton()
-            () -> driveController.getHID().getBButton()));
+            () -> driveController.povDown().getAsBoolean()));
 
         configureBindings();
 
