@@ -36,17 +36,6 @@ public class LimelightSubsystem extends SubsystemBase {
     public double getTY() {
         return LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT);
     }
-
-    /**
-     * Gets the angle for the nearest AprilTag relative to TX
-     *
-     * @return angle (in degrees)
-     */
-    public double getAngle() {
-        // Need to use TX and calculate the angle for the robot to turn to so that TX 
-        // is as close to 0 as possible (distance from crosshair to center of target)
-        return Units.radiansToDegrees(0); 
-    }
     
     /**
      * Gets the ID of the nearest AprilTag

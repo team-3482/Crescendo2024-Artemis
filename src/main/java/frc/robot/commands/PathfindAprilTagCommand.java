@@ -48,13 +48,17 @@ public class PathfindAprilTagCommand extends Command {
         }
         this.noPath = false;
         
-        Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
         Pose2d botpose = limelightSubsystem.getBotpose();
-        swerveSubsystem.resetOdometry(botpose);
 
-
+        swerveSubsystem.resetOdometry(new Pose2d(
+            botpose.getTranslation(), Rotation2d.fromRadians(swerveSubsystem.getHeading())));
+        
+        Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
         Pose2d idealPosition = new Pose2d(idealPositionCoord[0], idealPositionCoord[1],
-            Rotation2d.fromDegrees(limelightSubsystem.getAngle()));
+            Rotation2d.fromDegrees(
+                // swerveSubsystem.getHeading() - botpose.getRotation().getDegrees()
+                0
+            ));
 
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
