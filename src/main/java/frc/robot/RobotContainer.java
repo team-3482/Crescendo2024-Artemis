@@ -6,6 +6,10 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -71,7 +75,15 @@ public class RobotContainer {
     private void configureBindings() {
         driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
         driveController.x().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
-        driveController.a().whileTrue(Commands.run(() -> swerveSubsystem.resetOdometry(limelightSubsystem.getBotpose())));
+        // Reset odometry translation to the position that the limelight sees.
+        // Does not reset rotation, which is tracked by the gyro.
+        driveController.a().whileTrue(Commands.run(() -> {
+            Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
+            if (!translation.equals(new Translation2d(0, 0))) {
+                swerveSubsystem.resetOdometry(new Pose2d(
+                    translation, new Rotation2d(Units.degreesToRadians(swerveSubsystem.getHeading()))));
+            }
+        }));
         driveController.b().onTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
     }
   

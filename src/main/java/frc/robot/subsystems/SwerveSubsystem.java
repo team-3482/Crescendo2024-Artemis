@@ -74,10 +74,8 @@ public class SwerveSubsystem extends SubsystemBase {
         new Rotation2d(0), getModulePositions());
     
     /**
-    * Initializes a new SwerveSubsystem object,
-    * configures PathPlannerLib AutoBuilder,
-    * zeros the heading after a delay
-    * to allow the pigeon to turn on and load, 
+    * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
+    * and zeros the heading after a delay to allow the pigeon to turn on and load
     */
     public SwerveSubsystem() {
         AutoBuilder.configureHolonomic(
@@ -199,7 +197,8 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), getModulePositions());
 
         SmartDashboard.putNumber("Robot Heading", getHeading());
-        SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
+        SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
         SmartDashboard.putString("Robot Pose Meters", odometer.getPoseMeters().toString());
     }
 

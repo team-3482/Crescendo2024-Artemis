@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+/** A pathfinding command that uses limelight and swerve subsystems. */
 public class PathfindAprilTagCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final LimelightSubsystem limelightSubsystem;
@@ -25,9 +25,10 @@ public class PathfindAprilTagCommand extends Command {
 
     private boolean noPath;
     /**
-    * Creates a new ExampleCommand.
+    * Creates a new PathfindAprilTagCommand.
     *
-    * @param subsystem The subsystem used by this command.
+    * @param limelightSubsystem The limelight subsystem used by this command.
+    * @param swerveSubsystem The swerve subsystem used by this command.
     */
     public PathfindAprilTagCommand(LimelightSubsystem limelightSubsystem, SwerveSubsystem swerveSubsystem) {
         this.limelightSubsystem = limelightSubsystem;

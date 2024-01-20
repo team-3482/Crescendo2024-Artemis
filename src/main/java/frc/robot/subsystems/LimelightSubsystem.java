@@ -16,7 +16,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
-    /** Creates a new ExampleSubsystem. */
+    /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {}
     
     /**
@@ -74,11 +74,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("AprilTag TX", LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT));
-        SmartDashboard.putNumber("AprilTag TY", LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT));
+        SmartDashboard.putNumber("AprilTag TX", this.getTX());
+        SmartDashboard.putNumber("AprilTag TY", this.getTY());
 
-        SmartDashboard.putString("Botpose (limelight)", this.getBotpose().toString());
-        // SmartDashboard.putNumber("Limelight Needed Angle", this.getAngle()); // Not yet implemented
+        SmartDashboard.putString("Robot Location (limelight)", this.getBotpose().getTranslation().toString());
+        SmartDashboard.putString("Robot Rotation (limelight)", this.getBotpose().getRotation().toString());
     }
 
     private class ExtraHelpers extends LimelightHelpers {
