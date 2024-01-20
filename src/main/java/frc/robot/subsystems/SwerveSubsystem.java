@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
 // import frc.robot.Constants.AutonConstants;
@@ -74,6 +76,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveKinematics.driveKinematics,
         new Rotation2d(0), getModulePositions());
     
+    private Field2d field = new Field2d();
+
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
@@ -98,6 +102,10 @@ public class SwerveSubsystem extends SubsystemBase {
                 return false;
             },
             this);
+        
+        // Set up custom logging to add the current path to a field 2d widget
+        PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
+        SmartDashboard.putData("Field", field);
 
         new Thread(() -> {
             try {
@@ -196,6 +204,7 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
+        field.setRobotPose(getPose());
 
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
