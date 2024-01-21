@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.ShootSubsystem;
@@ -37,10 +39,11 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    leftMotor.set(-IntakeConstants.shooterSpeed);
-    rightMotor.set(IntakeConstants.shooterSpeed);
+    leftMotor.set(IntakeConstants.shooterSpeed);
+    rightMotor.set(-IntakeConstants.shooterSpeed);
 
-    System.out.println(leftMotor.getEncoder());
+    SmartDashboard.putNumber("Left Motor RPM", leftMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Right Motor RPM", rightMotor.getEncoder().getVelocity());
   }
 
   // Called once the command ends or is interrupted.
