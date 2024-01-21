@@ -80,11 +80,11 @@ public class RobotContainer {
     * Configures the button bindings of the controllers
     */
     private void configureBindings() {
-        driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-        driveController.x().whileTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
+        driveController.y().onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+        driveController.x().onTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
         // Reset odometry translation to the position that the limelight sees.
         // Does not reset rotation, which is tracked by the gyro.
-        driveController.a().whileTrue(Commands.run(() -> {
+        driveController.a().onTrue(Commands.run(() -> {
             Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
             if (!translation.equals(new Translation2d(0, 0))) {
                 swerveSubsystem.resetOdometry(new Pose2d(
