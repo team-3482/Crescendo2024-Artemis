@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -23,8 +24,8 @@ public class SwerveDrive extends Command {
     private final Supplier<Double> turningSpeedFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final Supplier<Boolean> fineControlFunction;
-    private final Supplier<Boolean> forwardFunction;
-    private final Supplier<Boolean> backFunction;
+    private final boolean enableDPadInput;
+    private final Function<Integer, Boolean> povFunction;
 
     // Instances of Rate Limiters to ensure that the robot moves smoothly
     private final SlewRateLimiter xLimiter;
@@ -47,7 +48,7 @@ public class SwerveDrive extends Command {
     public SwerveDrive(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpeedFunction,
         Supplier<Double> ySpeedFunction, Supplier<Double> turningSpeedFunction,
         Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> fineControlFunction, 
-        Supplier<Boolean> forwardFunction, Supplier<Boolean> backFunction) {
+        boolean enableDPadInput, Function<Integer, Boolean> povFunction) {
 
         this.swerveSubsystem = swerveSubsystem;
         this.xSpeedFunction = xSpeedFunction;
@@ -55,8 +56,8 @@ public class SwerveDrive extends Command {
         this.turningSpeedFunction = turningSpeedFunction;
         this.fieldOrientedFunction = fieldOrientedFunction;
         this.fineControlFunction = fineControlFunction;
-        this.forwardFunction = forwardFunction;
-        this.backFunction = backFunction;
+        this.enableDPadInput = enableDPadInput;
+        this.povFunction = povFunction;
 
         this.xLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
         this.yLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
@@ -70,14 +71,13 @@ public class SwerveDrive extends Command {
 
     @Override
     public void execute() {
-        // gets the drivers input
+        // Gets the driver's input
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
         double turningSpeed = turningSpeedFunction.get();
         boolean fineControl = fineControlFunction.get();
 
-        // Checks forcontroller deadband in case joysticks do not return perfectly to
-        // origin
+        // Checks forcontroller deadband in case joysticks do not return perfectly to origin
         xSpeed = Math.abs(xSpeed) > Constants.ControllerConstants.DEADBAND ? xSpeed : 0.0;
         ySpeed = Math.abs(ySpeed) > Constants.ControllerConstants.DEADBAND ? ySpeed : 0.0;
         turningSpeed = Math.abs(turningSpeed) > Constants.ControllerConstants.DEADBAND ? turningSpeed : 0.0;
@@ -90,22 +90,26 @@ public class SwerveDrive extends Command {
         turningSpeed = turningLimiter.calculate(turningSpeed)
             * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
 
-        // Creates the chassis speeds from the driver input depending on current
-        // orientation
+        // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
-        if (fieldOrientedFunction.get()) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, turningSpeed,
-            swerveSubsystem.getRotation2d());
+        if (this.enableDPadInput) {
+            int[] dPadSpeeds = this.calculateDPad();
+            if (fieldOrientedFunction.get()) {
+                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    dPadSpeeds[0], dPadSpeeds[0], 0, swerveSubsystem.getRotation2d());
+            }
+            else {
+                chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], 0);
+            }
         }
         else {
-            chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
-        }
-
-        if(forwardFunction.get()) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(1, 0, 0, swerveSubsystem.getRotation2d());
-        }
-        if(backFunction.get()) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(-1, 0, 0, swerveSubsystem.getRotation2d());
+            if (fieldOrientedFunction.get()) {
+                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+            }
+            else {
+                chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+            }
         }
 
         // Converts the chassis speeds to module states and sets them as the desired
@@ -113,6 +117,34 @@ public class SwerveDrive extends Command {
         swerveSubsystem.setChassisSpeeds(chassisSpeeds);
         // Ouputs the swerve system information
         swerveSubsystem.outputEncoderValues();
+    }
+
+    /**
+     * Calculates and returns D-Pad input
+     *
+     * @return the x and y speeds between -1 and 1
+     */
+    public int[] calculateDPad() {
+        int[] speeds = new int[]{0, 0};
+        
+        // Up
+        if (povFunction.apply(315) || povFunction.apply(0) || povFunction.apply(45)) {
+            speeds[0] = 1;
+        }
+        // Down
+        if (povFunction.apply(225) || povFunction.apply(180) || povFunction.apply(135)) {
+            speeds[0] = -1;
+        }
+        // Left
+        if (povFunction.apply(225) || povFunction.apply(270) || povFunction.apply(315)) {
+            speeds[1] = -1;
+        }
+        // Right
+        if (povFunction.apply(45) || povFunction.apply(90) || povFunction.apply(135)) {
+            speeds[1] = 1;
+        }
+
+        return speeds;
     }
 
     /**

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -50,6 +51,10 @@ public class RobotContainer {
         this.limelightSubsystem = new LimelightSubsystem();
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         
+        // Register named commands for pathplanner (do this after subsystem initialization)
+        NamedCommands.registerCommand("Pathfind AprilTag",
+            new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
+
         // Sets the default command to driving swerve
         this.swerveSubsystem.setDefaultCommand(new SwerveDrive(
             swerveSubsystem,
@@ -58,10 +63,12 @@ public class RobotContainer {
             // () ->
             // driveController.getRawAxis(Constants.ControllerConstants.DRIVE_ROT_AXIS),
             () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
-            () -> !driveController.getHID().getAButton(),
+            () -> !driveController.getHID().getLeftBumper(),
             () -> driveController.getHID().getRightBumper(),
-            () -> driveController.povUp().getAsBoolean(), // Replacing driveController.getHID.getXButton()
-            () -> driveController.povDown().getAsBoolean()));
+            // D-Pad / POV movement
+            ControllerConstants.DPAD_DRIVE_INPUT,
+            (Integer angle) -> driveController.pov(angle).getAsBoolean()
+        ));
 
         configureBindings();
 

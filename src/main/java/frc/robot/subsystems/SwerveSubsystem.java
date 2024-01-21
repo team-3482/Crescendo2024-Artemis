@@ -21,11 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
-// import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
-// import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Instance of swerve modules, initalized with specific value
@@ -76,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveKinematics.driveKinematics,
         new Rotation2d(0), getModulePositions());
     
-    private Field2d field = new Field2d();
+    private Field2d swerve_field = new Field2d();
 
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
@@ -104,8 +102,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this);
         
         // Set up custom logging to add the current path to a field 2d widget
-        PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
-        SmartDashboard.putData("Field", field);
+        PathPlannerLogging.setLogActivePathCallback((poses) -> swerve_field.getObject("path").setPoses(poses));
+        SmartDashboard.putData("Field (odometer/pathplanner)", swerve_field);
 
         new Thread(() -> {
             try {
@@ -122,7 +120,7 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void zeroHeading() {
         gyro.setYaw(0);
-        // this.resetOdometry(getPose());
+        this.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(0)));
     }
 
     /**
@@ -133,11 +131,10 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.zeroDriveEncoder();
         this.moduleThree.zeroDriveEncoder();
         this.moduleFour.zeroDriveEncoder();
-        // this.resetOdometry(getPose());
     }
 
     /**
-    * Returns the current heading of the robot
+    * Returns the current heading of the robot in degrees
     * 
     * @return current heading of the robot
     */
@@ -204,11 +201,11 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
-        field.setRobotPose(getPose());
+        swerve_field.setRobotPose(getPose());
 
         SmartDashboard.putNumber("Robot Heading", getHeading());
-        SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
-        SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
+        // SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
+        // SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
     }
 
     public static Twist2d log(Pose2d transform) {
