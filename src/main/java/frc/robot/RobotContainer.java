@@ -81,7 +81,7 @@ public class RobotContainer {
             Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
             if (!translation.equals(new Translation2d(0, 0))) {
                 swerveSubsystem.resetOdometry(new Pose2d(
-                    translation, Rotation2d.fromRadians(swerveSubsystem.getHeading())));
+                    translation, Rotation2d.fromDegrees(swerveSubsystem.getHeading())));
             }
         }));
         driveController.b().onTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));

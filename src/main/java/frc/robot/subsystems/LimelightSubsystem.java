@@ -38,7 +38,7 @@ public class LimelightSubsystem extends SubsystemBase {
     }
     
     /**
-     * Gets the ID of the nearest AprilTag
+     * Gets the ID of the nearest AprilTag or 0 if not found
      *
      * @return ID
      */

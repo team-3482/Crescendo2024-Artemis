@@ -114,7 +114,7 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void zeroHeading() {
         gyro.setYaw(0);
-        this.resetOdometry(getPose());
+        // this.resetOdometry(getPose());
     }
 
     /**
@@ -125,7 +125,7 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.zeroDriveEncoder();
         this.moduleThree.zeroDriveEncoder();
         this.moduleFour.zeroDriveEncoder();
-        this.resetOdometry(getPose());
+        // this.resetOdometry(getPose());
     }
 
     /**

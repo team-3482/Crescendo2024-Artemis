@@ -15,8 +15,8 @@ public final class Constants {
     // Constants used to run Auton code
     public final static class AutonConstants {
         // public static String AUTON_PATH_NAME = "StraightLine1Meter";
-        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 1;
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 1;
+        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 0.5;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 0.5;
 
         public static Map<Integer, Double[]> IDEAL_TAG_POSITIONS = Map.ofEntries(
             // Map.entry(4, new Double[]{6.35, 1.45})
