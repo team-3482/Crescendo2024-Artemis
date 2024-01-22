@@ -11,13 +11,16 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.SwerveKinematics;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-public class SwerveDrive extends Command {
+public class SwerveOrbit extends Command {
 
-    // Instance of the swerve subsystem
+    // Instance of the subsystems
     private SwerveSubsystem swerveSubsystem;
+    private LimelightSubsystem limelightSubsystem;
     // Instances of suppliers that will gather the inputs from the controller
     private final Supplier<Double> xSpeedFunction;
     private final Supplier<Double> ySpeedFunction;
@@ -43,16 +46,15 @@ public class SwerveDrive extends Command {
     * @param fieldOrientedFunction - function that will return if the driver wants
     *                              to be field Oriented or robot oriented
     */
-    public SwerveDrive(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpeedFunction,
-        Supplier<Double> ySpeedFunction, Supplier<Double> turningSpeedFunction,
-        Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> fineControlFunction, 
-        boolean enableDPadInput, Function<Integer, Boolean> povFunction) {
+    public SwerveOrbit(SwerveSubsystem swerveSubsystem, LimelightSubsystem limelightSubsystem,
+        Supplier<Double> xSpeedFunction, Supplier<Double> ySpeedFunction,
+        Supplier<Boolean> fineControlFunction, boolean enableDPadInput,
+        Function<Integer, Boolean> povFunction) {
 
         this.swerveSubsystem = swerveSubsystem;
+        this.limelightSubsystem = limelightSubsystem;
         this.xSpeedFunction = xSpeedFunction;
         this.ySpeedFunction = ySpeedFunction;
-        this.turningSpeedFunction = turningSpeedFunction;
-        this.fieldOrientedFunction = fieldOrientedFunction;
         this.fineControlFunction = fineControlFunction;
         this.enableDPadInput = enableDPadInput;
         this.povFunction = povFunction;
@@ -72,7 +74,12 @@ public class SwerveDrive extends Command {
         // Gets the driver's input
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
-        double turningSpeed = turningSpeedFunction.get();
+        double angleDifferenceDegrees =
+            swerveSubsystem.getHeading() - limelightSubsystem.getBotpose().getRotation().getDegrees();
+        // No angle difference if the bot is within the allowed deviation
+        angleDifferenceDegrees = Math.abs(angleDifferenceDegrees) > AutonConstants.ORBIT_DEVIATION_DEGREES ?
+            angleDifferenceDegrees : 0;
+        double turningSpeed = AutonConstants.ORBIT_TURNING_SPEED;
         boolean fineControl = fineControlFunction.get();
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
@@ -92,22 +99,10 @@ public class SwerveDrive extends Command {
         ChassisSpeeds chassisSpeeds;
         if (this.enableDPadInput) {
             int[] dPadSpeeds = this.calculateDPad();
-            if (fieldOrientedFunction.get()) {
-                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    dPadSpeeds[0], dPadSpeeds[0], 0, swerveSubsystem.getRotation2d());
-            }
-            else {
-                chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], 0);
-            }
+            chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], turningSpeed);
         }
         else {
-            if (fieldOrientedFunction.get()) {
-                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
-            }
-            else {
-                chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
-            }
+            chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         }
 
         // Converts the chassis speeds to module states and sets them as the desired

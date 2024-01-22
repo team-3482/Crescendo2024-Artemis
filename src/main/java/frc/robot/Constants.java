@@ -12,11 +12,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    // Constants used to run Auton code
+    // Constants used to run autonomous code
     public final static class AutonConstants {
         // These are used for on-the-fly paths
         public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 1;
         public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 1;
+        // This is the deviation allowed to the robot when orbiting an AprilTag
+        public static double ORBIT_DEVIATION_DEGREES = 2.5;
+        public static double ORBIT_TURNING_SPEED = 0.5;
         // These are where the bot should ideally line up for each AprilTag 
         public static Map<Integer, Double[]> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(3, new Double[]{15.0, 5.6}),
