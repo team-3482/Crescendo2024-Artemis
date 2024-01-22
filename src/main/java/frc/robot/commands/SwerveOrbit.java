@@ -21,8 +21,6 @@ public class SwerveDrive extends Command {
     // Instances of suppliers that will gather the inputs from the controller
     private final Supplier<Double> xSpeedFunction;
     private final Supplier<Double> ySpeedFunction;
-    private final Supplier<Double> turningSpeedFunction;
-    private final Supplier<Boolean> fieldOrientedFunction;
     private final Supplier<Boolean> fineControlFunction;
     private final boolean enableDPadInput;
     private final Function<Integer, Boolean> povFunction;

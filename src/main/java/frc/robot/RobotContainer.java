@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
@@ -80,18 +81,21 @@ public class RobotContainer {
     * Configures the button bindings of the controllers
     */
     private void configureBindings() {
-        driveController.y().onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+        // Zeroing functions
+        driveController.leftStick().onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
         driveController.x().onTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
         // Reset odometry translation to the position that the limelight sees.
         // Does not reset rotation, which is tracked by the gyro.
-        driveController.a().onTrue(Commands.run(() -> {
+        driveController.rightStick().onTrue(Commands.run(() -> {
             Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
             if (!translation.equals(new Translation2d(0, 0))) {
                 swerveSubsystem.resetOdometry(new Pose2d(
                     translation, Rotation2d.fromDegrees(swerveSubsystem.getHeading())));
             }
         }));
-        driveController.b().onTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
+
+        driveController.b().onTrue(Commands.run(() -> CommandScheduler.getInstance().cancelAll()));
+        driveController.a().onTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
     }
   
     /**

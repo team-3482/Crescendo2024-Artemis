@@ -37,6 +37,8 @@ public final class Constants {
         public static int DRIVE_ROT_AXIS = 4;
         public static int INTAKE_CONTROLLER_ID = 1;
         public static double DEADBAND = 0.05;
+
+        // Input
         public static boolean DPAD_DRIVE_INPUT = true;
     }
 
