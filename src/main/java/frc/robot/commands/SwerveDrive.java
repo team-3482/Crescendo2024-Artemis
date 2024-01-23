@@ -92,11 +92,11 @@ public class SwerveDrive extends Command {
 
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
-        if (this.enableDPadInput) {
-            int[] dPadSpeeds = this.calculateDPad();
+        int[] dPadSpeeds = this.calculateDPad();
+        if (this.enableDPadInput && (dPadSpeeds[0] != 0 || dPadSpeeds[1] != 0)) {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    dPadSpeeds[0], dPadSpeeds[0], 0, swerveSubsystem.getRotation2d());
+                    dPadSpeeds[0], dPadSpeeds[1], 0, swerveSubsystem.getRotation2d());
             }
             else {
                 chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], 0);
@@ -132,18 +132,17 @@ public class SwerveDrive extends Command {
             speeds[0] = 1;
         }
         // Down
-        if (povFunction.apply(225) || povFunction.apply(180) || povFunction.apply(135)) {
+        else if (povFunction.apply(225) || povFunction.apply(180) || povFunction.apply(135)) {
             speeds[0] = -1;
         }
         // Left
         if (povFunction.apply(225) || povFunction.apply(270) || povFunction.apply(315)) {
-            speeds[1] = -1;
-        }
-        // Right
-        if (povFunction.apply(45) || povFunction.apply(90) || povFunction.apply(135)) {
             speeds[1] = 1;
         }
-
+        // Right
+        else if (povFunction.apply(45) || povFunction.apply(90) || povFunction.apply(135)) {
+            speeds[1] = -1;
+        }
         return speeds;
     }
 

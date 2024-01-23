@@ -82,11 +82,11 @@ public class RobotContainer {
     private void configureBindings() {
         // Driver controller
         // Zeroing functions
-        driveController.leftStick().onTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-        driveController.a().onTrue(Commands.run(() -> swerveSubsystem.zeroDrivePositions()));
+        driveController.rightStick().onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+        driveController.a().onTrue(Commands.runOnce(() -> swerveSubsystem.zeroDrivePositions()));
         // Reset odometry translation to the position that the limelight sees.
         // Does not reset rotation, which is tracked by the gyro.
-        driveController.rightStick().onTrue(Commands.run(() -> {
+        driveController.leftStick().onTrue(Commands.runOnce(() -> {
             Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
             if (!translation.equals(new Translation2d(0, 0))) {
                 swerveSubsystem.resetOdometry(new Pose2d(
@@ -94,10 +94,10 @@ public class RobotContainer {
             }
         }));
 
-        driveController.b().onTrue(Commands.run(() -> CommandScheduler.getInstance().cancelAll()));
+        driveController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
         
         // Operator controller
-        driveController.x().onTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
+        driveController.x().whileTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
         driveController.y().whileTrue(new SwerveOrbit(
             swerveSubsystem,
             limelightSubsystem, 
