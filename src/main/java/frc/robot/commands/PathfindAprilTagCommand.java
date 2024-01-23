@@ -34,7 +34,8 @@ public class PathfindAprilTagCommand extends Command {
         this.limelightSubsystem = limelightSubsystem;
         this.swerveSubsystem = swerveSubsystem;
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(limelightSubsystem, swerveSubsystem);
+        // Do not require limelight subsystem because it is getter functions only
+        addRequirements(swerveSubsystem);
     }
 
     // Called when the command is initially scheduled.

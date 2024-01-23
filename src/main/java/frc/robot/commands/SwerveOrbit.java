@@ -17,7 +17,6 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveOrbit extends Command {
-
     // Instance of the subsystems
     private SwerveSubsystem swerveSubsystem;
     private LimelightSubsystem limelightSubsystem;
@@ -66,7 +65,8 @@ public class SwerveOrbit extends Command {
 
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
-        this.addRequirements(this.swerveSubsystem);
+        // Do not require limelight subsystem because it is getter functions only
+        this.addRequirements(this.swerveSubsystem); 
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SwerveOrbit extends Command {
         // No angle difference if the bot is within the allowed deviation
         angleDifferenceDegrees = Math.abs(angleDifferenceDegrees) > AutonConstants.ORBIT_DEVIATION_DEGREES ?
             angleDifferenceDegrees : 0;
-        double turningSpeed = AutonConstants.ORBIT_TURNING_SPEED;
+        double turningSpeed = angleDifferenceDegrees != 0 ? AutonConstants.ORBIT_TURNING_SPEED : 0;
         boolean fineControl = fineControlFunction.get();
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
@@ -94,7 +94,7 @@ public class SwerveOrbit extends Command {
             / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
         turningSpeed = turningLimiter.calculate(turningSpeed)
             * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
-
+        turningSpeed = angleDifferenceDegrees > 0 ? turningSpeed : -turningSpeed;
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
         int[] dPadSpeeds = this.calculateDPad();
@@ -150,8 +150,7 @@ public class SwerveOrbit extends Command {
     }
 
     /**
-    * Returns false because this command should run forever, throughout the robots
-    * being enabled
+    * Returns false because this command should run until the user releases the button
     * 
     * @return boolean - always false
     */
