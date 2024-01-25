@@ -9,6 +9,8 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.AutonConstants;
@@ -49,7 +51,7 @@ public class SwerveOrbit extends Command {
         Supplier<Double> xSpeedFunction, Supplier<Double> ySpeedFunction,
         Supplier<Boolean> fineControlFunction, boolean enableDPadInput,
         Function<Integer, Boolean> povFunction) {
-
+        
         this.swerveSubsystem = swerveSubsystem;
         this.limelightSubsystem = limelightSubsystem;
         this.xSpeedFunction = xSpeedFunction;
@@ -71,38 +73,50 @@ public class SwerveOrbit extends Command {
 
     @Override
     public void execute() {
+        if (limelightSubsystem.getID() <= 0) { return; }
         // Gets the driver's input
-        double xSpeed = xSpeedFunction.get();
+        // double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
+        boolean fineControl = fineControlFunction.get();
+        
+        double[] botpose = limelightSubsystem.getBotPoseTargetSpace();
         double angleDifferenceDegrees =
-            swerveSubsystem.getHeading() - limelightSubsystem.getBotpose().getRotation().getDegrees();
+            // swerveSubsystem.getHeading() - limelightSubsystem.getBotpose().getRotation().getDegrees();
+            swerveSubsystem.getHeading() - Math.toDegrees(Math.atan2(botpose[0], -botpose[3]));
+        SmartDashboard.putNumber("atan2", Math.toDegrees(Math.atan2(botpose[0], -botpose[3])));
+        
         // No angle difference if the bot is within the allowed deviation
         angleDifferenceDegrees = Math.abs(angleDifferenceDegrees) > AutonConstants.ORBIT_DEVIATION_DEGREES ?
             angleDifferenceDegrees : 0;
-        double turningSpeed = angleDifferenceDegrees != 0 ? AutonConstants.ORBIT_TURNING_SPEED : 0;
-        boolean fineControl = fineControlFunction.get();
+        SmartDashboard.putNumber("angle diff 1", angleDifferenceDegrees);
+        double turningSpeed = angleDifferenceDegrees > 0 ? 1 : -1;
+        angleDifferenceDegrees = Math.abs(angleDifferenceDegrees) > 60 ? 60 : Math.abs(angleDifferenceDegrees);
+        SmartDashboard.putNumber("angle diff 2", angleDifferenceDegrees);
+        turningSpeed /= angleDifferenceDegrees;
+        SmartDashboard.putNumber("turning speed", angleDifferenceDegrees);
+        
+        if(true) // Testing purposes
+            return;
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
-        xSpeed = Math.abs(xSpeed) > Constants.ControllerConstants.DEADBAND ? xSpeed : 0.0;
+        // xSpeed = Math.abs(xSpeed) > Constants.ControllerConstants.DEADBAND ? xSpeed : 0.0;
         ySpeed = Math.abs(ySpeed) > Constants.ControllerConstants.DEADBAND ? ySpeed : 0.0;
-        turningSpeed = Math.abs(turningSpeed) > Constants.ControllerConstants.DEADBAND ? turningSpeed : 0.0;
 
         // Limits the input to ensure smooth and depending on if fine control is active
-        xSpeed = xLimiter.calculate(xSpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
-            / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
+        // xSpeed = xLimiter.calculate(xSpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
+            // / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
         ySpeed = yLimiter.calculate(ySpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
             / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
         turningSpeed = turningLimiter.calculate(turningSpeed)
             * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
-        turningSpeed = angleDifferenceDegrees > 0 ? turningSpeed : -turningSpeed;
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
         int[] dPadSpeeds = this.calculateDPad();
-        if (this.enableDPadInput && (dPadSpeeds[0] != 0 || dPadSpeeds[1] != 0)) {
-            chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], turningSpeed);
+        if (this.enableDPadInput && dPadSpeeds[1] != 0) {
+            chassisSpeeds = new ChassisSpeeds(0, dPadSpeeds[1], turningSpeed);
         }
         else {
-            chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+            chassisSpeeds = new ChassisSpeeds(0, ySpeed, turningSpeed);
         }
 
         // Converts the chassis speeds to module states and sets them as the desired

@@ -63,6 +63,15 @@ public class LimelightSubsystem extends SubsystemBase {
         return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.FRONT_LIMELIGHT);
     }
 
+    /**
+     * Gets the botpose in target space array of 6
+     * 
+     * @return botpose array
+     */
+    public double[] getBotPoseTargetSpace() {
+        return LimelightHelpers.getBotPose_TargetSpace(LimelightConstants.FRONT_LIMELIGHT);
+    }
+
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());

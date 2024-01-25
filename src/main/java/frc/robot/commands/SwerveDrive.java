@@ -88,7 +88,8 @@ public class SwerveDrive extends Command {
         ySpeed = yLimiter.calculate(ySpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
             / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
         turningSpeed = turningLimiter.calculate(turningSpeed)
-            * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
+            * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND
+            / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
 
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
