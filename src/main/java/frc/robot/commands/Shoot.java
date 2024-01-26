@@ -14,10 +14,13 @@ import frc.robot.subsystems.ShootSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class Shoot extends Command {
-  private static CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.leftShooterMotorId, MotorType.kBrushless);
-  private static CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.rightShooterMotorId, MotorType.kBrushless);
+  private static CANSparkFlex topMotor = new CANSparkFlex(IntakeConstants.topShooterMotorId, MotorType.kBrushless);
+  private static CANSparkFlex bottomMotor = new CANSparkFlex(IntakeConstants.bottomShooterMotorId,
+      MotorType.kBrushless);
+  private static CANSparkFlex feederMotor = new CANSparkFlex(IntakeConstants.feederShooterMotorId,
+      MotorType.kBrushless);
 
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final ShootSubsystem m_subsystem;
 
   /**
@@ -39,18 +42,21 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    leftMotor.set(IntakeConstants.shooterSpeed);
-    rightMotor.set(-IntakeConstants.shooterSpeed);
+    topMotor.set(IntakeConstants.shooterSpeed);
+    bottomMotor.set(-IntakeConstants.shooterSpeed);
+    feederMotor.set(IntakeConstants.feederSpeed);
 
-    SmartDashboard.putNumber("Left Motor RPM", leftMotor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Right Motor RPM", rightMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Top Motor RPM", topMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Bottom Motor RPM", bottomMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Feeder Motor RPM", feederMotor.getEncoder().getVelocity());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    leftMotor.set(0);
-    rightMotor.set(0);
+    topMotor.set(0);
+    bottomMotor.set(0);
+    feederMotor.set(0);
   }
 
   // Returns true when the command should end.
