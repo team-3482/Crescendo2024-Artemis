@@ -44,7 +44,7 @@ public class Shoot extends Command {
   public void execute() {
     topMotor.set(IntakeConstants.shooterSpeed);
     bottomMotor.set(-IntakeConstants.shooterSpeed);
-    feederMotor.set(IntakeConstants.feederSpeed);
+    feederMotor.set(-IntakeConstants.feederSpeed);
 
     SmartDashboard.putNumber("Top Motor RPM", topMotor.getEncoder().getVelocity());
     SmartDashboard.putNumber("Bottom Motor RPM", bottomMotor.getEncoder().getVelocity());
