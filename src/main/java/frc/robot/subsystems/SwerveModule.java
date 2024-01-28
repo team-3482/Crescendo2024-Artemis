@@ -120,8 +120,9 @@ public class SwerveModule {
         // Gets drive velocity as rotations/min
         double velocity = this.driveMotor.getEncoder().getVelocity();
         // Turns rotations/min into radians/sec
-        velocity *= PhysicalConstants.ROT_TO_RAD / 60;
-        return new SwerveModuleState(velocity, new Rotation2d((getTurningPosition())));
+        // velocity *= PhysicalConstants.ROT_TO_RAD / 60;
+        velocity *= PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        return new SwerveModuleState(velocity, new Rotation2d(getTurningPosition()));
     }
   
     /**

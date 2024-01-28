@@ -56,10 +56,10 @@ public class LimelightSubsystem extends SubsystemBase {
      * @return botpose
      */
     public Pose2d getBotpose() {
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-            return LimelightHelpers.getBotPose2d_wpiRed(LimelightConstants.FRONT_LIMELIGHT);
-        }
+        // var alliance = DriverStation.getAlliance();
+        // if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+        //     return LimelightHelpers.getBotPose2d_wpiRed(LimelightConstants.FRONT_LIMELIGHT);
+        // }
         return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.FRONT_LIMELIGHT);
     }
 

@@ -49,7 +49,7 @@ public final class Constants {
         public static int DRIVE_CONTROLLER_ID = 0;
         public static int DRIVE_ROT_AXIS = 4;
         public static int INTAKE_CONTROLLER_ID = 1;
-        public static double DEADBAND = 0.05;
+        public static double DEADBAND = 0.075;
 
         // Input
         public static boolean DPAD_DRIVE_INPUT = true;
@@ -118,8 +118,8 @@ public final class Constants {
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 1;
-        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI / 2;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
 
         public static double PHYSICAL_MAX_SPEED_METERS_PER_SECOND = 15;
         public static double MAX_DRIVE_SPEED_METERS_PER_SECOND = PHYSICAL_MAX_SPEED_METERS_PER_SECOND;

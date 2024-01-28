@@ -88,7 +88,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
                 new PIDConstants(20, 20, 0),
-                new PIDConstants(20, 20, 0),
+                new PIDConstants(20, 0, 0),
                 AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
                 PhysicalConstants.WHEEL_BASE / 2,
                 new ReplanningConfig()),
@@ -176,6 +176,7 @@ public class SwerveSubsystem extends SubsystemBase {
           this.moduleTwo.getState(),
           this.moduleThree.getState(),
           this.moduleFour.getState()};
+        System.out.println("get " + states[0]);
         return states;
     }
 
@@ -276,6 +277,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param desiredStates - states to be relayed to the swerve modules
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
+        System.out.println("set " + desiredStates[0]);
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
             SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND);
 
