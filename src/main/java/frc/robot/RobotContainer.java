@@ -95,11 +95,12 @@ public class RobotContainer {
         }));
 
         driveController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
-        driveController.a().whileTrue(new SwerveOrbit(
+        driveController.a().toggleOnTrue(new SwerveOrbit(
             swerveSubsystem,
             limelightSubsystem, 
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
+            () -> !driveController.getHID().getLeftBumper(),
             () -> driveController.getHID().getRightBumper(),
             ControllerConstants.DPAD_DRIVE_INPUT,
             (Integer angle) -> driveController.pov(angle).getAsBoolean()

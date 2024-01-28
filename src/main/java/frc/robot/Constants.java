@@ -18,20 +18,30 @@ public final class Constants {
         public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 1;
         public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 1;
         // This is the deviation allowed to the robot when orbiting an AprilTag
-        public static double ORBIT_DEVIATION_DEGREES = 5;
-        public static double ORBIT_TURNING_SPEED = 0.5;
         // These are where the bot should ideally line up for each AprilTag 
         public static Map<Integer, Double[]> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(3, new Double[]{15.0, 5.6}),
             Map.entry(4, new Double[]{15.0, 5.6})
         );
+        
+    }
+    public final static class OrbitConstants {
+        public static double ORBIT_TURNING_SPEED = 0.5;
+        public static double ORBIT_FINER_MOVEMENT = 4;
+        public static double ORBIT_FINEST_MOVEMENT = 8;
+
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT = 4;
+        
+        public static double KP = 1;
+        public static double KI = 0;
+        public static double KD = 0;
     }
     
     // Constants for limelight-related data
     public final static class LimelightConstants {
         public static double TIMEOUT = 5; // In seconds
-        public static String FRONT_LIMELIGHT = "limelight";
-        public static String BACK_LIMELIGHT = "";
+        public static String FRONT_LIMELIGHT = "limelight-two";
+        public static String BACK_LIMELIGHT = "limelight-three";
     }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
