@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
@@ -86,8 +87,8 @@ public class SwerveModule {
         // Gets velocity as rotations/second
         double velocity = this.turningEncoder.getVelocity().getValueAsDouble();
         // Turn rotations into radians
-        velocity *= PhysicalConstants.ROT_TO_RAD;
-        return velocity;
+        System.out.println("turning velocity" + Units.rotationsToRadians(velocity));
+        return Units.rotationsToRadians(velocity);
     }
 
     /**
