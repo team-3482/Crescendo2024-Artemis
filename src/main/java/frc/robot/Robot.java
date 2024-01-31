@@ -43,6 +43,11 @@ public class Robot extends TimedRobot {
     ledBuffer = new AddressableLEDBuffer(60);
     led.setLength(ledBuffer.getLength());
 
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      ledBuffer.setRGB(i, 255, 0, 0);
+    }
+
     led.setData(ledBuffer);
     led.start();
   }
@@ -60,13 +65,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      // Sets the specified LED to the RGB values for red
-      ledBuffer.setRGB(i, 255, 0, 0);
-    }
-
-    led.setData(ledBuffer);
 
   }
 
