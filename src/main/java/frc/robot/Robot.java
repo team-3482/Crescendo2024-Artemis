@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     RobotContainer.getInstance();
 
     led = new AddressableLED(0);
-    ledBuffer = new AddressableLEDBuffer(60);
+    ledBuffer = new AddressableLEDBuffer(150);
     led.setLength(ledBuffer.getLength());
 
     for (var i = 0; i < ledBuffer.getLength(); i++) {
