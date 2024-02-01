@@ -11,8 +11,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
+import frc.robot.Constants.SwerveKinematics;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -64,7 +65,7 @@ public class SwerveOrbit extends Command {
         this.xLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
         this.yLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
         this.turningLimiter = new SlewRateLimiter(
-            Constants.SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
         pid = new PIDController(
             OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
@@ -91,16 +92,16 @@ public class SwerveOrbit extends Command {
             / 60 * 1.1;
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
-        xSpeed = Math.abs(xSpeed) > Constants.ControllerConstants.DEADBAND ? xSpeed : 0.0;
-        ySpeed = Math.abs(ySpeed) > Constants.ControllerConstants.DEADBAND ? ySpeed : 0.0;
+        xSpeed = Math.abs(xSpeed) > ControllerConstants.DEADBAND ? xSpeed : 0.0;
+        ySpeed = Math.abs(ySpeed) > ControllerConstants.DEADBAND ? ySpeed : 0.0;
 
         // Limits the input to ensure smooth and depending on if fine control is active
-        xSpeed = xLimiter.calculate(xSpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
+        xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
             / (fineControl ? OrbitConstants.ORBIT_FINEST_MOVEMENT : OrbitConstants.ORBIT_FINER_MOVEMENT);
-        ySpeed = yLimiter.calculate(ySpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
+        ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
             / (fineControl ? OrbitConstants.ORBIT_FINEST_MOVEMENT : OrbitConstants.ORBIT_FINER_MOVEMENT);
         turningSpeed = turningLimiter.calculate(turningSpeed)
-            * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
+            * SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
         
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;

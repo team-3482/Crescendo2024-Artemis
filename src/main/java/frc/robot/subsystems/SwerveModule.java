@@ -87,7 +87,6 @@ public class SwerveModule {
         // Gets velocity as rotations/second
         double velocity = this.turningEncoder.getVelocity().getValueAsDouble();
         // Turn rotations into radians
-        System.out.println("turning velocity" + Units.rotationsToRadians(velocity));
         return Units.rotationsToRadians(velocity);
     }
 
@@ -99,10 +98,9 @@ public class SwerveModule {
     public double getAbsoluteEncoderRad() {
         // Gets position as rotation
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
-        // angle -= this.absoluteEncoderOffsetRot;
+        // System.out.println("turning encoder absolute position in rot" + angle);
         // Turn rotations to radians
-        angle *= PhysicalConstants.ROT_TO_RAD;
-        return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
+        return Units.rotationsToRadians(angle) * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
     /*

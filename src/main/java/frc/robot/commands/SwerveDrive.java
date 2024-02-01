@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -59,10 +59,9 @@ public class SwerveDrive extends Command {
         this.enableDPadInput = enableDPadInput;
         this.povFunction = povFunction;
 
-        this.xLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        this.yLimiter = new SlewRateLimiter(Constants.SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        this.turningLimiter = new SlewRateLimiter(
-        Constants.SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        this.xLimiter = new SlewRateLimiter(SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
+        this.yLimiter = new SlewRateLimiter(SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
+        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
 
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
@@ -78,17 +77,17 @@ public class SwerveDrive extends Command {
         boolean fineControl = fineControlFunction.get();
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
-        xSpeed = Math.abs(xSpeed) > Constants.ControllerConstants.DEADBAND ? xSpeed : 0.0;
-        ySpeed = Math.abs(ySpeed) > Constants.ControllerConstants.DEADBAND ? ySpeed : 0.0;
-        turningSpeed = Math.abs(turningSpeed) > Constants.ControllerConstants.DEADBAND ? turningSpeed : 0.0;
+        xSpeed = Math.abs(xSpeed) > ControllerConstants.DEADBAND ? xSpeed : 0.0;
+        ySpeed = Math.abs(ySpeed) > ControllerConstants.DEADBAND ? ySpeed : 0.0;
+        turningSpeed = Math.abs(turningSpeed) > ControllerConstants.DEADBAND ? turningSpeed : 0.0;
 
         // Limits the input to ensure smooth and depending on if fine control is active
-        xSpeed = xLimiter.calculate(xSpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
+        xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
             / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
-        ySpeed = yLimiter.calculate(ySpeed) * Constants.SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
+        ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
             / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
         turningSpeed = turningLimiter.calculate(turningSpeed)
-            * Constants.SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND
+            * SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND
             / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
 
         // Creates the chassis speeds from the driver input depending on current orientation

@@ -63,8 +63,8 @@ public class PathfindAprilTagCommand extends Command {
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
             AutonConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON,
-            SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND,
-            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+            AutonConstants.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON,
+            AutonConstants.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED_AUTON);
 
         this.path = AutoBuilder.pathfindToPose(
             idealPosition,
