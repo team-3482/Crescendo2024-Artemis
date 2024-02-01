@@ -89,7 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
                 new PIDConstants(20, 20, 0),
-                new PIDConstants(5, 0, 0),
+                new PIDConstants(0.5, 0.5, 0),
                 AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
                 PhysicalConstants.WHEEL_BASE / 2,
                 new ReplanningConfig()),
