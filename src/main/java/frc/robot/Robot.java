@@ -26,6 +26,7 @@ public class Robot extends TimedRobot {
 
   private AddressableLED led;
   private AddressableLEDBuffer ledBuffer;
+  private int rainbowFirstPixelHue = 0;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -52,6 +53,32 @@ public class Robot extends TimedRobot {
     led.start();
   }
 
+  private void rainbow() {
+    // For every pixel
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      // Calculate the hue - hue is easier for rainbows because the color
+
+      // shape is a circle so only one value needs to precess
+
+      final var hue = (rainbowFirstPixelHue + (i * 180 / ledBuffer.getLength())) % 180;
+
+      // Set the value
+
+      ledBuffer.setHSV(i, hue, 255, 128);
+
+    }
+
+    // Increase by to make the rainbow "move"
+
+    rainbowFirstPixelHue += 3;
+
+    // Check bounds
+
+    rainbowFirstPixelHue %= 180;
+
+    led.setData(ledBuffer);
+  }
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items
    * like diagnostics
@@ -65,6 +92,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    rainbow();
 
   }
 
