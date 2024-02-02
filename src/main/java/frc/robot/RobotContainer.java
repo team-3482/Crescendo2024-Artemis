@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.commands.LED;
@@ -63,8 +64,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-    driveController.a().whileTrue(new LED(LEDSubsystem, 255, 0, 0));
-    driveController.b().whileTrue(new LED(LEDSubsystem, 0, 255, 0));
+    driveController.a().whileTrue(new LED(LEDSubsystem, LEDConstants.redColor));
+    driveController.b().whileTrue(new LED(LEDSubsystem, LEDConstants.blueColor));
   }
 
   /**

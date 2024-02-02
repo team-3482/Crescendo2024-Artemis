@@ -4,15 +4,14 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.LED;
+import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 public class LEDSubsystem extends SubsystemBase {
-  public static AddressableLED led = new AddressableLED(0);
-  public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(150);
+  public static AddressableLED led = new AddressableLED(LEDConstants.ledPort);
+  public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
 
   private int rainbowFirstPixelHue = 0;
   private int r = 0;
@@ -38,7 +37,6 @@ public class LEDSubsystem extends SubsystemBase {
       // Calculate the hue - hue is easier for rainbows because the color
       // shape is a circle so only one value needs to precess
       final var hue = (rainbowFirstPixelHue + (i * 360 / ledBuffer.getLength())) % 360;
-      // Set the value
       ledBuffer.setHSV(i, hue, 255, 128);
     }
 

@@ -16,15 +16,14 @@ public class LED extends Command {
   private int g;
   private int b;
 
-  public LED(LEDSubsystem subsystem, int r, int g, int b) {
+  public LED(LEDSubsystem subsystem, int[] rgb) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
 
-    this.r = r;
-    this.g = g;
-    this.b = b;
-
+    this.r = rgb[0];
+    this.g = rgb[1];
+    this.b = rgb[2];
   }
 
   @Override
