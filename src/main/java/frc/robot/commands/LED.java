@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDState;
+import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -24,11 +26,11 @@ public class LED extends Command {
 
   @Override
   public void execute() {
-    m_subsystem.SetColor(rgb, false);
+    m_subsystem.SetColor(rgb, LEDState.COLOR);
   }
 
   @Override
   public void end(boolean i) {
-    m_subsystem.SetColor(rgb, true);
+    m_subsystem.SetColor(LEDConstants.off, LEDState.GRADIENT);
   }
 }

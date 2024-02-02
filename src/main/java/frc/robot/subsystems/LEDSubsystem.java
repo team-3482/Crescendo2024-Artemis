@@ -8,18 +8,20 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import java.awt.Color;
 
 public class LEDSubsystem extends SubsystemBase {
-  public static AddressableLED led = new AddressableLED(LEDConstants.ledPort);
-  public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
-
   public enum LEDState {
     COLOR,
     RAINBOW,
     GRADIENT
   };
 
+  public static AddressableLED led = new AddressableLED(LEDConstants.ledPort);
+  public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
   private int rainbowFirstPixelHue = 0;
+  private boolean gradientCountUp = true;
+  private int gradientIndex;
   private int rgb[] = { 0, 0, 0 };
   private LEDState state = LEDState.RAINBOW;
 
@@ -40,25 +42,40 @@ public class LEDSubsystem extends SubsystemBase {
     for (var i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setRGB(i, rgb[0], rgb[1], rgb[2]);
     }
-    ;
   }
 
   private void Rainbow() { // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/misc/addressable-leds.html
     for (var i = 0; i < ledBuffer.getLength(); i++) {
-      // Calculate the hue - hue is easier for rainbows because the color
-      // shape is a circle so only one value needs to precess
       final var hue = (rainbowFirstPixelHue + (i * 360 / ledBuffer.getLength())) % 360;
       ledBuffer.setHSV(i, hue, 255, 128);
     }
 
-    // Increase by to make the rainbow "move"
     rainbowFirstPixelHue += 3;
-    // Check bounds
     rainbowFirstPixelHue %= 180;
   }
 
   private void Gradient(int color1[], int color2[]) {
-    // TODO
+    // color1 hue NEEDS to be less than color2.
+    // i am too lazy to make a better way to do this.
+    int color1_hue = Math.round(Color.RGBtoHSB(color1[0], color1[1], color1[2], null)[0]);
+    int color2_hue = Math.round(Color.RGBtoHSB(color2[0], color2[1], color2[2], null)[0]);
+
+    gradientIndex = color1_hue;
+
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, gradientIndex, 255, 255);
+      if (gradientIndex >= color2_hue) {
+        gradientCountUp = false;
+      } else if (gradientIndex <= color1_hue) {
+        gradientCountUp = true;
+      }
+
+      if (gradientCountUp) {
+        gradientIndex++;
+      } else {
+        gradientIndex--;
+      }
+    }
   }
 
   @Override
@@ -69,7 +86,7 @@ public class LEDSubsystem extends SubsystemBase {
       case COLOR:
         Color();
       case GRADIENT:
-        Gradient();
+        Gradient(LEDConstants.redColor, LEDConstants.blueColor);
     }
 
     led.setData(ledBuffer);
