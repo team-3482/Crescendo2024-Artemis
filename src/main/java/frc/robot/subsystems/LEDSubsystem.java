@@ -14,9 +14,7 @@ public class LEDSubsystem extends SubsystemBase {
   public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
 
   private int rainbowFirstPixelHue = 0;
-  private int r = 0;
-  private int g = 0;
-  private int b = 0;
+  private int rgb[] = { 0, 0, 0 };
   private boolean isRainbow = true;
 
   /** Creates a new ExampleSubsystem. */
@@ -25,10 +23,10 @@ public class LEDSubsystem extends SubsystemBase {
     led.start();
   }
 
-  public void SetColor(int r, int g, int b, boolean isRainbow) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
+  public void SetColor(int[] rgb, boolean isRainbow) {
+    this.rgb[0] = rgb[0];
+    this.rgb[1] = rgb[1];
+    this.rgb[2] = rgb[2];
     this.isRainbow = isRainbow;
   }
 
@@ -52,7 +50,7 @@ public class LEDSubsystem extends SubsystemBase {
       rainbow();
     } else {
       for (var i = 0; i < ledBuffer.getLength(); i++) {
-        ledBuffer.setRGB(i, r, g, b);
+        ledBuffer.setRGB(i, rgb[0], rgb[1], rgb[2]);
       }
     }
 
