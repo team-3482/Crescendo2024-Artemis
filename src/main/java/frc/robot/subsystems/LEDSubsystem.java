@@ -90,11 +90,11 @@ public class LEDSubsystem extends SubsystemBase {
     for (var i = 0; i < ledBuffer.getLength(); i++) {
       ledBuffer.setHSV(i, gradientIndex, 255, 255);
 
-      if (gradientIndex >= color2_hue) {
-        gradientIndex = color1_hue;
+      if (fadeIndex >= color2_hue) {
+        fadeIndex = color1_hue;
       }
 
-      gradientIndex++;
+      fadeIndex++;
     }
   }
 
