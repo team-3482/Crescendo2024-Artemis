@@ -10,64 +10,70 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.commands.LED;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
-    // Singleton design pattern
-    public static RobotContainer instance;
+  // Singleton design pattern
+  public static RobotContainer instance;
 
-    /**
-    * Gets the instance of the RobotContainer
-    * 
-    * @return instance
-    */
-    public static RobotContainer getInstance() {
-        if (instance == null) {
-            instance = new RobotContainer();
-        }
-        return instance;
+  /**
+   * Gets the instance of the RobotContainer
+   * 
+   * @return instance
+   */
+  public static RobotContainer getInstance() {
+    if (instance == null) {
+      instance = new RobotContainer();
     }
+    return instance;
+  }
 
-    // Instance of the Swerve Subsystem
-    private SwerveSubsystem swerveSubsystem;
-    // Instance of the controller used to drive the robot
-    private CommandXboxController driveController;
+  // Instance of the Subsystems
+  private SwerveSubsystem swerveSubsystem;
+  private final LEDSubsystem LEDSubsystem = new LEDSubsystem();
+  // Instance of the controller used to drive the robot
+  private CommandXboxController driveController;
 
-    /**
-    * Creates an instance of the robot controller
-    */
-    public RobotContainer() {
-        this.swerveSubsystem = new SwerveSubsystem();
-        this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
-        
-        // Sets the default command to driving swerve
-        this.swerveSubsystem.setDefaultCommand(new SwerveDrive(
-            swerveSubsystem,
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            // () ->
-            // driveController.getRawAxis(Constants.ControllerConstants.DRIVE_ROT_AXIS),
-            () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
-            () -> !driveController.getHID().getAButton(),
-            () -> driveController.getHID().getRightBumper(),
-            ()-> driveController.getHID().getXButton(), 
-            ()-> driveController.getHID().getBButton()));
+  /**
+   * Creates an instance of the robot controller
+   */
+  public RobotContainer() {
+    this.swerveSubsystem = new SwerveSubsystem();
+    this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
 
-        configureBindings();
-    }
+    // Sets the default command to driving swerve
+    this.swerveSubsystem.setDefaultCommand(new SwerveDrive(
+        swerveSubsystem,
+        () -> -driveController.getLeftY(),
+        () -> -driveController.getLeftX(),
+        // () ->
+        // driveController.getRawAxis(Constants.ControllerConstants.DRIVE_ROT_AXIS),
+        () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
+        () -> !driveController.getHID().getAButton(),
+        () -> driveController.getHID().getRightBumper(),
+        () -> driveController.getHID().getXButton(),
+        () -> driveController.getHID().getBButton()));
 
-    /**
-    * Configures the button bindings of the controllers
-    */
-    private void configureBindings() {
-        driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-    }
-  
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return Commands.run(() -> {});
-    }
+    configureBindings();
+  }
+
+  /**
+   * Configures the button bindings of the controllers
+   */
+  private void configureBindings() {
+    driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
+    driveController.a().whileTrue(new LED(LEDSubsystem, 255, 0, 0));
+    driveController.b().whileTrue(new LED(LEDSubsystem, 0, 255, 0));
+  }
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    return Commands.run(() -> {
+    });
+  }
 }
