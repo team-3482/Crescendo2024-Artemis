@@ -33,44 +33,6 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     RobotContainer.getInstance();
-
-    led = new AddressableLED(0);
-    ledBuffer = new AddressableLEDBuffer(150);
-    led.setLength(ledBuffer.getLength());
-
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      // Sets the specified LED to the RGB values for red
-      ledBuffer.setRGB(i, 255, 0, 0);
-    }
-
-    led.setData(ledBuffer);
-    led.start();
-  }
-
-  private void rainbow() {
-    // For every pixel
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      // Calculate the hue - hue is easier for rainbows because the color
-
-      // shape is a circle so only one value needs to precess
-
-      final var hue = (rainbowFirstPixelHue + (i * 180 / ledBuffer.getLength())) % 180;
-
-      // Set the value
-
-      ledBuffer.setHSV(i, hue, 255, 128);
-
-    }
-
-    // Increase by to make the rainbow "move"
-
-    rainbowFirstPixelHue += 3;
-
-    // Check bounds
-
-    rainbowFirstPixelHue %= 180;
-
-    led.setData(ledBuffer);
   }
 
   /**
@@ -103,12 +65,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    // if (m_autonomousCommand != null) {
+    // m_autonomousCommand.schedule();
+    // }
   }
 
   /** This function is called periodically during autonomous. */
