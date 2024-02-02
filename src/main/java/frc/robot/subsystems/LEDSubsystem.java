@@ -13,9 +13,15 @@ public class LEDSubsystem extends SubsystemBase {
   public static AddressableLED led = new AddressableLED(LEDConstants.ledPort);
   public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
 
+  public enum LEDState {
+    COLOR,
+    RAINBOW,
+    GRADIENT
+  };
+
   private int rainbowFirstPixelHue = 0;
   private int rgb[] = { 0, 0, 0 };
-  private boolean isRainbow = true;
+  private LEDState state = LEDState.RAINBOW;
 
   /** Creates a new ExampleSubsystem. */
   public LEDSubsystem() {
@@ -23,14 +29,21 @@ public class LEDSubsystem extends SubsystemBase {
     led.start();
   }
 
-  public void SetColor(int[] rgb, boolean isRainbow) {
+  public void SetColor(int[] rgb, LEDState state) {
     this.rgb[0] = rgb[0];
     this.rgb[1] = rgb[1];
     this.rgb[2] = rgb[2];
-    this.isRainbow = isRainbow;
+    this.state = state;
   }
 
-  private void rainbow() { // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/misc/addressable-leds.html
+  private void Color() {
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setRGB(i, rgb[0], rgb[1], rgb[2]);
+    }
+    ;
+  }
+
+  private void Rainbow() { // https://docs.wpilib.org/en/stable/docs/software/hardware-apis/misc/addressable-leds.html
     for (var i = 0; i < ledBuffer.getLength(); i++) {
       // Calculate the hue - hue is easier for rainbows because the color
       // shape is a circle so only one value needs to precess
@@ -44,14 +57,19 @@ public class LEDSubsystem extends SubsystemBase {
     rainbowFirstPixelHue %= 180;
   }
 
+  private void Gradient(int color1[], int color2[]) {
+    // TODO
+  }
+
   @Override
   public void periodic() {
-    if (isRainbow) {
-      rainbow();
-    } else {
-      for (var i = 0; i < ledBuffer.getLength(); i++) {
-        ledBuffer.setRGB(i, rgb[0], rgb[1], rgb[2]);
-      }
+    switch (state) {
+      case RAINBOW:
+        Rainbow();
+      case COLOR:
+        Color();
+      case GRADIENT:
+        Gradient();
     }
 
     led.setData(ledBuffer);
