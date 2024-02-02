@@ -14,7 +14,8 @@ public class LEDSubsystem extends SubsystemBase {
   public enum LEDState {
     COLOR,
     RAINBOW,
-    GRADIENT
+    GRADIENT,
+    FADE
   };
 
   public static AddressableLED led = new AddressableLED(LEDConstants.ledPort);
@@ -22,6 +23,7 @@ public class LEDSubsystem extends SubsystemBase {
   private int rainbowFirstPixelHue = 0;
   private boolean gradientCountUp = true;
   private int gradientIndex;
+  private int fadeIndex;
   private int rgb[] = { 0, 0, 0 };
   private LEDState state = LEDState.RAINBOW;
 
@@ -78,6 +80,24 @@ public class LEDSubsystem extends SubsystemBase {
     }
   }
 
+  // fade is just gradient but it doesnt reset the color back
+  private void Fade(int color1[], int color2[]) {
+    int color1_hue = Math.round(Color.RGBtoHSB(color1[0], color1[1], color1[2], null)[0]);
+    int color2_hue = Math.round(Color.RGBtoHSB(color2[0], color2[1], color2[2], null)[0]);
+
+    fadeIndex = color1_hue;
+
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setHSV(i, gradientIndex, 255, 255);
+
+      if (gradientIndex >= color2_hue) {
+        gradientIndex = color1_hue;
+      }
+
+      gradientIndex++;
+    }
+  }
+
   @Override
   public void periodic() {
     switch (state) {
@@ -87,6 +107,8 @@ public class LEDSubsystem extends SubsystemBase {
         Color();
       case GRADIENT:
         Gradient(LEDConstants.redColor, LEDConstants.blueColor);
+      case FADE:
+        Fade(LEDConstants.redColor, LEDConstants.blueColor);
     }
 
     led.setData(ledBuffer);
