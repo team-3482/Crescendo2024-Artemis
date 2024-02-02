@@ -1,4 +1,4 @@
-# Arrowbotics (FRC 2482) Official Crescendo 2024 Code
+# Arrowbotics (FRC 3482) Official Crescendo 2024 Code
 All on-season code is tracked in this repository. Different branches are for testing new features.
 
 ### Contributors
