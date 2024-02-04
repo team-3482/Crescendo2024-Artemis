@@ -34,6 +34,6 @@ public class LED extends Command {
 
   @Override
   public void end(boolean i) {
-    m_subsystem.SetColor(0, 0, 0, LEDState.GRADIENT);
+    m_subsystem.SetColor(0, 0, 0, LEDState.RAINBOW);
   }
 }
