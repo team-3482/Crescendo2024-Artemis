@@ -9,7 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
@@ -86,8 +86,7 @@ public class SwerveModule {
         // Gets velocity as rotations/second
         double velocity = this.turningEncoder.getVelocity().getValueAsDouble();
         // Turn rotations into radians
-        velocity *= PhysicalConstants.ROT_TO_RAD;
-        return velocity;
+        return Units.rotationsToRadians(velocity);
     }
 
     /**
@@ -98,10 +97,8 @@ public class SwerveModule {
     public double getAbsoluteEncoderRad() {
         // Gets position as rotation
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
-        // angle -= this.absoluteEncoderOffsetRot;
         // Turn rotations to radians
-        angle *= PhysicalConstants.ROT_TO_RAD;
-        return angle * (this.absoluteEncoderReversed ? -1.0 : 1.0);
+        return Units.rotationsToRadians(angle) * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
     /*
@@ -117,11 +114,12 @@ public class SwerveModule {
     * @return current state of the swerve module
     */
     public SwerveModuleState getState() {
-        // Gets drive velocity as rotations/min
+        // Gets drive velocity as rotations/min (CANSparkMax)
         double velocity = this.driveMotor.getEncoder().getVelocity();
-        // Turns rotations/min into radians/sec
-        velocity *= PhysicalConstants.ROT_TO_RAD / 60;
-        return new SwerveModuleState(velocity, new Rotation2d((getTurningPosition())));
+        // The ratio turns rotations/min into radians/second
+        // it also makes sure that the odometry getting values from this gets meters correctly
+        velocity *= PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        return new SwerveModuleState(velocity, new Rotation2d(getTurningPosition()));
     }
   
     /**
@@ -131,10 +129,18 @@ public class SwerveModule {
     */
     public SwerveModulePosition getPosition() {
         // Gets drive position as rotations
-        double position = this.driveMotor.getEncoder().getPosition();
+        double positionRot = this.driveMotor.getEncoder().getPosition();
         // Turns rotations to radians
-        position *= PhysicalConstants.ROT_TO_RAD;
-        return new SwerveModulePosition(position, new Rotation2d(getTurningPosition()));
+        // position *= PhysicalConstants.ROT_TO_RAD;
+        double positionMeters = positionRot * PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        return new SwerveModulePosition(positionMeters, new Rotation2d(getTurningPosition()));
+    }
+
+    /**
+     * Zeros the position of the driving encoder
+     */
+    public void zeroDriveEncoder() {
+        this.driveMotor.getEncoder().setPosition(0);
     }
 
     /**
@@ -148,7 +154,7 @@ public class SwerveModule {
         double driveMotorSpeed = state.speedMetersPerSecond / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
-        SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
+        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
@@ -185,9 +191,8 @@ public class SwerveModule {
     public void outputEncoderPosition() {
         int turnID = this.turningEncoder.getDeviceID();
         String id = "Swerve[" + turnID + "] ";
-        SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
-        SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
-        SmartDashboard.putNumber(id + "Turning position", this.turningEncoder.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber(id + "Turning absolute position", this.turningEncoder.getAbsolutePosition().getValueAsDouble());
+        // SmartDashboard.putString(id + "Position", this.getPosition().distanceMeters + " m");
+        // SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
+        // SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
     }
 }
