@@ -55,9 +55,7 @@ public class PathfindAprilTagCommand extends Command {
         
         Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
         Pose2d idealPosition = new Pose2d(idealPositionCoord[0], idealPositionCoord[1],
-            Rotation2d.fromDegrees(
-                swerveSubsystem.getHeading() - botpose.getRotation().getDegrees()
-            ));
+            new Rotation2d(0));
 
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
