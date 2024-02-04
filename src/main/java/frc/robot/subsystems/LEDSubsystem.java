@@ -22,9 +22,7 @@ public class LEDSubsystem extends SubsystemBase {
   public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
   private int rainbowFirstPixelHue = 0;
   private boolean gradientCountUp = true;
-  private int gradientIndex;
-  private int fadeIndex;
-  private int rgb[] = { 0, 0, 0 };
+  private int gradientIndex, fadeIndex, r, g, b;
   private LEDState state = LEDState.RAINBOW;
 
   /** Creates a new ExampleSubsystem. */
@@ -33,16 +31,16 @@ public class LEDSubsystem extends SubsystemBase {
     led.start();
   }
 
-  public void SetColor(int[] rgb, LEDState state) {
-    this.rgb[0] = rgb[0];
-    this.rgb[1] = rgb[1];
-    this.rgb[2] = rgb[2];
+  public void SetColor(int r, int g, int b, LEDState state) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
     this.state = state;
   }
 
   private void Color() {
     for (var i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setRGB(i, rgb[0], rgb[1], rgb[2]);
+      ledBuffer.setRGB(i, r, g, b);
     }
   }
 
@@ -64,20 +62,46 @@ public class LEDSubsystem extends SubsystemBase {
 
     gradientIndex = color1_hue;
 
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setHSV(i, gradientIndex, 255, 255);
-      if (gradientIndex >= color2_hue) {
-        gradientCountUp = false;
-      } else if (gradientIndex <= color1_hue) {
-        gradientCountUp = true;
+    for (int i = 0; i <= ledBuffer.getLength(); i++) {
+      int[] transitionColor = new int[3];
+
+      for (int j = 0; j < 3; i++) {
+        transitionColor[i] = color1[i] + (color2[i] - color1[i]) * i / ledBuffer.getLength();
+      }
+      for (int step = 0; step <= steps; step++) {
+        int[] transitionColor = new int[3];
+
+        // Interpolate values for each color channel
+        for (int i = 0; i < 3; i++) {
+          transitionColor[i] = color1[i] + (color2[i] - color1[i]) * step / steps;
+        }
+
+        // Use the transitionColor array for further processing or display
+        // For example, you can print the values
+        System.out.println(
+            "Step " + step + ": [" + transitionColor[0] + ", " + transitionColor[1] + ", " + transitionColor[2] + "]");
       }
 
-      if (gradientCountUp) {
-        gradientIndex++;
-      } else {
-        gradientIndex--;
-      }
+      // Use the transitionColor array for further processing or display
+      // For example, you can print the values
+      System.out.println(
+          "Step " + i + ": [" + transitionColor[0] + ", " + transitionColor[1] + ", " + transitionColor[2] + "]");
     }
+
+    // for (var i = 0; i < ledBuffer.getLength(); i++) {
+    // ledBuffer.setHSV(i, gradientIndex, 100, 100);
+    // if (gradientIndex >= color2_hue) {
+    // gradientCountUp = false;
+    // } else if (gradientIndex <= color1_hue) {
+    // gradientCountUp = true;
+    // }
+    //
+    // if (gradientCountUp) {
+    // gradientIndex++;
+    // } else {
+    // gradientIndex--;
+    // }
+    // }
   }
 
   // fade is just gradient but it doesnt reset the color back

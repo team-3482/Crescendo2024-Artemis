@@ -121,7 +121,6 @@ public final class Constants {
     public static int ledCount = 150;
 
     // colors use 3 ints for RGB
-    public static int[] off = { 0, 0, 0 };
     public static int[] redColor = { 255, 0, 0 };
     public static int[] blueColor = { 0, 0, 255 };
   }

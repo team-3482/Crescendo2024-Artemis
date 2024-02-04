@@ -13,24 +13,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class LED extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final LEDSubsystem m_subsystem;
-  private int rgb[];
+
+  private int r;
+  private int g;
+  private int b;
 
   public LED(LEDSubsystem subsystem, int[] rgb) {
     m_subsystem = subsystem;
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
 
-    this.rgb[0] = rgb[0];
-    this.rgb[1] = rgb[1];
-    this.rgb[2] = rgb[2];
+    this.r = rgb[0];
+    this.g = rgb[1];
+    this.b = rgb[2];
   }
 
   @Override
   public void execute() {
-    m_subsystem.SetColor(rgb, LEDState.COLOR);
+    m_subsystem.SetColor(r, g, b, LEDState.COLOR);
   }
 
   @Override
   public void end(boolean i) {
-    m_subsystem.SetColor(LEDConstants.off, LEDState.GRADIENT);
+    m_subsystem.SetColor(0, 0, 0, LEDState.GRADIENT);
   }
 }
