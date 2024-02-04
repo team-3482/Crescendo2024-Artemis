@@ -89,7 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
                 new PIDConstants(20, 20, 0),
-                new PIDConstants(0.5, 0.5, 0),
+                new PIDConstants(18, 18, 0),
                 AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
                 PhysicalConstants.WHEEL_BASE / 2,
                 new ReplanningConfig()),
@@ -204,9 +204,9 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
         swerve_field.setRobotPose(getPose());
-        double[] a = NetworkTableInstance.getDefault().getTable("PathPlanner").getEntry("vel").getDoubleArray(new double[4]);
-        System.out.println("actual " + a[2]);
-        System.out.println("commanded " + a[3]);
+        // double[] a = NetworkTableInstance.getDefault().getTable("PathPlanner").getEntry("vel").getDoubleArray(new double[4]);
+        // System.out.println("actual " + a[2]);
+        // System.out.println("commanded " + a[3]);
         SmartDashboard.putNumber("Robot Heading", getHeading());
         // SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
         // SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
@@ -269,7 +269,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * sets them as the desired ones for the modules
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-        ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
+        // ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
+        ChassisSpeeds correctedChasisSpeed = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
         SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);
     }
@@ -280,7 +281,6 @@ public class SwerveSubsystem extends SubsystemBase {
      * @param desiredStates - states to be relayed to the swerve modules
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        // System.out.println("set " + desiredStates[0]);
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
             SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND);
 

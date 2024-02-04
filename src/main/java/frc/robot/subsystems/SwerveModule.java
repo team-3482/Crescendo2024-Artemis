@@ -98,7 +98,6 @@ public class SwerveModule {
     public double getAbsoluteEncoderRad() {
         // Gets position as rotation
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
-        // System.out.println("turning encoder absolute position in rot" + angle);
         // Turn rotations to radians
         return Units.rotationsToRadians(angle) * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
@@ -116,10 +115,10 @@ public class SwerveModule {
     * @return current state of the swerve module
     */
     public SwerveModuleState getState() {
-        // Gets drive velocity as rotations/min
+        // Gets drive velocity as rotations/min (CANSparkMax)
         double velocity = this.driveMotor.getEncoder().getVelocity();
-        // Turns rotations/min into radians/sec
-        // velocity *= PhysicalConstants.ROT_TO_RAD / 60;
+        // The ratio turns rotations/min into radians/second
+        // it also makes sure that the odometry getting values from this gets meters correctly
         velocity *= PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModuleState(velocity, new Rotation2d(getTurningPosition()));
     }
