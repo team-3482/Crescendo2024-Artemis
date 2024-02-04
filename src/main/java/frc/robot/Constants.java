@@ -117,11 +117,11 @@ public final class Constants {
   }
 
   public static class LEDConstants {
-    public static int ledPort = 0;
-    public static int ledCount = 150;
+    public static int LED_PORT = 0;
+    public static int LED_COUNT = 150;
 
     // colors use 3 ints for RGB
-    public static int[] redColor = { 255, 0, 0 };
-    public static int[] blueColor = { 0, 0, 255 };
+    public static int[] RED_COLOR = { 255, 0, 0 };
+    public static int[] BLUE_COLOR = { 0, 0, 255 };
   }
 }

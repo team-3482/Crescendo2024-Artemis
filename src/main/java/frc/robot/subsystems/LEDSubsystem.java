@@ -18,10 +18,9 @@ public class LEDSubsystem extends SubsystemBase {
     FADE
   };
 
-  public static AddressableLED led = new AddressableLED(LEDConstants.ledPort);
-  public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.ledCount);
+  public static AddressableLED led = new AddressableLED(LEDConstants.LED_PORT);
+  public static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(LEDConstants.LED_COUNT);
   private int rainbowFirstPixelHue = 0;
-  private boolean gradientCountUp = true;
   private int gradientIndex, fadeIndex, r, g, b;
   private LEDState state = LEDState.RAINBOW;
 
@@ -63,29 +62,7 @@ public class LEDSubsystem extends SubsystemBase {
     gradientIndex = color1_hue;
 
     for (int i = 0; i <= ledBuffer.getLength(); i++) {
-      int[] transitionColor = new int[3];
 
-      for (int j = 0; j < 3; i++) {
-        transitionColor[i] = color1[i] + (color2[i] - color1[i]) * i / ledBuffer.getLength();
-      }
-      for (int step = 0; step <= steps; step++) {
-        int[] transitionColor = new int[3];
-
-        // Interpolate values for each color channel
-        for (int i = 0; i < 3; i++) {
-          transitionColor[i] = color1[i] + (color2[i] - color1[i]) * step / steps;
-        }
-
-        // Use the transitionColor array for further processing or display
-        // For example, you can print the values
-        System.out.println(
-            "Step " + step + ": [" + transitionColor[0] + ", " + transitionColor[1] + ", " + transitionColor[2] + "]");
-      }
-
-      // Use the transitionColor array for further processing or display
-      // For example, you can print the values
-      System.out.println(
-          "Step " + i + ": [" + transitionColor[0] + ", " + transitionColor[1] + ", " + transitionColor[2] + "]");
     }
 
     // for (var i = 0; i < ledBuffer.getLength(); i++) {
@@ -130,9 +107,9 @@ public class LEDSubsystem extends SubsystemBase {
       case COLOR:
         Color();
       case GRADIENT:
-        Gradient(LEDConstants.redColor, LEDConstants.blueColor);
+        Gradient(LEDConstants.RED_COLOR, LEDConstants.BLUE_COLOR);
       case FADE:
-        Fade(LEDConstants.redColor, LEDConstants.blueColor);
+        Fade(LEDConstants.RED_COLOR, LEDConstants.BLUE_COLOR);
     }
 
     led.setData(ledBuffer);

@@ -64,8 +64,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
     driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-    driveController.a().whileTrue(new LED(LEDSubsystem, LEDConstants.redColor));
-    driveController.b().whileTrue(new LED(LEDSubsystem, LEDConstants.blueColor));
+    driveController.a().whileTrue(new LED(LEDSubsystem, LEDConstants.RED_COLOR));
+    driveController.b().whileTrue(new LED(LEDSubsystem, LEDConstants.BLUE_COLOR));
   }
 
   /**
