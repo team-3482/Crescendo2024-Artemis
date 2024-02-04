@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 public class LEDSubsystem extends SubsystemBase {
   public enum LEDState {
     COLOR,
-    RAINBOW
+    RAINBOW,
+    GRADIENT
   };
 
   public static AddressableLED led = new AddressableLED(LEDConstants.LED_PORT);
@@ -51,6 +52,18 @@ public class LEDSubsystem extends SubsystemBase {
     rainbowFirstPixelHue %= 180;
   }
 
+  private void Gradient(int color1[], int color2[]) {
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      float fraction = (float) i / ledBuffer.getLength();
+
+      int red = (int) (color1[0] + fraction * (color2[0] - color1[0]));
+      int green = (int) (color1[1] + fraction * (color2[1] - color1[1]));
+      int blue = (int) (color1[2] + fraction * (color2[2] - color1[2]));
+
+      ledBuffer.setRGB(i, red, green, blue);
+    }
+  }
+
   @Override
   public void periodic() {
     switch (state) {
@@ -58,6 +71,8 @@ public class LEDSubsystem extends SubsystemBase {
         Rainbow();
       case COLOR:
         Color();
+      case GRADIENT:
+        Gradient(LEDConstants.RED_COLOR, LEDConstants.BLUE_COLOR);
     }
 
     led.setData(ledBuffer);
