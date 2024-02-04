@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.SwerveKinematics;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 

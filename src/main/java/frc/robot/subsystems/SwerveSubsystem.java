@@ -16,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -177,7 +176,6 @@ public class SwerveSubsystem extends SubsystemBase {
           this.moduleTwo.getState(),
           this.moduleThree.getState(),
           this.moduleFour.getState()};
-        // System.out.println("get " + states[0]);
         return states;
     }
 
@@ -204,9 +202,6 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
         swerve_field.setRobotPose(getPose());
-        // double[] a = NetworkTableInstance.getDefault().getTable("PathPlanner").getEntry("vel").getDoubleArray(new double[4]);
-        // System.out.println("actual " + a[2]);
-        // System.out.println("commanded " + a[3]);
         SmartDashboard.putNumber("Robot Heading", getHeading());
         // SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
         // SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
@@ -269,8 +264,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * sets them as the desired ones for the modules
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-        // ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
-        ChassisSpeeds correctedChasisSpeed = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
+        ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
+        // ChassisSpeeds correctedChasisSpeed = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
         SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);
     }
