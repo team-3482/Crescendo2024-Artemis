@@ -13,6 +13,7 @@ public class LEDSubsystem extends SubsystemBase {
   public enum LEDState {
     COLOR,
     RAINBOW,
+    RANDOM,
     GRADIENT
   };
 
@@ -52,6 +53,15 @@ public class LEDSubsystem extends SubsystemBase {
     rainbowFirstPixelHue %= 180;
   }
 
+  private void Random() {
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      ledBuffer.setRGB(i,
+          (int) Math.random() * 255,
+          (int) Math.random() * 255,
+          (int) Math.random() * 255);
+    }
+  }
+
   private void Gradient(int color1[], int color2[]) {
     for (var i = 0; i < ledBuffer.getLength(); i++) {
       float fraction = (float) i / ledBuffer.getLength();
@@ -71,6 +81,8 @@ public class LEDSubsystem extends SubsystemBase {
         Rainbow();
       case COLOR:
         Color();
+      case RANDOM:
+        Random();
       case GRADIENT:
         Gradient(LEDConstants.RED_COLOR, LEDConstants.BLUE_COLOR);
     }
