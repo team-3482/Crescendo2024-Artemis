@@ -154,4 +154,14 @@ public final class Constants {
         public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
         public static double ROT_TO_RAD = 2 * Math.PI;
     }
+  
+  public static class LEDConstants {
+    public static int ledPort = 0;
+    public static int ledCount = 150;
+
+    // colors use 3 ints for RGB
+    public static int[] off = { 0, 0, 0 };
+    public static int[] redColor = { 255, 0, 0 };
+    public static int[] blueColor = { 0, 0, 255 };
+  }
 }
