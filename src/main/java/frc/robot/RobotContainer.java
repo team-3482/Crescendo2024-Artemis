@@ -8,10 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.SwerveDrive;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.commands.LED;
+import frc.robot.subsystems.LEDSubsystem.LightState;
 import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
@@ -32,7 +31,6 @@ public class RobotContainer {
 
   // Instance of the Subsystems
   private SwerveSubsystem swerveSubsystem;
-  private final LEDSubsystem LEDSubsystem = new LEDSubsystem();
   // Instance of the controller used to drive the robot
   private CommandXboxController driveController;
 
@@ -64,8 +62,14 @@ public class RobotContainer {
    */
   private void configureBindings() {
     driveController.y().whileTrue(Commands.run(() -> swerveSubsystem.zeroHeading()));
-    driveController.a().whileTrue(new LED(LEDSubsystem, LEDConstants.RED_COLOR));
-    driveController.b().whileTrue(new LED(LEDSubsystem, LEDConstants.BLUE_COLOR));
+    driveController.a().whileTrue(Commands.runEnd(
+      ()-> LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN), 
+      ()-> LEDSubsystem.getInstance().setLightState(LightState.OFF), 
+      LEDSubsystem.getInstance()));
+    driveController.b().whileTrue(Commands.runEnd(
+      ()-> LEDSubsystem.getInstance().setLightState(LightState.FLASHING_BLUE), 
+      ()-> LEDSubsystem.getInstance().setLightState(LightState.OFF), 
+      LEDSubsystem.getInstance()));
   }
 
   /**
