@@ -13,6 +13,7 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** A pathfinding command that uses limelight and swerve subsystems. */
@@ -46,16 +47,10 @@ public class PathfindAprilTagCommand extends Command {
             this.noPath = true;
             return;
         }
-        this.noPath = false;
-        
-        Pose2d botpose = limelightSubsystem.getBotpose();
+        this.noPath = false;    
 
-        swerveSubsystem.resetOdometry(new Pose2d(
-            botpose.getTranslation(), Rotation2d.fromDegrees(swerveSubsystem.getHeading())));
-        
-        Double[] idealPositionCoord = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
-        Pose2d idealPosition = new Pose2d(idealPositionCoord[0], idealPositionCoord[1],
-            new Rotation2d(0));
+        Translation2d idealPositionTrans = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
+        Pose2d idealPosition = new Pose2d(idealPositionTrans, limelightSubsystem.getFacingAngle());
 
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,

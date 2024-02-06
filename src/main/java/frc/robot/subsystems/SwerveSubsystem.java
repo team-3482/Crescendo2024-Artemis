@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
+import java.util.OptionalInt;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -7,20 +10,22 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
@@ -70,17 +75,21 @@ public class SwerveSubsystem extends SubsystemBase {
     // Instance of the Pigeon2 gyroscope on the specifc swerve CAN bus
     private Pigeon2 gyro = new Pigeon2(SwerveModuleConstants.GRYO_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
-    private SwerveDriveOdometry odometer = new SwerveDriveOdometry(
-        SwerveKinematics.driveKinematics,
-        new Rotation2d(0), getModulePositions());
+    // Instance of the odometer to track robot position, initialized to starting position
+    private SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(
+        SwerveKinematics.DRIVE_KINEMATICS, getRotation2d(), getModulePositions(), getStartingPosition());
     
+    // Initialize a field to track of robot position in SmartDashboard
     private Field2d swerve_field = new Field2d();
 
+    // Used to update odometry with vision measurements
+    private LimelightSubsystem limelightSubsystem;
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
     */
-    public SwerveSubsystem() {
+    public SwerveSubsystem(LimelightSubsystem limelightSubsystem) {
+        this.limelightSubsystem = limelightSubsystem;
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::resetOdometry,
@@ -113,6 +122,25 @@ public class SwerveSubsystem extends SubsystemBase {
             catch (Exception error) {
                 error.printStackTrace();
             }});
+    }
+
+    /**
+     * Grab the starting position of the robot
+     * 
+     * @return the starting position
+     */
+    @SuppressWarnings("unlikely-arg-type")
+    private Pose2d getStartingPosition() {
+        OptionalInt location = DriverStation.getLocation();
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        Pose2d startingPosition;
+        if (!location.isPresent() || !alliance.isPresent()) {
+            startingPosition = new Pose2d();
+        }
+        else {
+            startingPosition = AutonConstants.STARTING_POSITIONS.get(alliance).get(location);
+        }
+        return startingPosition;
     }
 
     /**
@@ -185,7 +213,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * @return the pose of the robot in meters
     */
     public Pose2d getPose() {
-        return odometer.getPoseMeters();
+        return odometer.getEstimatedPosition();
     }
   
     /**
@@ -201,6 +229,14 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), getModulePositions());
+        if (limelightSubsystem.getID() > 0) {
+            Pose2d botpose = limelightSubsystem.getBotpose();
+            Pose2d relative = botpose.relativeTo(getPose());
+            if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
+                && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
+                odometer.addVisionMeasurement(limelightSubsystem.getBotpose(), Timer.getFPGATimestamp());
+            }
+        }
         swerve_field.setRobotPose(getPose());
         SmartDashboard.putNumber("Robot Heading", getHeading());
         // SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
@@ -256,7 +292,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return the chassis speeds
      */
     public ChassisSpeeds getChassisSpeeds() {
-        return SwerveKinematics.driveKinematics.toChassisSpeeds(getModuleStates());
+        return SwerveKinematics.DRIVE_KINEMATICS.toChassisSpeeds(getModuleStates());
     }
     
     /**
@@ -266,7 +302,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
         ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
         // ChassisSpeeds correctedChasisSpeed = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
-        SwerveModuleState[] moduleStates = SwerveKinematics.driveKinematics.toSwerveModuleStates(correctedChasisSpeed);
+        SwerveModuleState[] moduleStates = SwerveKinematics.DRIVE_KINEMATICS.toSwerveModuleStates(correctedChasisSpeed);
         setModuleStates(moduleStates);
     }
 

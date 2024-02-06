@@ -47,8 +47,8 @@ public class RobotContainer {
     * Creates an instance of the robot controller
     */
     public RobotContainer() {
-        this.swerveSubsystem = new SwerveSubsystem();
         this.limelightSubsystem = new LimelightSubsystem();
+        this.swerveSubsystem = new SwerveSubsystem(limelightSubsystem);
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         
         // Register named commands for pathplanner (do this after subsystem initialization)

@@ -6,10 +6,13 @@ package frc.robot;
 
 import java.util.Map;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public final class Constants {
     // Constants used to run autonomous code
@@ -21,9 +24,22 @@ public final class Constants {
         public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON = 4 * Math.PI;
         // This is the deviation allowed to the robot when orbiting an AprilTag
         // These are where the bot should ideally line up for each AprilTag 
-        public static Map<Integer, Double[]> IDEAL_TAG_POSITIONS = Map.ofEntries(
-            Map.entry(3, new Double[]{15.0, 5.6}),
-            Map.entry(4, new Double[]{15.0, 5.6})
+        public static Map<Integer, Translation2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
+            Map.entry(3, new Translation2d(15.0, 5.6)),
+            Map.entry(4, new Translation2d(15.0, 5.6))
+        );
+
+        public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
+                Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
+                Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
+                Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
+            )),
+            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
+                Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
+                Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
+                Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
+            ))
         );
         
     }
@@ -44,6 +60,8 @@ public final class Constants {
         public static double TIMEOUT = 5; // In seconds
         public static String FRONT_LIMELIGHT = "limelight-two";
         public static String BACK_LIMELIGHT = "limelight-three";
+
+        public static double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[]{1, 1}; // x, y
     }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
@@ -114,7 +132,7 @@ public final class Constants {
 
     // Constants for the movement and kinematics of the swerve system
     public final static class SwerveKinematics {
-        public static SwerveDriveKinematics driveKinematics = new SwerveDriveKinematics(
+        public static SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),

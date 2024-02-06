@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -69,6 +70,16 @@ public class LimelightSubsystem extends SubsystemBase {
      */
     public double[] getBotPoseTargetSpace() {
         return LimelightHelpers.getBotPose_TargetSpace(LimelightConstants.FRONT_LIMELIGHT);
+    }
+
+    /**
+     * Gets the angle the robot needs to have to face the current tag
+     * 
+     * @return Rotation2d for the angle
+     */
+    public Rotation2d getFacingAngle() {
+        double[] botpose_targetspace = getBotPoseTargetSpace();
+        return new Rotation2d(Math.atan2(botpose_targetspace[0], -botpose_targetspace[2]));
     }
 
     @Override

@@ -84,11 +84,9 @@ public class SwerveOrbit extends Command {
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
         boolean fineControl = fineControlFunction.get();
-        
-        double[] botpose = limelightSubsystem.getBotPoseTargetSpace();        
-        // No angle difference if the bot is within the allowed deviation
+                // No angle difference if the bot is within the allowed deviation
         double turningSpeed = pid.calculate(
-            swerveSubsystem.getHeading(), Math.toDegrees(Math.atan2(botpose[0], -botpose[2])))
+            swerveSubsystem.getHeading(), limelightSubsystem.getFacingAngle().getDegrees())
             / 60 * 1.1;
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
