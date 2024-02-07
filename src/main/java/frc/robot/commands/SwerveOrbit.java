@@ -10,9 +10,12 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -64,10 +67,8 @@ public class SwerveOrbit extends Command {
 
         this.xLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
         this.yLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
-        this.turningLimiter = new SlewRateLimiter(
-            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
-        pid = new PIDController(
-            OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
+        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        pid = new PIDController(OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
         // Do not require limelight subsystem because it is getter functions only
@@ -76,7 +77,9 @@ public class SwerveOrbit extends Command {
 
     @Override
     public void execute() {
-        if (limelightSubsystem.getID() <= 0) {
+        int id = limelightSubsystem.getID();
+        // If it isn't tags 3 or 4 or their respective blue tags
+        if (AutonConstants.IDEAL_TAG_POSITIONS.get(id) == null) {
             swerveSubsystem.stopModules();
             return;
         }
@@ -84,10 +87,12 @@ public class SwerveOrbit extends Command {
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
         boolean fineControl = fineControlFunction.get();
-                // No angle difference if the bot is within the allowed deviation
-        double turningSpeed = pid.calculate(
-            swerveSubsystem.getHeading(), limelightSubsystem.getFacingAngle().getDegrees())
-            / 60 * 1.1;
+        double[] botPose_TargetSpace = limelightSubsystem.getBotPose_TargetSpace();
+        double angleGoalRad = id == 4 || id == 7 ?
+            Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]) :
+            Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_BETWEEN_AMP_TAGS_METERS , -botPose_TargetSpace[2]);
+        
+        double turningSpeed = pid.calculate(swerveSubsystem.getHeading(), Units.radiansToDegrees(angleGoalRad)) / 60 * 1.1;
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
         xSpeed = Math.abs(xSpeed) > ControllerConstants.DEADBAND ? xSpeed : 0.0;

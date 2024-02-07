@@ -28,8 +28,9 @@ public final class Constants {
             Map.entry(3, new Translation2d(15.0, 5.6)),
             Map.entry(4, new Translation2d(15.0, 5.6))
         );
-
-        public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
+        
+        // Initial bot positions to initialize odometry
+        public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries( 
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
                 Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
@@ -44,7 +45,6 @@ public final class Constants {
         
     }
     public final static class OrbitConstants {
-        public static double ORBIT_TURNING_SPEED = 0.5;
         public static double ORBIT_FINER_MOVEMENT = 4;
         public static double ORBIT_FINEST_MOVEMENT = 8;
 
@@ -170,7 +170,8 @@ public final class Constants {
 
         public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5);
         public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
-        public static double ROT_TO_RAD = 2 * Math.PI;
+        
+        public static double DIST_BETWEEN_AMP_TAGS_METERS = 0.43;
     }
   
   public static class LEDConstants {

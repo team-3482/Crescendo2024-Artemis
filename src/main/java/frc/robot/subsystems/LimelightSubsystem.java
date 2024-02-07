@@ -68,26 +68,23 @@ public class LimelightSubsystem extends SubsystemBase {
      * 
      * @return botpose array
      */
-    public double[] getBotPoseTargetSpace() {
+    public double[] getBotPose_TargetSpace() {
         return LimelightHelpers.getBotPose_TargetSpace(LimelightConstants.FRONT_LIMELIGHT);
     }
 
-    /**
-     * Gets the angle the robot needs to have to face the current tag
-     * 
-     * @return Rotation2d for the angle
-     */
-    public Rotation2d getFacingAngle() {
-        double[] botpose_targetspace = getBotPoseTargetSpace();
-        return new Rotation2d(Math.atan2(botpose_targetspace[0], -botpose_targetspace[2]));
-    }
-
+    // /**
+     // * Gets the angle the robot needs to have to face the current tag
+     // * 
+     // * @return Rotation2d for the angle
+     // */
+    // public Rotation2d getFacingAngle() {
+        // double[] botpose_targetspace = getBotPoseTargetSpace();
+        // return new Rotation2d(Math.atan2(botpose_targetspace[0], -botpose_targetspace[2]));
+    // }
+    
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
-
-        // SmartDashboard.putString("Robot Location (limelight)", this.getBotpose().getTranslation().toString());
-        // SmartDashboard.putString("Robot Rotation (limelight)", this.getBotpose().getRotation().toString());
         SmartDashboard.putNumber("T-ID", this.getID());
     }
 
