@@ -21,12 +21,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
+import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 
@@ -110,9 +112,11 @@ public class SwerveSubsystem extends SubsystemBase {
             },
             this);
         
-        // Set up custom logging to add the current path to a field 2d widget
+        // Set up custom logging to add the current path to a field 2d widget on shuffleboard
         PathPlannerLogging.setLogActivePathCallback((poses) -> swerve_field.getObject("path").setPoses(poses));
-        SmartDashboard.putData("Field (odometer & pathplanner)", swerve_field);
+        Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+            .add("Field (SwervePoseEstimator)", swerve_field)
+            .withWidget(BuiltInWidgets.kField);
 
         new Thread(() -> {
             try {
@@ -224,7 +228,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   
     /**
-    * Update the odometer and push SmartDashboard data
+    * Update the odometer and push ShuffleBoard data
     */
     @Override
     public void periodic() {
@@ -238,9 +242,10 @@ public class SwerveSubsystem extends SubsystemBase {
             }
         }
         swerve_field.setRobotPose(getPose());
-        SmartDashboard.putNumber("Robot Heading", getHeading());
-        // SmartDashboard.putString("Robot Location (odometer)", getPose().getTranslation().toString());
-        // SmartDashboard.putString("Robot Rotation (odometer)", getPose().getRotation().toString());
+        
+        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+            .add("Robot Heading", getHeading())
+            .withWidget(BuiltInWidgets.kGyro);
     }
 
     public static Twist2d log(Pose2d transform) {

@@ -15,6 +15,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public final class Constants {
+    // Names of the tabs in ShuffleBoard
+    public static final class ShuffleboardTabConstants {
+        public static String DEFAULT = "SmartDashboard";
+        public static String FIELDS = "Field";
+    }
     // Constants used to run autonomous code
     public final static class AutonConstants {
         // These are used for on-the-fly paths

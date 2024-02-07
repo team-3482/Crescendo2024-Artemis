@@ -5,20 +5,24 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.ShuffleboardTabConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
     Field2d limelight_field = new Field2d();
 
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
-        SmartDashboard.putData("Field (limelight)", limelight_field);
+        Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+            .add("Field (limelight)", limelight_field)
+            .withWidget(BuiltInWidgets.kField);
     }
     
     /**
@@ -85,7 +89,13 @@ public class LimelightSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
-        SmartDashboard.putNumber("T-ID", this.getID());
+        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+            .add("T-ID", this.getID())
+            .withWidget(BuiltInWidgets.kTextView);
+        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+            .add("T-SEE", AutonConstants.IDEAL_TAG_POSITIONS.get(this.getID()) != null)
+            .withWidget(BuiltInWidgets.kBooleanBox);
+
     }
 
     // private class ExtraHelpers extends LimelightHelpers {
