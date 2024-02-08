@@ -36,7 +36,7 @@ public class SwerveOrbit extends Command {
     private final SlewRateLimiter xLimiter;
     private final SlewRateLimiter yLimiter;
     private final SlewRateLimiter turningLimiter;
-    private PIDController pid;
+    private PIDController rotationPidController;
 
     /**
     * Creates new Swerve Drive Command
@@ -68,7 +68,7 @@ public class SwerveOrbit extends Command {
         this.xLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
         this.yLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
         this.turningLimiter = new SlewRateLimiter(SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
-        pid = new PIDController(OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
+        this.rotationPidController = new PIDController(OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
         // Do not require limelight subsystem because it is getter functions only
@@ -92,7 +92,8 @@ public class SwerveOrbit extends Command {
             Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]) :
             Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_BETWEEN_AMP_TAGS_METERS , -botPose_TargetSpace[2]);
         
-        double turningSpeed = pid.calculate(swerveSubsystem.getHeading(), Units.radiansToDegrees(angleGoalRad)) / 60 * 1.1;
+        double turningSpeed = rotationPidController
+            .calculate(swerveSubsystem.getHeading(), Units.radiansToDegrees(angleGoalRad)) / 60 * 1.1;
 
         // Checks for controller deadband in case joysticks do not return perfectly to origin
         xSpeed = Math.abs(xSpeed) > ControllerConstants.DEADBAND ? xSpeed : 0.0;

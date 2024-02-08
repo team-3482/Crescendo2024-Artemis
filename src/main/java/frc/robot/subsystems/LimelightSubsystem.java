@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -17,6 +18,16 @@ import frc.robot.Constants.ShuffleboardTabConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
     Field2d limelight_field = new Field2d();
+
+    // Shuffleboard
+    private GenericEntry SB_TID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("T-ID", 0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .getEntry();
+    private GenericEntry SB_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("T-SEE", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .getEntry();
 
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
@@ -89,13 +100,8 @@ public class LimelightSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
-        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-            .add("T-ID", this.getID())
-            .withWidget(BuiltInWidgets.kTextView);
-        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-            .add("T-SEE", AutonConstants.IDEAL_TAG_POSITIONS.get(this.getID()) != null)
-            .withWidget(BuiltInWidgets.kBooleanBox);
-
+        SB_TID.setInteger(this.getID());
+        SB_TSEE.setBoolean(AutonConstants.IDEAL_TAG_POSITIONS.get(this.getID()) != null);
     }
 
     // private class ExtraHelpers extends LimelightHelpers {

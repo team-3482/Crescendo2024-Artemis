@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -86,6 +87,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Used to update odometry with vision measurements
     private LimelightSubsystem limelightSubsystem;
+
+    // Shuffleboard
+    private GenericEntry SB_GYRO = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("Robot Heading", 0)
+        .withWidget(BuiltInWidgets.kGyro)
+        .getEntry();
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
@@ -133,16 +140,15 @@ public class SwerveSubsystem extends SubsystemBase {
      * 
      * @return the starting position
      */
-    @SuppressWarnings("unlikely-arg-type")
     private Pose2d getStartingPosition() {
-        OptionalInt location = DriverStation.getLocation();
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        OptionalInt location = DriverStation.getLocation();
         Pose2d startingPosition;
         if (!location.isPresent() || !alliance.isPresent()) {
             startingPosition = new Pose2d();
         }
         else {
-            startingPosition = AutonConstants.STARTING_POSITIONS.get(alliance).get(location);
+            startingPosition = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
         }
         return startingPosition;
     }
@@ -242,10 +248,7 @@ public class SwerveSubsystem extends SubsystemBase {
             }
         }
         swerve_field.setRobotPose(getPose());
-        
-        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-            .add("Robot Heading", getHeading())
-            .withWidget(BuiltInWidgets.kGyro);
+        SB_GYRO.setDouble(getHeading());
     }
 
     public static Twist2d log(Pose2d transform) {

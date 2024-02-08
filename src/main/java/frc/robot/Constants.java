@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public final class Constants {
     // Names of the tabs in ShuffleBoard
     public static final class ShuffleboardTabConstants {
-        public static String DEFAULT = "SmartDashboard";
+        public static String DEFAULT = "Default";
         public static String FIELDS = "Field";
     }
     // Constants used to run autonomous code
@@ -63,8 +63,8 @@ public final class Constants {
     // Constants for limelight-related data
     public final static class LimelightConstants {
         public static double TIMEOUT = 5; // In seconds
-        public static String FRONT_LIMELIGHT = "limelight-two";
-        public static String BACK_LIMELIGHT = "limelight-three";
+        public static String FRONT_LIMELIGHT = "limelight-three"; // Shooter / AprilTags
+        public static String BACK_LIMELIGHT = "limelight-two"; // Intake / Detection
 
         public static double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[]{1, 1}; // x, y
     }
