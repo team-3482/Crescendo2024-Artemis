@@ -110,7 +110,7 @@ public class RobotContainer {
             ));
         
         // Operator controller
-        // driveController.x().whileTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
+        driveController.x().whileTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
     }
   
     /**

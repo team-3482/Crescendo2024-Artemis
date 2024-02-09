@@ -49,7 +49,7 @@ public class PathfindAprilTagCommand extends Command {
             return;
         }
         this.noPath = false;    
-
+        
         Pose2d idealPosition = new Pose2d(idealPositionTrans,
             new Rotation2d(Math.atan2(idealPositionTrans.getY(), idealPositionTrans.getX())));
 

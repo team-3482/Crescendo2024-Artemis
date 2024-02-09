@@ -88,9 +88,9 @@ public class SwerveOrbit extends Command {
         double ySpeed = ySpeedFunction.get();
         boolean fineControl = fineControlFunction.get();
         double[] botPose_TargetSpace = limelightSubsystem.getBotPose_TargetSpace();
-        double angleGoalRad = id == 4 || id == 7 ?
-            Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]) :
-            Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_BETWEEN_AMP_TAGS_METERS , -botPose_TargetSpace[2]);
+        double angleGoalRad = Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]); // id == 4 || id == 7 ?
+        //     Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]) :
+        //     Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_BETWEEN_AMP_TAGS_METERS , -botPose_TargetSpace[2]);
         
         double turningSpeed = rotationPidController
             .calculate(swerveSubsystem.getHeading(), Units.radiansToDegrees(angleGoalRad)) / 60 * 1.1;
