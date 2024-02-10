@@ -23,10 +23,14 @@ public final class Constants {
     // Constants used to run autonomous code
     public final static class AutonConstants {
         // These are used for on-the-fly paths
-        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 15;
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 10;
-        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED_AUTON = 2 * Math.PI;
-        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON = 4 * Math.PI;
+        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 
+            SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 
+            SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED;
+        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON = 
+            SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
+        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED_AUTON = 
+            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED;
         // This is the deviation allowed to the robot when orbiting an AprilTag
         // These are where the bot should ideally line up for each AprilTag 
         public static Map<Integer, Pose2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
@@ -143,14 +147,14 @@ public final class Constants {
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 10;
+        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND =  4 * Math.PI;
         public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
+        public static double MAX_TURN_DECCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
 
         public static double PHYSICAL_MAX_SPEED_METERS_PER_SECOND = 15;
         public static double MAX_DRIVE_SPEED_METERS_PER_SECOND = PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
-
-        // public static double PHYSICAL_MAX_ANGULAR_SPEED_METERS_PER_SECOND = 2.5 * 2.5 * Math.PI;
-        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND =  4 * Math.PI;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
+        public static double MAX_DRIVE_DECCELERATION_METERS_PER_SECOND_SQUARED = 15;
 
         public static double FINE_CONTROL_DIVIDER = 4.0;
 

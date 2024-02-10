@@ -151,12 +151,11 @@ public class SwerveModule {
     * @param state - desired state of the swerve module
     */
     public void setDesiredState(SwerveModuleState state) {
-        state = SwerveModuleState.optimize((state), getState().angle);
+        state = SwerveModuleState.optimize(state, getState().angle);
 
         double driveMotorSpeed = state.speedMetersPerSecond / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
-        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
@@ -192,7 +191,7 @@ public class SwerveModule {
     */
     public void outputEncoderPosition() {
         int turnID = this.turningEncoder.getDeviceID();
-        String id = "Swerve[" + turnID + "] ";
+        // String id = "Swerve[" + turnID + "] ";
         // SmartDashboard.putString(id + "Position", this.getPosition().distanceMeters + " m");
         // SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
         // SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
