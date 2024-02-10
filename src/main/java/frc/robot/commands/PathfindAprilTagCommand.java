@@ -57,8 +57,6 @@ public class PathfindAprilTagCommand extends Command {
         Pose2d idealPosition = DriverStation.getAlliance().get() == Alliance.Red ?
             AutonConstants.IDEAL_TAG_POSITIONS.get(4) :
             AutonConstants.IDEAL_TAG_POSITIONS.get(7);
-        idealPosition = new Pose2d(idealPosition.getTranslation(),
-            Rotation2d.fromDegrees(swerveSubsystem.getHeading()));
 
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,

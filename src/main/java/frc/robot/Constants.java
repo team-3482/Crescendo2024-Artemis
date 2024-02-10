@@ -35,7 +35,7 @@ public final class Constants {
         // These are where the bot should ideally line up for each AprilTag 
         public static Map<Integer, Pose2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
             // Map.entry(3, new Pose2d(new Translation2d(15.0, 5.6), new Rotation2d())),
-            Map.entry(4, new Pose2d(new Translation2d(15.0, 5.6), Rotation2d.fromDegrees(90)))
+            Map.entry(4, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90)))
         );
         
         // Initial bot positions to initialize odometry
@@ -46,9 +46,9 @@ public final class Constants {
                 Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
-                Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
-                Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
+                Map.entry(1, new Pose2d(new Translation2d(16, 4.4), Rotation2d.fromDegrees(55))),
+                Map.entry(2, new Pose2d(new Translation2d(15.4, 5.4), Rotation2d.fromDegrees(0))),
+                Map.entry(3, new Pose2d(new Translation2d(16, 7), Rotation2d.fromDegrees(-60)))
             ))
         );
         
@@ -147,18 +147,16 @@ public final class Constants {
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
-        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND =  4 * Math.PI;
-        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
-        public static double MAX_TURN_DECCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
+        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND =  2 * Math.PI;
+        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI;
 
         public static double PHYSICAL_MAX_SPEED_METERS_PER_SECOND = 15;
         public static double MAX_DRIVE_SPEED_METERS_PER_SECOND = PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 5;
-        public static double MAX_DRIVE_DECCELERATION_METERS_PER_SECOND_SQUARED = 15;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 1;
 
         public static double FINE_CONTROL_DIVIDER = 4.0;
 
-        public static double KP = 0.4;
+        public static double KP = 0.325;
         public static double KI = 0;
         public static double KD = 0;
 

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.swing.text.Utilities;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.LimelightConstants;
@@ -27,7 +30,8 @@ import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
-import frc.robot.Utilities.SwerveUtilities;
+import frc.robot.utilities.Logger;
+import frc.robot.utilities.SwerveUtilities;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Instance of swerve modules, initalized with specific value
@@ -88,20 +92,23 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(3, 3)
         .getEntry();
     
+    private Logger logger;
+    private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
     */
     public SwerveSubsystem(LimelightSubsystem limelightSubsystem) {
         this.limelightSubsystem = limelightSubsystem;
+        this.logger = new Logger(this);
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::resetOdometry,
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
-                new PIDConstants(5, 5, 0),
-                new PIDConstants(5, 5, 0),
+                new PIDConstants(10, 0, 0),
+                new PIDConstants(5, 0, 0),
                 // new PIDConstants(20, 20, 0),
                 // new PIDConstants(18, 18, 0),
                 AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
@@ -127,7 +134,7 @@ public class SwerveSubsystem extends SubsystemBase {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                zeroHeading();
+                setHeading(SwerveUtilities.getStartingPosition().getRotation().getDegrees());
             }
             catch (Exception error) {
                 error.printStackTrace();
@@ -135,13 +142,21 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
-    * Zeros the heading of the robot Pigeon2
+    * Resets the heading of the robot's Piegon2
+    *
+    * @param heading in degrees
     */
-    public void zeroHeading() {
-        this.gyro.setYaw(0);
-        this.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(0)));
+    public void setHeading(double heading) {
+        this.gyro.setYaw(heading);
+        this.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(heading)));
     }
 
+    /**
+     * Zeros the heading of the Pigeon2
+     */
+    public void zeroHeading() {
+        setHeading(0);
+    }
     /**
      * Zeros the position of the drive encoders
      */
@@ -220,6 +235,8 @@ public class SwerveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         this.odometer.update(getRotation2d(), getModulePositions());
+        this.logger.execute();
+        
         if (this.limelightSubsystem.getID() > 0) {
             Pose2d botpose = this.limelightSubsystem.getBotpose();
             Pose2d relative = botpose.relativeTo(getPose());
@@ -268,10 +285,19 @@ public class SwerveSubsystem extends SubsystemBase {
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
             SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND);
-
+        this.desiredStates = desiredStates;
         this.moduleOne.setDesiredState(desiredStates[0]);
         this.moduleTwo.setDesiredState(desiredStates[1]);
         this.moduleThree.setDesiredState(desiredStates[2]);
         this.moduleFour.setDesiredState(desiredStates[3]);
+    }
+
+    /**
+     * Get desired states 
+     * 
+     * @return states
+     */
+    public SwerveModuleState[] getDesiredStates() {
+        return this.desiredStates;
     }
 }

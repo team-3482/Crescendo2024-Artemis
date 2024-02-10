@@ -24,7 +24,7 @@ public class SwerveModule {
     private CANcoder turningEncoder;
 
     // Instance of PIDcontroller - used to calculate value for turning motor
-    private ProfiledPIDController turningPidController;
+    private PIDController turningPidController;
 
     // Instances of values used to help calculate encoder positions for the turning motor
     private boolean absoluteEncoderReversed;
@@ -58,8 +58,7 @@ public class SwerveModule {
         this.turningEncoder = new CANcoder(turningEncoderID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
         // Initializes the PID controller using the determined values
-        this.turningPidController = new ProfiledPIDController(SwerveKinematics.KP, SwerveKinematics.KI, SwerveKinematics.KD,
-            SwerveKinematics.PID_ROTATION_TRAPEZOID_PROFILE);
+        this.turningPidController = new PIDController(SwerveKinematics.KP, SwerveKinematics.KI, SwerveKinematics.KD);
 
         // Makes the values continuous, so that 0 == 360 degrees
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);

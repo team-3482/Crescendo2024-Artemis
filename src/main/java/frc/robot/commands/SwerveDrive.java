@@ -59,18 +59,9 @@ public class SwerveDrive extends Command {
         this.enableDPadInput = enableDPadInput;
         this.povFunction = povFunction;
 
-        this.xLimiter = new SlewRateLimiter(
-            SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED,
-            SwerveKinematics.MAX_DRIVE_DECCELERATION_METERS_PER_SECOND_SQUARED,
-            0);
-        this.yLimiter = new SlewRateLimiter(
-            SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED,
-            SwerveKinematics.MAX_DRIVE_DECCELERATION_METERS_PER_SECOND_SQUARED,
-            0);
-        this.turningLimiter = new SlewRateLimiter(
-            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED,
-            SwerveKinematics.MAX_TURN_DECCELERATION_RADIANS_PER_SECOND_SQUARED,
-            0);
+        this.xLimiter = new SlewRateLimiter(SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
+        this.yLimiter = new SlewRateLimiter(SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
+        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
 
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time

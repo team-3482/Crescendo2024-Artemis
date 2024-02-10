@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Utilities;
+package frc.robot.utilities;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -20,10 +20,19 @@ public class Logger extends Command {
     
     //Publishers
     private StructArrayPublisher<SwerveModuleState> swervePublisher = NetworkTableInstance.getDefault()
-    .getStructArrayTopic("SwerveModuleStates", SwerveModuleState.struct).publish();
+        .getTable("AdvantageScope")
+        .getStructArrayTopic("SwerveModuleStates", SwerveModuleState.struct)
+        .publish();
 
     private StructPublisher<Pose2d> swervePosePublisher = NetworkTableInstance.getDefault()
-    .getStructTopic("MyPose", Pose2d.struct).publish();
+        .getTable("AdvantageScope")
+        .getStructTopic("RobotPose", Pose2d.struct)
+        .publish();
+
+    private StructArrayPublisher<SwerveModuleState> swerveDesiredStatesPublisher = NetworkTableInstance.getDefault()
+        .getTable("AdvantageScope")
+        .getStructArrayTopic("desiredStates", SwerveModuleState.struct)
+        .publish();
     
     /*
      * Creates and initializes a new logger object
@@ -38,6 +47,7 @@ public class Logger extends Command {
         // Publishes the data to the network table
         swervePublisher.set(swerveSubsystem.getModuleStates());
         swervePosePublisher.set(swerveSubsystem.getPose());
+        swerveDesiredStatesPublisher.set(swerveSubsystem.getDesiredStates());
     }
 
 
