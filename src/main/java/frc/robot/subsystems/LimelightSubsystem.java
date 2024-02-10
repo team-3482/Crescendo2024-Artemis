@@ -20,20 +20,39 @@ public class LimelightSubsystem extends SubsystemBase {
     Field2d limelight_field = new Field2d();
 
     // Shuffleboard
-    private GenericEntry SB_TID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+    private GenericEntry SB_D_TID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("T-ID", 0)
         .withWidget(BuiltInWidgets.kTextView)
+        .withPosition(3, 3)
+        .withSize(1, 1)
         .getEntry();
-    private GenericEntry SB_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+    private GenericEntry SB_D_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("T-SEE", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(3, 0)
+        .withSize(3, 3)
         .getEntry();
-
+    
+    private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+        .add("T-ID", 0)
+        .withWidget(BuiltInWidgets.kTextView)
+        .withPosition(14, 0)
+        .withSize(2, 1)
+        .getEntry();
+    private GenericEntry SB_F_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+        .add("T-SEE", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(14, 1)
+        .withSize(2, 3)
+        .getEntry();
+    
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
         Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
             .add("Field (limelight)", limelight_field)
-            .withWidget(BuiltInWidgets.kField);
+            .withWidget(BuiltInWidgets.kField)
+            .withPosition(7, 0)
+            .withSize(7, 4);
     }
     
     /**
@@ -100,8 +119,12 @@ public class LimelightSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
-        SB_TID.setInteger(this.getID());
-        SB_TSEE.setBoolean(AutonConstants.IDEAL_TAG_POSITIONS.get(this.getID()) != null);
+        int id = this.getID();
+        boolean see = id > 0;
+        SB_D_TID.setInteger(id);
+        SB_F_TID.setInteger(id);
+        SB_D_TSEE.setBoolean(see);
+        SB_F_TSEE.setBoolean(see);
     }
 
     // private class ExtraHelpers extends LimelightHelpers {

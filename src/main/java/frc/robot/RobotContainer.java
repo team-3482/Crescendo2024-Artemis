@@ -77,7 +77,9 @@ public class RobotContainer {
         autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
             .add("Auto Chooser", autoChooser)
-            .withWidget(BuiltInWidgets.kComboBoxChooser);
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(0, 3)
+            .withSize(3, 1);
     }
 
     /**

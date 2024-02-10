@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -23,7 +24,7 @@ public class SwerveModule {
     private CANcoder turningEncoder;
 
     // Instance of PIDcontroller - used to calculate value for turning motor
-    private PIDController turningPidController;
+    private ProfiledPIDController turningPidController;
 
     // Instances of values used to help calculate encoder positions for the turning motor
     private boolean absoluteEncoderReversed;
@@ -60,7 +61,8 @@ public class SwerveModule {
         this.turningEncoder = new CANcoder(turningEncoderID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
         // Initializes the PID controller using the determined values
-        this.turningPidController = new PIDController(SwerveKinematics.KP, SwerveKinematics.KI, SwerveKinematics.KD);
+        this.turningPidController = new ProfiledPIDController(SwerveKinematics.KP, SwerveKinematics.KI, SwerveKinematics.KD,
+            SwerveKinematics.PID_ROTATION_TRAPEZOID_PROFILE);
 
         // Makes the values continuous, so that 0 == 360 degrees
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);

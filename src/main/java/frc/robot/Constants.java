@@ -24,14 +24,14 @@ public final class Constants {
     public final static class AutonConstants {
         // These are used for on-the-fly paths
         public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 15;
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 2;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 10;
         public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED_AUTON = 2 * Math.PI;
         public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON = 4 * Math.PI;
         // This is the deviation allowed to the robot when orbiting an AprilTag
         // These are where the bot should ideally line up for each AprilTag 
-        public static Map<Integer, Translation2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
-            Map.entry(3, new Translation2d(15.0, 5.6)),
-            Map.entry(4, new Translation2d(15.0, 5.6))
+        public static Map<Integer, Pose2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
+            // Map.entry(3, new Pose2d(new Translation2d(15.0, 5.6), new Rotation2d())),
+            Map.entry(4, new Pose2d(new Translation2d(15.0, 5.6), Rotation2d.fromDegrees(90)))
         );
         
         // Initial bot positions to initialize odometry
@@ -143,7 +143,7 @@ public final class Constants {
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 2;
+        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 10;
         public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 2 * Math.PI;
 
         public static double PHYSICAL_MAX_SPEED_METERS_PER_SECOND = 15;
@@ -155,15 +155,10 @@ public final class Constants {
         public static double FINE_CONTROL_DIVIDER = 4.0;
 
         public static double KP = 0.4;
-        public static double KI = 0.4;
+        public static double KI = 0;
         public static double KD = 0;
 
-        public static double AUTO_PID_XCONTROLLER_KP = 0;
-        public static double AUTO_PID_YCONTROLLER_KP = 0;
-
-        public static double AUTO_PID_THETA_CONTROLLER_KP = 0;
-
-        public static TrapezoidProfile.Constraints AUTO_PID_THETA_CONTROLLER_CONSTRAINTS =
+        public static TrapezoidProfile.Constraints PID_ROTATION_TRAPEZOID_PROFILE =
             new TrapezoidProfile.Constraints(
                 MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
     }

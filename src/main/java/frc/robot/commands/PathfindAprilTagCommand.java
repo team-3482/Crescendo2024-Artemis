@@ -4,17 +4,18 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.AutonConstants;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.AutonConstants;
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /** A pathfinding command that uses limelight and swerve subsystems. */
 public class PathfindAprilTagCommand extends Command {
@@ -41,17 +42,23 @@ public class PathfindAprilTagCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        int tagID = limelightSubsystem.getID();
-        Translation2d idealPositionTrans = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
+        // int tagID = limelightSubsystem.getID();
+        // Translation2d idealPositionTrans = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
         
-        if (tagID <= 0 || idealPositionTrans == null) {
+        // if (tagID <= 0 || idealPositionTrans == null) {
+        if (!DriverStation.getAlliance().isPresent()) {
             this.noPath = true;
             return;
         }
         this.noPath = false;    
         
-        Pose2d idealPosition = new Pose2d(idealPositionTrans,
-            new Rotation2d(Math.atan2(idealPositionTrans.getY(), idealPositionTrans.getX())));
+        // Pose2d idealPosition = new Pose2d(idealPositionTrans,
+        //     new Rotation2d(Math.atan2(idealPositionTrans.getY(), idealPositionTrans.getX())));
+        Pose2d idealPosition = DriverStation.getAlliance().get() == Alliance.Red ?
+            AutonConstants.IDEAL_TAG_POSITIONS.get(4) :
+            AutonConstants.IDEAL_TAG_POSITIONS.get(7);
+        idealPosition = new Pose2d(idealPosition.getTranslation(),
+            Rotation2d.fromDegrees(swerveSubsystem.getHeading()));
 
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,

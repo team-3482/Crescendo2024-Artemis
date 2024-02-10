@@ -92,7 +92,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private GenericEntry SB_GYRO = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("Robot Heading", 0)
         .withWidget(BuiltInWidgets.kGyro)
+        .withPosition(0, 0)
+        .withSize(3, 3)
         .getEntry();
+    
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
@@ -105,10 +108,12 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
-                new PIDConstants(20, 20, 0),
-                new PIDConstants(18, 18, 0),
+                new PIDConstants(5, 5, 0),
+                new PIDConstants(5, 5, 0),
+                // new PIDConstants(20, 20, 0),
+                // new PIDConstants(18, 18, 0),
                 AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
-                PhysicalConstants.WHEEL_BASE / 2,
+                Math.sqrt(Math.pow(PhysicalConstants.WHEEL_BASE, 2) + Math.pow(PhysicalConstants.WHEEL_BASE, 2)) / 2,
                 new ReplanningConfig()),
             () -> {
                 var alliance = DriverStation.getAlliance();
@@ -123,7 +128,9 @@ public class SwerveSubsystem extends SubsystemBase {
         PathPlannerLogging.setLogActivePathCallback((poses) -> swerve_field.getObject("path").setPoses(poses));
         Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
             .add("Field (SwervePoseEstimator)", swerve_field)
-            .withWidget(BuiltInWidgets.kField);
+            .withWidget(BuiltInWidgets.kField)
+            .withPosition(0, 0)
+            .withSize(7, 4);
 
         new Thread(() -> {
             try {
