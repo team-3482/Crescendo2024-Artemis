@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
-import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -132,8 +131,6 @@ public class SwerveOrbit extends Command {
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
         swerveSubsystem.setChassisSpeeds(chassisSpeeds);
-        // Ouputs the swerve system information
-        swerveSubsystem.outputEncoderValues();
     }
 
     /**

@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.Optional;
-import java.util.OptionalInt;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -13,8 +10,6 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -32,6 +27,7 @@ import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.Utilities.SwerveUtilities;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Instance of swerve modules, initalized with specific value
@@ -41,7 +37,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.One.ENCODER,
         SwerveModuleConstants.One.DRIVE_MOTOR_REVERSED,
         SwerveModuleConstants.One.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.One.ENCODER_OFFSET_ROT,
         SwerveModuleConstants.One.ABSOLUTE_ENCODER_REVERSED
     );
 
@@ -51,7 +46,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.Two.ENCODER,
         SwerveModuleConstants.Two.DRIVE_MOTOR_REVERSED,
         SwerveModuleConstants.Two.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.Two.ENCODER_OFFSET_ROT,
         SwerveModuleConstants.Two.ABSOLUTE_ENCODER_REVERSED
     );
 
@@ -61,7 +55,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.Three.ENCODER,
         SwerveModuleConstants.Three.DRIVE_MOTOR_REVERSED,
         SwerveModuleConstants.Three.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.Three.ENCODER_OFFSET_ROT,
         SwerveModuleConstants.Three.ABSOLUTE_ENCODER_REVERSED
     );
 
@@ -71,7 +64,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.Four.ENCODER,
         SwerveModuleConstants.Four.DRIVE_MOTOR_REVERSED,
         SwerveModuleConstants.Four.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.Four.ENCODER_OFFSET_ROT,
         SwerveModuleConstants.Four.ABSOLUTE_ENCODER_REVERSED
     );
 
@@ -80,7 +72,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Instance of the odometer to track robot position, initialized to starting position
     private SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(
-        SwerveKinematics.DRIVE_KINEMATICS, getRotation2d(), getModulePositions(), getStartingPosition());
+        SwerveKinematics.DRIVE_KINEMATICS, getRotation2d(), getModulePositions(), SwerveUtilities.getStartingPosition());
     
     // Initialize a field to track of robot position in SmartDashboard
     private Field2d swerve_field = new Field2d();
@@ -143,28 +135,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
-     * Grab the starting position of the robot
-     * 
-     * @return the starting position
-     */
-    private Pose2d getStartingPosition() {
-        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        OptionalInt location = DriverStation.getLocation();
-        Pose2d startingPosition;
-        if (!location.isPresent() || !alliance.isPresent()) {
-            startingPosition = new Pose2d();
-        }
-        else {
-            startingPosition = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
-        }
-        return startingPosition;
-    }
-
-    /**
     * Zeros the heading of the robot Pigeon2
     */
     public void zeroHeading() {
-        gyro.setYaw(0);
+        this.gyro.setYaw(0);
         this.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(0)));
     }
 
@@ -184,7 +158,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * @return current heading of the robot
     */
     public double getHeading() {
-        return gyro.getYaw().getValueAsDouble();
+        return this.gyro.getYaw().getValueAsDouble();
     }
 
     /**
@@ -193,7 +167,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * @return current rotation of the robot
     */
     public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getHeading());
+        return Rotation2d.fromDegrees(this.getHeading());
     }
 
     /**
@@ -230,14 +204,14 @@ public class SwerveSubsystem extends SubsystemBase {
     * @return the pose of the robot in meters
     */
     public Pose2d getPose() {
-        return odometer.getEstimatedPosition();
+        return this.odometer.getEstimatedPosition();
     }
   
     /**
     * Resets the odometry of the robot
     */
     public void resetOdometry(Pose2d pose) {
-        odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
+        this.odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
     }
   
     /**
@@ -245,53 +219,18 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        odometer.update(getRotation2d(), getModulePositions());
-        if (limelightSubsystem.getID() > 0) {
-            Pose2d botpose = limelightSubsystem.getBotpose();
+        this.odometer.update(getRotation2d(), getModulePositions());
+        if (this.limelightSubsystem.getID() > 0) {
+            Pose2d botpose = this.limelightSubsystem.getBotpose();
             Pose2d relative = botpose.relativeTo(getPose());
             if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
                 && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
-                odometer.addVisionMeasurement(limelightSubsystem.getBotpose(), Timer.getFPGATimestamp());
+                this.odometer.addVisionMeasurement(this.limelightSubsystem.getBotpose(), Timer.getFPGATimestamp());
             }
         }
-        swerve_field.setRobotPose(getPose());
-        SB_GYRO.setDouble(getHeading());
+        this.swerve_field.setRobotPose(getPose());
+        this.SB_GYRO.setDouble(getHeading());
     }
-
-    public static Twist2d log(Pose2d transform) {
-        final double kEps = 1E-9;
-
-        final double dtheta = transform.getRotation().getRadians();
-        final double half_dtheta = 0.5 * dtheta;
-        final double cos_minus_one = Math.cos(transform.getRotation().getRadians()) - 1.0;
-        double halftheta_by_tan_of_halfdtheta;
-
-        if (Math.abs(cos_minus_one) < kEps) {
-            halftheta_by_tan_of_halfdtheta = 1.0 - 1.0 / 12.0 * dtheta * dtheta;
-        }
-        else {
-            halftheta_by_tan_of_halfdtheta = -(half_dtheta * Math.sin(transform.getRotation().getRadians())) / cos_minus_one;
-        }
-
-        final Translation2d translation_part = transform.getTranslation()
-                .rotateBy(new Rotation2d(halftheta_by_tan_of_halfdtheta, -half_dtheta));
-        return new Twist2d(translation_part.getX(), translation_part.getY(), dtheta);
-    }
-
-    private static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
-        final double LOOP_TIME_S = 0.02;
-        Pose2d futureRobotPose = new Pose2d(
-            originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
-            originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
-            Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S));
-        Twist2d twistForPose = log(futureRobotPose);
-        ChassisSpeeds updatedSpeeds = new ChassisSpeeds(
-            twistForPose.dx / LOOP_TIME_S,
-            twistForPose.dy / LOOP_TIME_S,
-            twistForPose.dtheta / LOOP_TIME_S);
-        return updatedSpeeds;
-    }
-
     /**
     * Stops all the swerve modules
     */
@@ -315,10 +254,10 @@ public class SwerveSubsystem extends SubsystemBase {
      * sets them as the desired ones for the modules
      */
     public void setChassisSpeeds(ChassisSpeeds chassisSpeeds) {
-        ChassisSpeeds correctedChasisSpeed = correctForDynamics(chassisSpeeds);
+        ChassisSpeeds correctedChasisSpeed = SwerveUtilities.correctForDynamics(chassisSpeeds);
         // ChassisSpeeds correctedChasisSpeed = ChassisSpeeds.discretize(chassisSpeeds, 0.02);
         SwerveModuleState[] moduleStates = SwerveKinematics.DRIVE_KINEMATICS.toSwerveModuleStates(correctedChasisSpeed);
-        setModuleStates(moduleStates);
+        this.setModuleStates(moduleStates);
     }
 
     /**
@@ -334,15 +273,5 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.setDesiredState(desiredStates[1]);
         this.moduleThree.setDesiredState(desiredStates[2]);
         this.moduleFour.setDesiredState(desiredStates[3]);
-    }
-
-    /**
-     * Ouputs information of the current swerve system
-     */
-    public void outputEncoderValues() {
-        this.moduleOne.outputEncoderPosition();
-        this.moduleTwo.outputEncoderPosition();
-        this.moduleThree.outputEncoderPosition();
-        this.moduleFour.outputEncoderPosition();
     }
 }

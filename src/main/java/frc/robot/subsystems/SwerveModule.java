@@ -28,7 +28,6 @@ public class SwerveModule {
 
     // Instances of values used to help calculate encoder positions for the turning motor
     private boolean absoluteEncoderReversed;
-    private double absoluteEncoderOffsetRot;
 
     /**
     * Creates an Instance of the Swerve Module with the specified options
@@ -39,13 +38,11 @@ public class SwerveModule {
     *                                swerve CAN bus)
     * @param driveMotorReversed      - is the driving motor inverted?
     * @param turningMotorReversed    - is the turning motor inverted?
-    * @param absoluteEcoderOffset    - absolute offset for the turning encoder
     * @param absoluteEncoderReversed - is the turning encoder inverted?
     */
     public SwerveModule(int driveMotorID, int turningMotorID, int turningEncoderID,
             boolean driveMotorReversed, boolean turningMotorReversed,
-            double absoluteEcoderOffset, boolean absoluteEncoderReversed) {
-        this.absoluteEncoderOffsetRot = absoluteEcoderOffset;
+            boolean absoluteEncoderReversed) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
 
         // Initializes the driving and turning motor
@@ -66,8 +63,6 @@ public class SwerveModule {
 
         // Makes the values continuous, so that 0 == 360 degrees
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);
-
-        this.resetEncoders();
     }
 
     /**
@@ -101,13 +96,6 @@ public class SwerveModule {
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
         // Turn rotations to radians
         return Units.rotationsToRadians(angle) * (this.absoluteEncoderReversed ? -1.0 : 1.0);
-    }
-
-    /*
-    * Resets the encoder position to absolute encoder position
-    */
-    public void resetEncoders() {
-        // this.turningEncoder.setPosition(this.getAbsoluteEncoderRad());
     }
 
     /**
@@ -154,7 +142,6 @@ public class SwerveModule {
         state = SwerveModuleState.optimize(state, getState().angle);
 
         double driveMotorSpeed = state.speedMetersPerSecond / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
-
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
 
         driveMotor.set(driveMotorSpeed);
@@ -184,16 +171,5 @@ public class SwerveModule {
     */
     public double getTurnVoltage() {
         return this.turningMotor.getBusVoltage() * this.turningMotor.getAppliedOutput();
-    }
-
-    /**
-    * Outputs information of the swerve module to SmartDashboard
-    */
-    public void outputEncoderPosition() {
-        int turnID = this.turningEncoder.getDeviceID();
-        // String id = "Swerve[" + turnID + "] ";
-        // SmartDashboard.putString(id + "Position", this.getPosition().distanceMeters + " m");
-        // SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
-        // SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
     }
 }
