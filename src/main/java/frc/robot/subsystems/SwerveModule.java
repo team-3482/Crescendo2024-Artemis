@@ -120,7 +120,6 @@ public class SwerveModule {
         // Gets drive position as rotations
         double positionRot = this.driveMotor.getEncoder().getPosition();
         // Turns rotations to radians
-        // position *= PhysicalConstants.ROT_TO_RAD;
         double positionMeters = positionRot * PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModulePosition(positionMeters, new Rotation2d(getTurningPosition()));
     }
