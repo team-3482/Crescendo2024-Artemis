@@ -59,9 +59,9 @@ public class SwerveDrive extends Command {
         this.enableDPadInput = enableDPadInput;
         this.povFunction = povFunction;
 
-        this.xLimiter = new SlewRateLimiter(SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        this.yLimiter = new SlewRateLimiter(SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED);
-        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        this.xLimiter = new SlewRateLimiter(SwerveKinematics.DRIVE_SLEW_RATE_LIMIT);
+        this.yLimiter = new SlewRateLimiter(SwerveKinematics.DRIVE_SLEW_RATE_LIMIT);
+        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.TURNING_SLEW_RATE_LIMIT);
 
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
@@ -82,17 +82,13 @@ public class SwerveDrive extends Command {
         turningSpeed = Math.abs(turningSpeed) > ControllerConstants.DEADBAND ? turningSpeed : 0.0;
 
         // Limits the input to ensure smooth and depending on if fine control is active
-        xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
-            / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
-        ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
-            / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
-        turningSpeed = turningLimiter.calculate(turningSpeed)
-            * SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND
-            / (fineControl ? SwerveKinematics.FINE_CONTROL_DIVIDER : 1);
+        xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
 
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
-        int[] dPadSpeeds = this.calculateDPad();
+        double[] dPadSpeeds = this.calculateDPad();
         if (this.enableDPadInput && (dPadSpeeds[0] != 0 || dPadSpeeds[1] != 0)) {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -111,7 +107,11 @@ public class SwerveDrive extends Command {
                 chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
             }
         }
-
+        // Multiplies by fine control to limit the speeds
+        double fineControlCoefficent = fineControl? SwerveKinematics.FINE_CONTROL_COEFFICENT : 1.0;
+        chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond * fineControlCoefficent, 
+                                            chassisSpeeds.vyMetersPerSecond * fineControlCoefficent, 
+                                            chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent);
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
         swerveSubsystem.setChassisSpeeds(chassisSpeeds);
@@ -122,24 +122,24 @@ public class SwerveDrive extends Command {
      *
      * @return the x and y speeds between -1 and 1
      */
-    public int[] calculateDPad() {
-        int[] speeds = new int[]{0, 0};
+    public double[] calculateDPad() {
+        double[] speeds = new double[]{0, 0};
         
         // Up
         if (povFunction.apply(315) || povFunction.apply(0) || povFunction.apply(45)) {
-            speeds[0] = 1;
+            speeds[0] = SwerveKinematics.D_PAD_SPEED;
         }
         // Down
         else if (povFunction.apply(225) || povFunction.apply(180) || povFunction.apply(135)) {
-            speeds[0] = -1;
+            speeds[0] = -SwerveKinematics.D_PAD_SPEED;
         }
         // Left
         if (povFunction.apply(225) || povFunction.apply(270) || povFunction.apply(315)) {
-            speeds[1] = 1;
+            speeds[1] = SwerveKinematics.D_PAD_SPEED;
         }
         // Right
         else if (povFunction.apply(45) || povFunction.apply(90) || povFunction.apply(135)) {
-            speeds[1] = -1;
+            speeds[1] = -SwerveKinematics.D_PAD_SPEED;
         }
         return speeds;
     }

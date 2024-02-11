@@ -8,8 +8,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,10 +57,10 @@ public class PathfindAprilTagCommand extends Command {
             AutonConstants.IDEAL_TAG_POSITIONS.get(7);
 
         PathConstraints constraints = new PathConstraints(
-            AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
-            AutonConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON,
-            AutonConstants.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON,
-            AutonConstants.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED_AUTON);
+            AutonConstants.MAX_LINEAR_VELOCITY,
+            AutonConstants.MAX_LINEAR_ACCELERATION,
+            AutonConstants.MAX_ANGULAR_VELOCITY,
+            AutonConstants.MAX_ANGULAR_ACCELERATION);
 
         this.path = AutoBuilder.pathfindToPose(
             idealPosition,

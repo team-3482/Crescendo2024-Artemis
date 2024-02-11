@@ -64,10 +64,11 @@ public class SwerveOrbit extends Command {
         this.enableDPadInput = enableDPadInput;
         this.povFunction = povFunction;
 
-        this.xLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
-        this.yLimiter = new SlewRateLimiter(OrbitConstants.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT);
-        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        this.xLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_DRIVE_SLEW_RATE_LIMIT);
+        this.yLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_DRIVE_SLEW_RATE_LIMIT);
+        this.turningLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_TURNING_SLEW_RATE_LIMIT);
         this.rotationPidController = new PIDController(OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
+        
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
         // Do not require limelight subsystem because it is getter functions only
@@ -99,12 +100,10 @@ public class SwerveOrbit extends Command {
         ySpeed = Math.abs(ySpeed) > ControllerConstants.DEADBAND ? ySpeed : 0.0;
 
         // Limits the input to ensure smooth and depending on if fine control is active
-        xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
-            / (fineControl ? OrbitConstants.ORBIT_FINEST_MOVEMENT : OrbitConstants.ORBIT_FINER_MOVEMENT);
-        ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND
-            / (fineControl ? OrbitConstants.ORBIT_FINEST_MOVEMENT : OrbitConstants.ORBIT_FINER_MOVEMENT);
+        xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
         turningSpeed = turningLimiter.calculate(turningSpeed)
-            * SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
+            * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
@@ -127,7 +126,12 @@ public class SwerveOrbit extends Command {
                 chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
             }
         }
-
+        // Multiplies by fine control to limit the speeds
+        double fineControlCoefficent = fineControl ? OrbitConstants.ORBIT_FINE_CONTROL_SPEED_COEFFIECENT : OrbitConstants.ORBIT_SPEED_COEFFIECENT;
+        chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond * fineControlCoefficent, 
+                                            chassisSpeeds.vyMetersPerSecond * fineControlCoefficent, 
+                                            chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent);
+        
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
         swerveSubsystem.setChassisSpeeds(chassisSpeeds);

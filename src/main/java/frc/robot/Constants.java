@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -23,19 +22,17 @@ public final class Constants {
     // Constants used to run autonomous code
     public final static class AutonConstants {
         // These are used for on-the-fly paths
-        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON = 
-            SwerveKinematics.MAX_DRIVE_SPEED_METERS_PER_SECOND;
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_AUTON = 
-            SwerveKinematics.MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED;
-        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND_AUTON = 
-            SwerveKinematics.MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND;
-        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED_AUTON = 
-            SwerveKinematics.MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED;
+        public static double MAX_LINEAR_VELOCITY =  SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        public static double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
+        public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
+        
         // This is the deviation allowed to the robot when orbiting an AprilTag
         // These are where the bot should ideally line up for each AprilTag 
         public static Map<Integer, Pose2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
             // Map.entry(3, new Pose2d(new Translation2d(15.0, 5.6), new Rotation2d())),
-            Map.entry(4, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90)))
+            Map.entry(4, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90))),
+            Map.entry(7, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90)))
         );
         
         // Initial bot positions to initialize odometry
@@ -54,11 +51,17 @@ public final class Constants {
         
     }
     public final static class OrbitConstants {
-        public static double ORBIT_FINER_MOVEMENT = 4;
-        public static double ORBIT_FINEST_MOVEMENT = 8;
+        // Multipies by the chasis speeds to slow down the bot for more control when orbitting
+        public static double ORBIT_SPEED_COEFFIECENT = .25; 
+        // Multipies by the chasis speeds to slow down the bot for more control when orbitting and using fine control
+        public static double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = .125; 
 
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED_ORBIT = 4;
-        
+        // The rate of change limit (units per second) for turning limiter in orbit mode
+        public static double ORBIT_TURNING_SLEW_RATE_LIMIT = Math.PI; 
+        // The rate limit (units per second) for driving in orbit mode (x & y) | prev:4
+        public static double ORBIT_DRIVE_SLEW_RATE_LIMIT = 1;  
+
+        // KP for the orbit rotation PID controller (controls the turning speed)
         public static double KP = 1;
         public static double KI = 0;
         public static double KD = 0;
@@ -94,7 +97,6 @@ public final class Constants {
             public static int ENCODER = 10;
             public static boolean DRIVE_MOTOR_REVERSED = true;
             public static boolean TURNING_MOTOR_REVERSED = true;
-            public static double ENCODER_OFFSET_ROT = 0;
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
@@ -106,7 +108,6 @@ public final class Constants {
             public static int ENCODER = 11;
             public static boolean DRIVE_MOTOR_REVERSED = false;
             public static boolean TURNING_MOTOR_REVERSED = true;
-            public static double ENCODER_OFFSET_ROT = 0;
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
@@ -118,7 +119,6 @@ public final class Constants {
             public static int ENCODER = 12;
             public static boolean DRIVE_MOTOR_REVERSED = true;
             public static boolean TURNING_MOTOR_REVERSED = true;
-            public static double ENCODER_OFFSET_ROT = 0;
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
@@ -130,7 +130,6 @@ public final class Constants {
             public static int ENCODER = 13;
             public static boolean DRIVE_MOTOR_REVERSED = true;
             public static boolean TURNING_MOTOR_REVERSED = true;
-            public static double ENCODER_OFFSET_ROT = 0;
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
@@ -141,39 +140,47 @@ public final class Constants {
 
     // Constants for the movement and kinematics of the swerve system
     public final static class SwerveKinematics {
+        // Distance between wheel positions
         public static SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
-        public static double MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND =  2 * Math.PI;
-        public static double MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED = Math.PI;
+        // Multiplied by the value given by the slew rate limiter for turning
+        public static double TURNING_SPEED_COEFFIECENT =  2 * Math.PI; 
+        // The rate of change limit (units per second) for turning limiter
+        public static double TURNING_SLEW_RATE_LIMIT = Math.PI; 
 
-        public static double PHYSICAL_MAX_SPEED_METERS_PER_SECOND = 15;
-        public static double MAX_DRIVE_SPEED_METERS_PER_SECOND = PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
-        public static double MAX_DRIVE_ACCELERATION_METERS_PER_SECOND_SQUARED = 1;
+        // The absolute max speed that a module can reach
+        public static double PHYSICAL_MAX_MODULE_SPEED = 1;
+        // Multiplied by the value given by the slew rate limiter for driving 
+        public static double DRIVE_SPEED_COEFFICENT = 1;
+        // The rate of change limit (units per second) for driving limiters (x & y) 
+        public static double DRIVE_SLEW_RATE_LIMIT = 1; 
 
-        public static double FINE_CONTROL_DIVIDER = 4.0;
+        // Multipies by the chasis speeds to slow down the bot for more control
+        public static double FINE_CONTROL_COEFFICENT = 0.25;
+        // Speed set for the D-Pad input 
+        public static double D_PAD_SPEED = 0.1; 
 
+        // KP For controlling the turning position of the swerve modules
         public static double KP = 0.325;
-        public static double KI = 0;
-        public static double KD = 0;
-
-        public static TrapezoidProfile.Constraints PID_ROTATION_TRAPEZOID_PROFILE =
-            new TrapezoidProfile.Constraints(
-                MAX_DRIVE_ANGULAR_SPEED_RADIANS_PER_SECOND, MAX_TURN_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        // KI for controlling the turning position of the swerve modules 
+        public static double KI = 0; 
+        // KD for contorlling the turning position of the swerve modules
+        public static double KD = 0; 
     }
 
     // Constants of physical attributes of the robot
     public final static class PhysicalConstants {
-        public static double TRACK_WIDTH = Units.inchesToMeters(21.5);
-        public static double WHEEL_BASE = Units.inchesToMeters(21.5);
+        public static double TRACK_WIDTH = Units.inchesToMeters(21.5); // Y (not sure if left-right or front-back) distance between wheels
+        public static double WHEEL_BASE = Units.inchesToMeters(21.5); // X (not sure if left-right or front-back) distance between wheels
 
-        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5);
-        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
+        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
+        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3; // Ratio between motor rotations and wheel rotations
         
-        public static double DIST_BETWEEN_AMP_TAGS_METERS = 0.43;
+        public static double DIST_BETWEEN_AMP_TAGS_METERS = 0.43; // Distance between the two april tags on the speaker
     }
   
   public static class LEDConstants {

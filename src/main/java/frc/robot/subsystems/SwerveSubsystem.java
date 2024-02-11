@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import javax.swing.text.Utilities;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -22,9 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
@@ -107,11 +103,9 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
-                new PIDConstants(10, 0, 0),
-                new PIDConstants(5, 0, 0),
-                // new PIDConstants(20, 20, 0),
-                // new PIDConstants(18, 18, 0),
-                AutonConstants.MAX_DRIVE_SPEED_METERS_PER_SECOND_AUTON,
+                new PIDConstants(10, 0, 0), // prev: 20 20 0
+                new PIDConstants(5, 0, 0), // prev: 18 18 0
+                SwerveKinematics.PHYSICAL_MAX_MODULE_SPEED, // might need to change to an auton constant
                 Math.sqrt(Math.pow(PhysicalConstants.WHEEL_BASE, 2) + Math.pow(PhysicalConstants.WHEEL_BASE, 2)) / 2,
                 new ReplanningConfig()),
             () -> {
@@ -284,7 +278,7 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates,
-            SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND);
+            SwerveKinematics.PHYSICAL_MAX_MODULE_SPEED);
         this.desiredStates = desiredStates;
         this.moduleOne.setDesiredState(desiredStates[0]);
         this.moduleTwo.setDesiredState(desiredStates[1]);
