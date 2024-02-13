@@ -14,12 +14,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public final class Constants {
-    // Names of the tabs in ShuffleBoard
+    /** Tab names in Shuffleboard */
     public static final class ShuffleboardTabConstants {
         public static String DEFAULT = "Default";
         public static String FIELDS = "Field";
     }
-    // Constants used to run autonomous code
+
+    /** Values used for running autonomous code */
     public final static class AutonConstants {
         // These are used for on-the-fly paths
         public static double MAX_LINEAR_VELOCITY =  SwerveKinematics.DRIVE_SPEED_COEFFICENT;
@@ -27,15 +28,14 @@ public final class Constants {
         public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
         
-        // This is the deviation allowed to the robot when orbiting an AprilTag
-        // These are where the bot should ideally line up for each AprilTag 
+        /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static Map<Integer, Pose2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
             // Map.entry(3, new Pose2d(new Translation2d(15.0, 5.6), new Rotation2d())),
             Map.entry(4, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90))),
             Map.entry(7, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90)))
         );
         
-        // Initial bot positions to initialize odometry
+        /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries( 
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
@@ -51,15 +51,15 @@ public final class Constants {
         
     }
     public final static class OrbitConstants {
-        // Multipies by the chasis speeds to slow down the bot for more control when orbitting
-        public static double ORBIT_SPEED_COEFFIECENT = .25; 
-        // Multipies by the chasis speeds to slow down the bot for more control when orbitting and using fine control
-        public static double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = .125; 
+        /** Multipies by the chasis speeds to slow down the bot for more control when orbitting */
+        public static double ORBIT_SPEED_COEFFIECENT = 0.25; 
+        /** Multipies by the chasis speeds to slow down the bot for more control when orbitting and using fine control */
+        public static double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = 0.125; 
 
-        // The rate of change limit (units per second) for turning limiter in orbit mode
+        /** The rate of change limit (units per second) for turning limiter in orbit mode */
         public static double ORBIT_TURNING_SLEW_RATE_LIMIT = Math.PI; 
-        // The rate limit (units per second) for driving in orbit mode (x & y) | prev:4
-        public static double ORBIT_DRIVE_SLEW_RATE_LIMIT = 1;  
+        /** The rate limit in units per second for driving in orbit mode (x and y) */
+        public static double ORBIT_DRIVE_SLEW_RATE_LIMIT = 1; // Previously 4
 
         // KP for the orbit rotation PID controller (controls the turning speed)
         public static double KP = 1;
@@ -69,27 +69,31 @@ public final class Constants {
     
     // Constants for limelight-related data
     public final static class LimelightConstants {
-        public static double TIMEOUT = 5; // In seconds
-        public static String FRONT_LIMELIGHT = "limelight-three"; // Shooter / AprilTags
-        public static String BACK_LIMELIGHT = "limelight-two"; // Intake / Detection
-
-        public static double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[]{1, 1}; // x, y
+        /** Name of the front-facing limelight (shooter / AprilTags) */
+        public static String FRONT_LIMELIGHT = "limelight-three";
+        /** Name of the backwards-facing limelight (Intake / Note Detection) */
+        public static String BACK_LIMELIGHT = "limelight-two";
+        
+        /** Only accepts limelight values that differ by these x and y values from the internal odometer */
+        public static double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[]{1, 1};
     }
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
     public final static class ControllerConstants {
+        /** DriverStation ID of the driver controller */
         public static int DRIVE_CONTROLLER_ID = 0;
-        public static int DRIVE_ROT_AXIS = 4;
-        public static int INTAKE_CONTROLLER_ID = 1;
+        /** DriverStation ID of the operator controller */
+        public static int OPERATOR_CONTROLLER_ID = 1;
+        /** Removes input around the joystick's center (eliminates stick drift) */
         public static double DEADBAND = 0.075;
 
-        // Input
+        /** Whether or not to accept directional pad input for movement */
         public static boolean DPAD_DRIVE_INPUT = true;
     }
 
     // Constants for the swerve modules
     public final static class SwerveModuleConstants {
-        // Module One
+        /** Configuration for swerve module one */
         public final static class One {
             public static boolean ENABLED = true;
             public static int DRIVE = 3;
@@ -100,7 +104,7 @@ public final class Constants {
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
-        // Module two
+        /** Configuration for swerve module three */
         public final static class Two {
             public static boolean ENABLED = true;
             public static int DRIVE = 5;
@@ -111,7 +115,7 @@ public final class Constants {
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
-        // Module three
+        /** Configuration for swerve module three */
         public final static class Three {
             public static boolean ENABLED = true;
             public static int DRIVE = 7;
@@ -122,7 +126,7 @@ public final class Constants {
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
-        // Module four
+        /** Configuration for swerve module four */
         public final static class Four {
             public static boolean ENABLED = true;
             public static int DRIVE = 9;
@@ -133,63 +137,71 @@ public final class Constants {
             public static boolean ABSOLUTE_ENCODER_REVERSED = false;
         }
 
-        // Extra fields
+        /** Name of the CAN bus the swerve is connected to */
         public static String SWERVE_CAN_BUS = "swerve";
+        /** ID of the Pigeon2's connection */
         public static int GRYO_ID = 14;
     }
 
-    // Constants for the movement and kinematics of the swerve system
+    /** Constants for the kinematics and driving of the swerve system */
     public final static class SwerveKinematics {
-        // Distance between wheel positions
+        /** Distance between wheel positions */
         public static SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
-        // Multiplied by the value given by the slew rate limiter for turning
+        /** Multiplied by the value given by the slew rate limiter for turning */
         public static double TURNING_SPEED_COEFFIECENT =  2 * Math.PI; 
-        // The rate of change limit (units per second) for turning limiter
+        /** The rate of change limit (units per second) for turning limiter */
         public static double TURNING_SLEW_RATE_LIMIT = Math.PI; 
 
-        // The absolute max speed that a module can reach
+        /** The max speed a module can reach while driving ; essentially how fast it can rotate while driving full speed, in meters per second */
         public static double PHYSICAL_MAX_MODULE_SPEED = 1;
-        // Multiplied by the value given by the slew rate limiter for driving 
+        /** Multiplied by the value given by the slew rate limiter for driving */
         public static double DRIVE_SPEED_COEFFICENT = 1;
-        // The rate of change limit (units per second) for driving limiters (x & y) 
+        /** The rate of change limit in units per second for driving limiters (x and y) */
         public static double DRIVE_SLEW_RATE_LIMIT = 1; 
 
-        // Multipies by the chasis speeds to slow down the bot for more control
+        /** Multiplies joystick and turning input by the specified coefficient */
         public static double FINE_CONTROL_COEFFICENT = 0.25;
-        // Speed set for the D-Pad input 
-        public static double D_PAD_SPEED = 0.1; 
-
-        // KP For controlling the turning position of the swerve modules
-        public static double KP = 0.325;
-        // KI for controlling the turning position of the swerve modules 
-        public static double KI = 0; 
-        // KD for contorlling the turning position of the swerve modules
-        public static double KD = 0; 
+        
+        /** x and y speed set by the directional pad in meters per second */
+        public static double D_PAD_SPEED = 0.1; // Previously 1
+        
+        /** PID constants used for controlling the turning position of the swerve modules */
+        public static class TURNING_PID_CONTROLLER {
+            public static double KP = 0.325;
+            public static double KI = 0; 
+            public static double KD = 0; 
+        }
     }
 
     // Constants of physical attributes of the robot
     public final static class PhysicalConstants {
         public static double TRACK_WIDTH = Units.inchesToMeters(21.5); // Y (not sure if left-right or front-back) distance between wheels
         public static double WHEEL_BASE = Units.inchesToMeters(21.5); // X (not sure if left-right or front-back) distance between wheels
-
-        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
-        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3; // Ratio between motor rotations and wheel rotations
         
-        public static double DIST_BETWEEN_AMP_TAGS_METERS = 0.43; // Distance between the two april tags on the speaker
+        /** Diameter in meters */
+        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
+        /** Ratio between motor rotations and wheel rotations */
+        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
+        /** Distance between the two april tags on the AMP in meters*/
+        public static double DIST_AMP_TAGS = 0.43;
     }
   
   public static class LEDConstants {
+    /** Port that the LED strip is plugged into */
     public static int ledPort = 0;
+    /** Number of LEDs to iterate through */
     public static int ledCount = 150;
 
-    // colors use 3 ints for RGB
+    /** RGB values for black (off) */
     public static int[] off = { 0, 0, 0 };
+    /** RGB values for red */
     public static int[] redColor = { 255, 0, 0 };
+    /** RGB values for blue */
     public static int[] blueColor = { 0, 0, 255 };
   }
 }

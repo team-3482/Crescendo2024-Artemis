@@ -90,7 +90,7 @@ public class SwerveOrbit extends Command {
         double[] botPose_TargetSpace = limelightSubsystem.getBotPose_TargetSpace();
         double angleGoalRad = Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]); // id == 4 || id == 7 ?
         //     Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]) :
-        //     Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_BETWEEN_AMP_TAGS_METERS , -botPose_TargetSpace[2]);
+        //     Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_AMP_TAGS , -botPose_TargetSpace[2]);
         
         double turningSpeed = rotationPidController
             .calculate(swerveSubsystem.getHeading(), Units.radiansToDegrees(angleGoalRad)) / 60 * 1.1;
@@ -107,7 +107,7 @@ public class SwerveOrbit extends Command {
         
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
-        int[] dPadSpeeds = this.calculateDPad();
+        double[] dPadSpeeds = this.calculateDPad();
         if (this.enableDPadInput && (dPadSpeeds[0] != 0 || dPadSpeeds[1] != 0)) {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -142,24 +142,24 @@ public class SwerveOrbit extends Command {
      *
      * @return the x and y speeds between -1 and 1
      */
-    public int[] calculateDPad() {
-        int[] speeds = new int[]{0, 0};
+    public double[] calculateDPad() {
+        double[] speeds = new double[]{0, 0};
         
         // Up
         if (povFunction.apply(315) || povFunction.apply(0) || povFunction.apply(45)) {
-            speeds[0] = 1;
+            speeds[0] = SwerveKinematics.D_PAD_SPEED;
         }
         // Down
         else if (povFunction.apply(225) || povFunction.apply(180) || povFunction.apply(135)) {
-            speeds[0] = -1;
+            speeds[0] = -SwerveKinematics.D_PAD_SPEED;
         }
         // Left
         if (povFunction.apply(225) || povFunction.apply(270) || povFunction.apply(315)) {
-            speeds[1] = 1;
+            speeds[1] = SwerveKinematics.D_PAD_SPEED;
         }
         // Right
         else if (povFunction.apply(45) || povFunction.apply(90) || povFunction.apply(135)) {
-            speeds[1] = -1;
+            speeds[1] = -SwerveKinematics.D_PAD_SPEED;
         }
         return speeds;
     }

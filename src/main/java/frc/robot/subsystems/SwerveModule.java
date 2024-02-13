@@ -58,7 +58,10 @@ public class SwerveModule {
         this.turningEncoder = new CANcoder(turningEncoderID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
         // Initializes the PID controller using the determined values
-        this.turningPidController = new PIDController(SwerveKinematics.KP, SwerveKinematics.KI, SwerveKinematics.KD);
+        this.turningPidController = new PIDController(
+            SwerveKinematics.TURNING_PID_CONTROLLER.KP,
+            SwerveKinematics.TURNING_PID_CONTROLLER.KI,
+            SwerveKinematics.TURNING_PID_CONTROLLER.KD);
 
         // Makes the values continuous, so that 0 == 360 degrees
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);
