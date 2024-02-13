@@ -64,7 +64,7 @@ public class RobotContainer {
             () -> -driveController.getLeftX(),
             // () ->
             // driveController.getRawAxis(Constants.ControllerConstants.DRIVE_ROT_AXIS),
-            () -> driveController.getLeftTriggerAxis() - driveController.getRightTriggerAxis(),
+            () -> -driveController.getRightX(),
             () -> !driveController.getHID().getLeftBumper(),
             () -> driveController.getHID().getRightBumper(),
             // D-Pad / POV movement

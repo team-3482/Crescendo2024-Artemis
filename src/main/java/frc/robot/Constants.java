@@ -153,22 +153,22 @@ public final class Constants {
             new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
 
         /** Multiplied by the value given by the slew rate limiter for turning */
-        public static double TURNING_SPEED_COEFFIECENT =  2 * Math.PI; 
+        public static double TURNING_SPEED_COEFFIECENT = Math.PI; 
         /** The rate of change limit (units per second) for turning limiter */
-        public static double TURNING_SLEW_RATE_LIMIT = Math.PI; 
+        public static double TURNING_SLEW_RATE_LIMIT = 2 * Math.PI; 
 
         /** The max speed a module can reach while driving ; essentially how fast it can rotate while driving full speed, in meters per second */
-        public static double PHYSICAL_MAX_MODULE_SPEED = 1;
-        /** Multiplied by the value given by the slew rate limiter for driving */
+        public static double PHYSICAL_MAX_MODULE_SPEED = 5;
+        /** Multiplied by the value given by the slew rate limiter for driving; basically the top speed reachable*/
         public static double DRIVE_SPEED_COEFFICENT = 1;
         /** The rate of change limit in units per second for driving limiters (x and y) */
-        public static double DRIVE_SLEW_RATE_LIMIT = 1; 
+        public static double DRIVE_SLEW_RATE_LIMIT = 5; 
 
         /** Multiplies joystick and turning input by the specified coefficient */
         public static double FINE_CONTROL_COEFFICENT = 0.25;
         
         /** x and y speed set by the directional pad in meters per second */
-        public static double D_PAD_SPEED = 0.1; // Previously 1
+        public static double D_PAD_SPEED = 0.25; // Previously 1
         
         /** PID constants used for controlling the turning position of the swerve modules */
         public static class TURNING_PID_CONTROLLER {
