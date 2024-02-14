@@ -4,58 +4,50 @@
 
 package frc.robot.commands;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
-import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** A pathfinding command that uses limelight and swerve subsystems. */
-public class PathfindAprilTagCommand extends Command {
-    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final LimelightSubsystem limelightSubsystem;
+public class PathfindLineUp extends Command {
+    @SuppressWarnings("unused")
     private final SwerveSubsystem swerveSubsystem;
     private Command path;
 
     private boolean noPath;
+    private Character goal;
     /**
     * Creates a new PathfindAprilTagCommand.
     *
-    * @param limelightSubsystem The limelight subsystem used by this command.
     * @param swerveSubsystem The swerve subsystem used by this command.
+    * @param goal The location to line up at
     */
-    public PathfindAprilTagCommand(LimelightSubsystem limelightSubsystem, SwerveSubsystem swerveSubsystem) {
-        this.limelightSubsystem = limelightSubsystem;
+    public PathfindLineUp(SwerveSubsystem swerveSubsystem, Character goal) {
         this.swerveSubsystem = swerveSubsystem;
+        this.goal = goal;
+
         // Use addRequirements() here to declare subsystem dependencies.
-        // Do not require limelight subsystem because it is getter functions only
         addRequirements(swerveSubsystem);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // int tagID = limelightSubsystem.getID();
-        // Translation2d idealPositionTrans = AutonConstants.IDEAL_TAG_POSITIONS.get(tagID);
-        
-        // if (tagID <= 0 || idealPositionTrans == null) {
-        if (!DriverStation.getAlliance().isPresent()) {
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        if (!alliance.isPresent()) {
             this.noPath = true;
-            return;
-        }
-        this.noPath = false;    
-        
-        // Pose2d idealPosition = new Pose2d(idealPositionTrans,
-        //     new Rotation2d(Math.atan2(idealPositionTrans.getY(), idealPositionTrans.getX())));
-        Pose2d idealPosition = DriverStation.getAlliance().get() == Alliance.Red ?
-            AutonConstants.IDEAL_TAG_POSITIONS.get(4) :
-            AutonConstants.IDEAL_TAG_POSITIONS.get(7);
+        };
+        this.noPath = false;
 
+        Pose2d idealPosition = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(goal);
+        
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_LINEAR_VELOCITY,
             AutonConstants.MAX_LINEAR_ACCELERATION,
@@ -65,8 +57,8 @@ public class PathfindAprilTagCommand extends Command {
         this.path = AutoBuilder.pathfindToPose(
             idealPosition,
             constraints,
-            0.0, // Goal end velocity in meters/sec
-            0.0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+            0, // Goal end velocity in meters/sec
+            0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
         
         path.schedule();
     }

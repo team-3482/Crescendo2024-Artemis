@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.subsystems.*;
@@ -54,27 +55,26 @@ public class RobotContainer {
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         
         // Register named commands for pathplanner (do this after subsystem initialization)
-        NamedCommands.registerCommand("Pathfind AprilTag",
-            new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
+        NamedCommands.registerCommand("Pathfind AMP",
+            new PathfindLineUp(swerveSubsystem, AutonConstants.AMP));
+        NamedCommands.registerCommand("Pathfind SPEAKER",
+            new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
 
         // Sets the default command to driving swerve
         this.swerveSubsystem.setDefaultCommand(new SwerveDrive(
             swerveSubsystem,
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
-            // () ->
-            // driveController.getRawAxis(Constants.ControllerConstants.DRIVE_ROT_AXIS),
             () -> -driveController.getRightX(),
-            () -> !driveController.getHID().getLeftBumper(),
-            () -> driveController.getHID().getRightBumper(),
+            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
+            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
             // D-Pad / POV movement
             ControllerConstants.DPAD_DRIVE_INPUT,
             (Integer angle) -> driveController.pov(angle).getAsBoolean()
         ));
-
         configureBindings();
 
-        autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+        autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
             .add("Auto Chooser", autoChooser)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
@@ -88,18 +88,19 @@ public class RobotContainer {
     private void configureBindings() {
         // Driver controller
         // Zeroing functions
-        driveController.rightStick().onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+        driveController.rightBumper().onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
         // Reset odometry translation to the position that the limelight sees.
         // Does not reset rotation, which is tracked by the gyro.
-        driveController.y().onTrue(Commands.runOnce(() -> {
+        driveController.leftBumper().onTrue(Commands.runOnce(() -> {
             Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
             if (!translation.equals(new Translation2d(0, 0))) {
                 swerveSubsystem.resetOdometry(new Pose2d(
                     translation, Rotation2d.fromDegrees(swerveSubsystem.getHeading())));
             }
         }));
-
+        // Cancel all scheduled commands
         driveController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
+        // Orbit April-Tag
         driveController.a().toggleOnTrue(new SwerveOrbit(
             swerveSubsystem,
             limelightSubsystem, 
@@ -112,7 +113,10 @@ public class RobotContainer {
             ));
         
         // Operator controller
-        driveController.x().whileTrue(new PathfindAprilTagCommand(limelightSubsystem, swerveSubsystem));
+        // Line up to AMP
+        driveController.x().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.AMP));
+        // Line up to SPEAKER
+        driveController.y().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
     }
   
     /**

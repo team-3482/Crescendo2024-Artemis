@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 
@@ -126,17 +125,4 @@ public class LimelightSubsystem extends SubsystemBase {
         SB_D_TSEE.setBoolean(see);
         SB_F_TSEE.setBoolean(see);
     }
-
-    // private class ExtraHelpers extends LimelightHelpers {
-    //     public static Pose2d toPose2d(double[] inData) {
-    //         // From LimelightHelpers 397-406
-    //         if(inData.length < 6) {
-    //             System.err.println("Bad LL 2D Pose Data!");
-    //             return new Pose2d();
-    //         }
-    //         Translation2d tran2d = new Translation2d(inData[0], inData[1]);
-    //         Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
-    //         return new Pose2d(tran2d, r2d);
-    //     }
-    // }
 }

@@ -97,14 +97,15 @@ public class SwerveSubsystem extends SubsystemBase {
     public SwerveSubsystem(LimelightSubsystem limelightSubsystem) {
         this.limelightSubsystem = limelightSubsystem;
         this.logger = new Logger(this);
+
         AutoBuilder.configureHolonomic(
             this::getPose,
             this::resetOdometry,
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
-                new PIDConstants(5, 0, 0), // prev: 20 20 0
-                new PIDConstants(5, 0, 0), // prev: 18 18 0
+                new PIDConstants(4.5, 1, 0),
+                new PIDConstants(3, 0, 0),
                 SwerveKinematics.PHYSICAL_MAX_MODULE_SPEED, // might need to change to an auton constant
                 Math.sqrt(Math.pow(PhysicalConstants.WHEEL_BASE, 2) + Math.pow(PhysicalConstants.WHEEL_BASE, 2)) / 2,
                 new ReplanningConfig()),

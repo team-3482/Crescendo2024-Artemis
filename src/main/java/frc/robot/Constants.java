@@ -28,11 +28,18 @@ public final class Constants {
         public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
         
+        public static char AMP = 'a';
+        public static char SPEAKER = 's';
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
-        public static Map<Integer, Pose2d> IDEAL_TAG_POSITIONS = Map.ofEntries(
-            // Map.entry(3, new Pose2d(new Translation2d(15.0, 5.6), new Rotation2d())),
-            Map.entry(4, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90))),
-            Map.entry(7, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(90)))
+        public static Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
+                Map.entry(AMP, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(0))),
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
+            )),
+            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
+                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
+            ))
         );
         
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
@@ -155,14 +162,14 @@ public final class Constants {
         /** Multiplied by the value given by the slew rate limiter for turning */
         public static double TURNING_SPEED_COEFFIECENT = Math.PI; 
         /** The rate of change limit (units per second) for turning limiter */
-        public static double TURNING_SLEW_RATE_LIMIT = 2 * Math.PI; 
+        public static double TURNING_SLEW_RATE_LIMIT = Math.PI; 
 
         /** The max speed a module can reach while driving ; essentially how fast it can rotate while driving full speed, in meters per second */
-        public static double PHYSICAL_MAX_MODULE_SPEED = 5;
-        /** Multiplied by the value given by the slew rate limiter for driving; basically the top speed reachable*/
-        public static double DRIVE_SPEED_COEFFICENT = 1;
+        public static double PHYSICAL_MAX_MODULE_SPEED = 5; // This value should be greater than DRIVE_SPEED_COEFFICENT
+        /** Multiplied by the value given by the slew rate limiter for driving ; basically the top speed reachable*/
+        public static double DRIVE_SPEED_COEFFICENT = 4; // This value should be lower than PHYSICAL_MAX_MODULE_SPEED
         /** The rate of change limit in units per second for driving limiters (x and y) */
-        public static double DRIVE_SLEW_RATE_LIMIT = 5; 
+        public static double DRIVE_SLEW_RATE_LIMIT = 1; 
 
         /** Multiplies joystick and turning input by the specified coefficient */
         public static double FINE_CONTROL_COEFFICENT = 0.25;
