@@ -20,9 +20,9 @@ public class PathfindLineUp extends Command {
     @SuppressWarnings("unused")
     private final SwerveSubsystem swerveSubsystem;
     private Command path;
-
-    private boolean noPath;
     private Character goal;
+    private boolean finished;
+
     /**
     * Creates a new PathfindAprilTagCommand.
     *
@@ -32,21 +32,23 @@ public class PathfindLineUp extends Command {
     public PathfindLineUp(SwerveSubsystem swerveSubsystem, Character goal) {
         this.swerveSubsystem = swerveSubsystem;
         this.goal = goal;
+        this.finished = false;
 
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(swerveSubsystem);
+        // addRequirements(swerveSubsystem);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) {
-            this.noPath = true;
-        };
-        this.noPath = false;
+        if (!alliance.isPresent() || this.path != null) {
+            this.finished = true;
+            return;
+        }
+        this.finished = false;
 
-        Pose2d idealPosition = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(goal);
+        Pose2d idealPosition = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
         
         PathConstraints constraints = new PathConstraints(
             AutonConstants.MAX_LINEAR_VELOCITY,
@@ -58,29 +60,30 @@ public class PathfindLineUp extends Command {
             idealPosition,
             constraints,
             0, // Goal end velocity in meters/sec
-            0); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
-        
+            0); // Rotation delay distance in meters
         path.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        if (this.path.isFinished()) {
+            this.finished = true; // Will also cancel path if it exists
+        }
+    }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        if (path != null) {
-            path.cancel();
+        if (this.path != null) {
+            this.path.cancel();
         }
+        this.path = null;
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (path != null) {
-            return path.isFinished();
-        }
-        return this.noPath;
+        return this.finished;
     }
 }
