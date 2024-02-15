@@ -106,17 +106,18 @@ public class RobotContainer {
             limelightSubsystem, 
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
-            () -> !driveController.getHID().getLeftBumper(),
-            () -> driveController.getHID().getRightBumper(),
+            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
+            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
+            // D-Pad / POV Movement
             ControllerConstants.DPAD_DRIVE_INPUT,
             (Integer angle) -> driveController.pov(angle).getAsBoolean()
             ));
         
         // Operator controller
         // Line up to AMP
-        driveController.x().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.AMP));
+        driveController.x().onTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.AMP));
         // Line up to SPEAKER
-        driveController.y().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
+        // driveController.y().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
     }
   
     /**

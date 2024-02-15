@@ -12,7 +12,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
@@ -67,7 +66,10 @@ public class SwerveOrbit extends Command {
         this.xLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_DRIVE_SLEW_RATE_LIMIT);
         this.yLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_DRIVE_SLEW_RATE_LIMIT);
         this.turningLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_TURNING_SLEW_RATE_LIMIT);
-        this.rotationPidController = new PIDController(OrbitConstants.KP, OrbitConstants.KI, OrbitConstants.KD);
+        this.rotationPidController = new PIDController(
+            OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP,
+            OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI,
+            OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
@@ -77,9 +79,10 @@ public class SwerveOrbit extends Command {
 
     @Override
     public void execute() {
-        int id = limelightSubsystem.getID();
+        // Double so it can be null if the ID cannot be orbited
+        Double orbitOffset = OrbitConstants.ORBIT_IDS.get(limelightSubsystem.getID()); 
         // If it isn't tags 3 or 4 or their respective blue tags
-        if (AutonConstants.IDEAL_TAG_POSITIONS.get(id) == null) {
+        if (orbitOffset == null) {
             swerveSubsystem.stopModules();
             return;
         }
@@ -87,11 +90,10 @@ public class SwerveOrbit extends Command {
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
         boolean fineControl = fineControlFunction.get();
+
+        // Orbit calculations
         double[] botPose_TargetSpace = limelightSubsystem.getBotPose_TargetSpace();
-        double angleGoalRad = Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]); // id == 4 || id == 7 ?
-        //     Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]) :
-        //     Math.atan2(botPose_TargetSpace[0] + PhysicalConstants.DIST_AMP_TAGS , -botPose_TargetSpace[2]);
-        
+        double angleGoalRad = Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]); // +/- orbitOffset for [0]
         double turningSpeed = rotationPidController
             .calculate(swerveSubsystem.getHeading(), Units.radiansToDegrees(angleGoalRad)) / 60 * 1.1;
 

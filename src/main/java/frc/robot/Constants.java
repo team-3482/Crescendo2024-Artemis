@@ -23,21 +23,21 @@ public final class Constants {
     /** Values used for running autonomous code */
     public final static class AutonConstants {
         // These are used for on-the-fly paths
-        public static double MAX_LINEAR_VELOCITY =  SwerveKinematics.DRIVE_SPEED_COEFFICENT;
-        public static double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
-        public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
-        public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
+        public static double MAX_LINEAR_VELOCITY =  1;
+        public static double MAX_LINEAR_ACCELERATION = 1;
+        public static double MAX_ANGULAR_VELOCITY = Math.PI / 2;
+        public static double MAX_ANGULAR_ACCELERATION = Math.PI / 2;
         
         public static char AMP = 'a';
         public static char SPEAKER = 's';
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(AMP, new Pose2d(new Translation2d(15.0, 5.4), Rotation2d.fromDegrees(0))),
+                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
                 Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             )),
-            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
+            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
+                Map.entry(AMP, new Pose2d(new Translation2d(15, 5.4), Rotation2d.fromDegrees(0))),
                 Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             ))
         );
@@ -64,14 +64,24 @@ public final class Constants {
         public static double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = 0.125; 
 
         /** The rate of change limit (units per second) for turning limiter in orbit mode */
-        public static double ORBIT_TURNING_SLEW_RATE_LIMIT = Math.PI; 
+        public static double ORBIT_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT; 
         /** The rate limit in units per second for driving in orbit mode (x and y) */
-        public static double ORBIT_DRIVE_SLEW_RATE_LIMIT = 1; // Previously 4
+        public static double ORBIT_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
 
-        // KP for the orbit rotation PID controller (controls the turning speed)
-        public static double KP = 1;
-        public static double KI = 0;
-        public static double KD = 0;
+        /** PID constants for controlling the turning speed during orbits */
+        public static class TURNING_SPEED_PID_CONTROLLER {
+            public static double KP = 1;
+            public static double KI = 0;
+            public static double KD = 0;
+        }
+
+        /** Tag IDs acceptable for orbit (keys) and the x offset needed for them in meters (values) */
+        public static Map<Integer, Double> ORBIT_IDS = Map.ofEntries(
+            Map.entry(4, 0.0), // Orbit Tag 4
+            Map.entry(3, PhysicalConstants.DIST_AMP_TAGS), // Orbit Tag 4
+            Map.entry(7, 0.0), // Orbit Tag 7
+            Map.entry(8, -PhysicalConstants.DIST_AMP_TAGS) // Orbit Tag 7
+        );
     }
     
     // Constants for limelight-related data
@@ -84,6 +94,55 @@ public final class Constants {
         /** Only accepts limelight values that differ by these x and y values from the internal odometer */
         public static double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[]{1, 1};
     }
+
+    /** Constants for the kinematics and driving of the swerve system */
+    public final static class SwerveKinematics {
+        /** Distance between wheel positions */
+        public static SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
+            new Translation2d(PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
+            new Translation2d(PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2),
+            new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
+            new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
+
+        /** Multiplied by the value given by the slew rate limiter for turning */
+        public static double TURNING_SPEED_COEFFIECENT = Math.PI; 
+        /** The rate of change limit (units per second) for turning limiter */
+        public static double TURNING_SLEW_RATE_LIMIT = Math.PI; 
+
+        /** The max speed a module can reach while driving ; essentially how fast it can rotate while driving full speed, in meters per second */
+        public static double PHYSICAL_MAX_MODULE_SPEED = 5; // This value should be greater than DRIVE_SPEED_COEFFICENT
+        /** Multiplied by the value given by the slew rate limiter for driving ; basically the top speed reachable*/
+        public static double DRIVE_SPEED_COEFFICENT = 4; // This value should be lower than PHYSICAL_MAX_MODULE_SPEED
+        /** The rate of change limit in units per second for driving limiters (x and y) */
+        public static double DRIVE_SLEW_RATE_LIMIT = 1; 
+
+        /** Multiplies joystick and turning input by the specified coefficient */
+        public static double FINE_CONTROL_COEFFICENT = 0.25;
+        
+        /** x and y speed set by the directional pad in meters per second */
+        public static double D_PAD_SPEED = 0.25; // Previously 1
+        
+        /** PID constants used for controlling the turning position of the swerve modules */
+        public static class TURNING_PID_CONTROLLER {
+            public static double KP = 0.325;
+            public static double KI = 0; 
+            public static double KD = 0; 
+        }
+    }
+
+    // Constants of physical attributes of the robot
+    public final static class PhysicalConstants {
+        public static double TRACK_WIDTH = Units.inchesToMeters(21.5); // Y (not sure if left-right or front-back) distance between wheels
+        public static double WHEEL_BASE = Units.inchesToMeters(21.5); // X (not sure if left-right or front-back) distance between wheels
+        
+        /** Diameter in meters */
+        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
+        /** Ratio between motor rotations and wheel rotations */
+        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
+        /** Distance between the two april tags on the AMP in meters*/
+        public static double DIST_AMP_TAGS = 0.43;
+    }
+
     // Constants for the controller and any controller related items
     // (ex. buttons, axis, ect.)
     public final static class ControllerConstants {
@@ -97,7 +156,7 @@ public final class Constants {
         /** Whether or not to accept directional pad input for movement */
         public static boolean DPAD_DRIVE_INPUT = true;
     }
-
+    
     // Constants for the swerve modules
     public final static class SwerveModuleConstants {
         /** Configuration for swerve module one */
@@ -150,65 +209,17 @@ public final class Constants {
         public static int GRYO_ID = 14;
     }
 
-    /** Constants for the kinematics and driving of the swerve system */
-    public final static class SwerveKinematics {
-        /** Distance between wheel positions */
-        public static SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
-            new Translation2d(PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
-            new Translation2d(PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2),
-            new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
-            new Translation2d(-PhysicalConstants.WHEEL_BASE / 2, PhysicalConstants.TRACK_WIDTH / 2));
-
-        /** Multiplied by the value given by the slew rate limiter for turning */
-        public static double TURNING_SPEED_COEFFIECENT = Math.PI; 
-        /** The rate of change limit (units per second) for turning limiter */
-        public static double TURNING_SLEW_RATE_LIMIT = Math.PI; 
-
-        /** The max speed a module can reach while driving ; essentially how fast it can rotate while driving full speed, in meters per second */
-        public static double PHYSICAL_MAX_MODULE_SPEED = 5; // This value should be greater than DRIVE_SPEED_COEFFICENT
-        /** Multiplied by the value given by the slew rate limiter for driving ; basically the top speed reachable*/
-        public static double DRIVE_SPEED_COEFFICENT = 4; // This value should be lower than PHYSICAL_MAX_MODULE_SPEED
-        /** The rate of change limit in units per second for driving limiters (x and y) */
-        public static double DRIVE_SLEW_RATE_LIMIT = 1; 
-
-        /** Multiplies joystick and turning input by the specified coefficient */
-        public static double FINE_CONTROL_COEFFICENT = 0.25;
+    public static class LEDConstants {
+        /** Port that the LED strip is plugged into */
+        public static int ledPort = 0;
+        /** Number of LEDs to iterate through */
+        public static int ledCount = 150;
         
-        /** x and y speed set by the directional pad in meters per second */
-        public static double D_PAD_SPEED = 0.25; // Previously 1
-        
-        /** PID constants used for controlling the turning position of the swerve modules */
-        public static class TURNING_PID_CONTROLLER {
-            public static double KP = 0.325;
-            public static double KI = 0; 
-            public static double KD = 0; 
-        }
+        /** RGB values for black (off) */
+        public static int[] off = { 0, 0, 0 };
+        /** RGB values for red */
+        public static int[] redColor = { 255, 0, 0 };
+        /** RGB values for blue */
+        public static int[] blueColor = { 0, 0, 255 };
     }
-
-    // Constants of physical attributes of the robot
-    public final static class PhysicalConstants {
-        public static double TRACK_WIDTH = Units.inchesToMeters(21.5); // Y (not sure if left-right or front-back) distance between wheels
-        public static double WHEEL_BASE = Units.inchesToMeters(21.5); // X (not sure if left-right or front-back) distance between wheels
-        
-        /** Diameter in meters */
-        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
-        /** Ratio between motor rotations and wheel rotations */
-        public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
-        /** Distance between the two april tags on the AMP in meters*/
-        public static double DIST_AMP_TAGS = 0.43;
-    }
-  
-  public static class LEDConstants {
-    /** Port that the LED strip is plugged into */
-    public static int ledPort = 0;
-    /** Number of LEDs to iterate through */
-    public static int ledCount = 150;
-
-    /** RGB values for black (off) */
-    public static int[] off = { 0, 0, 0 };
-    /** RGB values for red */
-    public static int[] redColor = { 255, 0, 0 };
-    /** RGB values for blue */
-    public static int[] blueColor = { 0, 0, 255 };
-  }
 }

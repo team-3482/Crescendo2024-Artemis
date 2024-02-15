@@ -4,8 +4,6 @@
 
 package frc.robot.utilities;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -50,8 +48,6 @@ public class Logger extends Command {
         swervePublisher.set(swerveSubsystem.getModuleStates());
         swervePosePublisher.set(swerveSubsystem.getPose());
         swerveDesiredStatesPublisher.set(swerveSubsystem.getDesiredStates());
-
-        System.out.println(AutoBuilder.getAllAutoNames());
     }
 
 
