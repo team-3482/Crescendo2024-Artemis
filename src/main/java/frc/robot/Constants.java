@@ -37,7 +37,7 @@ public final class Constants {
                 Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(AMP, new Pose2d(new Translation2d(15, 5.4), Rotation2d.fromDegrees(0))),
+                Map.entry(AMP, new Pose2d(new Translation2d(15.5, 5.4), Rotation2d.fromDegrees(0))), // Previously 15
                 Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             ))
         );
@@ -45,7 +45,7 @@ public final class Constants {
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries( 
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
+                Map.entry(1, new Pose2d(new Translation2d(1,1), new Rotation2d())),
                 Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
                 Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
             )),
@@ -70,7 +70,9 @@ public final class Constants {
 
         /** PID constants for controlling the turning speed during orbits */
         public static class TURNING_SPEED_PID_CONTROLLER {
-            public static double KP = 1;
+            /** Tolerance for the PID controller in degrees */
+            public static double TOLERANCE = 1;
+            public static double KP = 0.5;
             public static double KI = 0;
             public static double KD = 0;
         }

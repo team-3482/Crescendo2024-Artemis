@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -56,12 +57,12 @@ public class RobotContainer {
         
         // Register named commands for pathplanner (do this after subsystem initialization)
         NamedCommands.registerCommand("Pathfind AMP",
-            new PathfindLineUp(swerveSubsystem, AutonConstants.AMP));
+            new BezierToGoalCommand(swerveSubsystem, AutonConstants.AMP));
         NamedCommands.registerCommand("Pathfind SPEAKER",
-            new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
+            new BezierToGoalCommand(swerveSubsystem, AutonConstants.SPEAKER));
 
         // Sets the default command to driving swerve
-        this.swerveSubsystem.setDefaultCommand(new SwerveDrive(
+        this.swerveSubsystem.setDefaultCommand(new SwerveDriveCommand(
             swerveSubsystem,
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
@@ -101,7 +102,7 @@ public class RobotContainer {
         // Cancel all scheduled commands
         driveController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
         // Orbit April-Tag
-        driveController.a().toggleOnTrue(new SwerveOrbit(
+        driveController.a().toggleOnTrue(new SwerveOrbitCommand(
             swerveSubsystem,
             limelightSubsystem, 
             () -> -driveController.getLeftY(),
@@ -115,7 +116,7 @@ public class RobotContainer {
         
         // Operator controller
         // Line up to AMP
-        driveController.x().onTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.AMP));
+        driveController.x().onTrue(new BezierToGoalCommand(swerveSubsystem, AutonConstants.AMP));
         // Line up to SPEAKER
         // driveController.y().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
     }

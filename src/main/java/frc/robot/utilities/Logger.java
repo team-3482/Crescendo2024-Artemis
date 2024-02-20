@@ -49,6 +49,4 @@ public class Logger extends Command {
         swervePosePublisher.set(swerveSubsystem.getPose());
         swerveDesiredStatesPublisher.set(swerveSubsystem.getDesiredStates());
     }
-
-
 }

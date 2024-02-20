@@ -31,7 +31,7 @@ import frc.robot.utilities.SwerveUtilities;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Instance of swerve modules, initalized with specific value
-    private SwerveModule moduleOne = new SwerveModule(
+    private SwerveModuleSubsystem moduleOne = new SwerveModuleSubsystem(
         SwerveModuleConstants.One.DRIVE,
         SwerveModuleConstants.One.TURN,
         SwerveModuleConstants.One.ENCODER,
@@ -40,7 +40,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.One.ABSOLUTE_ENCODER_REVERSED
     );
 
-    private SwerveModule moduleTwo = new SwerveModule(
+    private SwerveModuleSubsystem moduleTwo = new SwerveModuleSubsystem(
         SwerveModuleConstants.Two.DRIVE,
         SwerveModuleConstants.Two.TURN,
         SwerveModuleConstants.Two.ENCODER,
@@ -49,16 +49,16 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.Two.ABSOLUTE_ENCODER_REVERSED
     );
 
-    private SwerveModule moduleThree = new SwerveModule(
+    private SwerveModuleSubsystem moduleThree = new SwerveModuleSubsystem(
         SwerveModuleConstants.Three.DRIVE,
         SwerveModuleConstants.Three.TURN,
         SwerveModuleConstants.Three.ENCODER,
         SwerveModuleConstants.Three.DRIVE_MOTOR_REVERSED,
         SwerveModuleConstants.Three.TURNING_MOTOR_REVERSED,
         SwerveModuleConstants.Three.ABSOLUTE_ENCODER_REVERSED
-    );
+    ); 
 
-    private SwerveModule moduleFour = new SwerveModule(
+    private SwerveModuleSubsystem moduleFour = new SwerveModuleSubsystem(
         SwerveModuleConstants.Four.DRIVE,
         SwerveModuleConstants.Four.TURN,
         SwerveModuleConstants.Four.ENCODER,

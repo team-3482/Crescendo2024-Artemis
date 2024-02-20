@@ -14,7 +14,7 @@ import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 
-public class SwerveModule {
+public class SwerveModuleSubsystem {
     // Instances of the drivng and turning motor for the module
     private CANSparkMax driveMotor;
     private CANSparkMax turningMotor;
@@ -39,7 +39,7 @@ public class SwerveModule {
     * @param turningMotorReversed    - is the turning motor inverted?
     * @param absoluteEncoderReversed - is the turning encoder inverted?
     */
-    public SwerveModule(int driveMotorID, int turningMotorID, int turningEncoderID,
+    public SwerveModuleSubsystem(int driveMotorID, int turningMotorID, int turningEncoderID,
             boolean driveMotorReversed, boolean turningMotorReversed,
             boolean absoluteEncoderReversed) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
