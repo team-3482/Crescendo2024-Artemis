@@ -57,6 +57,8 @@ public final class Constants {
         );
         
     }
+  
+    /** Constants used by the Swerve Orbit Command */
     public final static class OrbitConstants {
         /** Multipies by the chasis speeds to slow down the bot for more control when orbitting */
         public static double ORBIT_SPEED_COEFFIECENT = 0.25; 
@@ -132,7 +134,7 @@ public final class Constants {
         }
     }
 
-    // Constants of physical attributes of the robot
+    /** Constants of physical attributes of the robot */
     public final static class PhysicalConstants {
         public static double TRACK_WIDTH = Units.inchesToMeters(21.5); // Y (not sure if left-right or front-back) distance between wheels
         public static double WHEEL_BASE = Units.inchesToMeters(21.5); // X (not sure if left-right or front-back) distance between wheels
@@ -144,9 +146,8 @@ public final class Constants {
         /** Distance between the two april tags on the AMP in meters*/
         public static double DIST_AMP_TAGS = 0.43;
     }
-
-    // Constants for the controller and any controller related items
-    // (ex. buttons, axis, ect.)
+  
+    /** Constants for the controller and any controller related assignments */
     public final static class ControllerConstants {
         /** DriverStation ID of the driver controller */
         public static int DRIVE_CONTROLLER_ID = 0;
@@ -158,8 +159,21 @@ public final class Constants {
         /** Whether or not to accept directional pad input for movement */
         public static boolean DPAD_DRIVE_INPUT = true;
     }
+  
+    /** Constants used with the LEDSubsystem */
+    public static class LEDConstants {
+        /** Port that the LED strip is plugged into */
+        public static int LED_PORT = 0;
+        /** Number of LEDs to iterate through */
+        public static int LED_COUNT = 150;
+
+        /** RGB values for red */
+        public static int[] RED_COLOR = { 255, 0, 0 };
+        /** RGB values for blue */
+        public static int[] BLUE_COLOR = { 0, 0, 255 };
+    }
     
-    // Constants for the swerve modules
+    /** Constants for the swerve modules */
     public final static class SwerveModuleConstants {
         /** Configuration for swerve module one */
         public final static class One {
@@ -209,19 +223,5 @@ public final class Constants {
         public static String SWERVE_CAN_BUS = "swerve";
         /** ID of the Pigeon2's connection */
         public static int GRYO_ID = 14;
-    }
-
-    public static class LEDConstants {
-        /** Port that the LED strip is plugged into */
-        public static int ledPort = 0;
-        /** Number of LEDs to iterate through */
-        public static int ledCount = 150;
-        
-        /** RGB values for black (off) */
-        public static int[] off = { 0, 0, 0 };
-        /** RGB values for red */
-        public static int[] redColor = { 255, 0, 0 };
-        /** RGB values for blue */
-        public static int[] blueColor = { 0, 0, 255 };
     }
 }
