@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LightState;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -84,9 +86,12 @@ public class SwerveOrbitCommand extends Command {
         Double orbitOffset = OrbitConstants.ORBIT_IDS.get(limelightSubsystem.getID()); 
         // If it isn't tags 3 or 4 or their respective blue tags
         if (orbitOffset == null) {
+            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             swerveSubsystem.stopModules();
             return;
         }
+        LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        
         // Gets the driver's input
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
@@ -177,6 +182,7 @@ public class SwerveOrbitCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.stopModules();
+        LEDSubsystem.getInstance().setLightState(LightState.OFF);
     }
 
     /**
