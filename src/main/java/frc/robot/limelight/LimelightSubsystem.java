@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.limelight;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -16,6 +16,18 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
+
+    // Singleton Design Pattern
+    private static LimelightSubsystem instance;
+    public static LimelightSubsystem getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new LimelightSubsystem();
+        }
+        return instance;
+    }
+
     Field2d limelight_field = new Field2d();
 
     // Shuffleboard

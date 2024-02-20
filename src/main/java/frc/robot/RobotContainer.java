@@ -21,14 +21,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
-import frc.robot.subsystems.*;
-import frc.robot.commands.*;
+import frc.robot.swerve.BezierToGoalCommand;
+import frc.robot.swerve.SwerveDriveCommand;
+import frc.robot.swerve.SwerveOrbitCommand;
+import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.limelight.LimelightSubsystem;
 
 public class RobotContainer {
     // Singleton design pattern
-    public static RobotContainer instance;
-    private final SendableChooser<Command> autoChooser;
-
+    private static RobotContainer instance;
     /**
     * Gets the instance of the RobotContainer
     * 
@@ -41,9 +42,8 @@ public class RobotContainer {
         return instance;
     }
 
-    // Instance of Subsystems
-    private SwerveSubsystem swerveSubsystem;
-    private LimelightSubsystem limelightSubsystem;
+    private final SendableChooser<Command> autoChooser;
+
     // Instance of the controller used to drive the robot
     private CommandXboxController driveController;
 
@@ -51,19 +51,16 @@ public class RobotContainer {
     * Creates an instance of the robot controller
     */
     public RobotContainer() {
-        this.limelightSubsystem = new LimelightSubsystem();
-        this.swerveSubsystem = new SwerveSubsystem(limelightSubsystem);
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         
         // Register named commands for pathplanner (do this after subsystem initialization)
         NamedCommands.registerCommand("Pathfind AMP",
-            new BezierToGoalCommand(swerveSubsystem, AutonConstants.AMP));
+            new BezierToGoalCommand(AutonConstants.AMP));
         NamedCommands.registerCommand("Pathfind SPEAKER",
-            new BezierToGoalCommand(swerveSubsystem, AutonConstants.SPEAKER));
+            new BezierToGoalCommand(AutonConstants.SPEAKER));
 
         // Sets the default command to driving swerve
-        this.swerveSubsystem.setDefaultCommand(new SwerveDriveCommand(
-            swerveSubsystem,
+        SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> -driveController.getRightX(),
@@ -89,22 +86,20 @@ public class RobotContainer {
     private void configureBindings() {
         // Driver controller
         // Zeroing functions
-        driveController.rightBumper().onTrue(Commands.runOnce(() -> swerveSubsystem.zeroHeading()));
+        driveController.rightBumper().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         // Reset odometry translation to the position that the limelight sees.
         // Does not reset rotation, which is tracked by the gyro.
         driveController.leftBumper().onTrue(Commands.runOnce(() -> {
-            Translation2d translation = limelightSubsystem.getBotpose().getTranslation();
+            Translation2d translation = LimelightSubsystem.getInstance().getBotpose().getTranslation();
             if (!translation.equals(new Translation2d(0, 0))) {
-                swerveSubsystem.resetOdometry(new Pose2d(
-                    translation, Rotation2d.fromDegrees(swerveSubsystem.getHeading())));
+                SwerveSubsystem.getInstance().resetOdometry(new Pose2d(
+                    translation, Rotation2d.fromDegrees(SwerveSubsystem.getInstance().getHeading())));
             }
         }));
         // Cancel all scheduled commands
         driveController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
         // Orbit April-Tag
         driveController.a().toggleOnTrue(new SwerveOrbitCommand(
-            swerveSubsystem,
-            limelightSubsystem, 
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
@@ -116,9 +111,9 @@ public class RobotContainer {
         
         // Operator controller
         // Line up to AMP
-        driveController.x().onTrue(new BezierToGoalCommand(swerveSubsystem, AutonConstants.AMP));
+        driveController.x().onTrue(new BezierToGoalCommand(AutonConstants.AMP));
         // Line up to SPEAKER
-        // driveController.y().whileTrue(new PathfindLineUp(swerveSubsystem, AutonConstants.SPEAKER));
+        // driveController.y().whileTrue(new PathfindLineUp(SwerveSubsystem.getInstance(), AutonConstants.SPEAKER));
     }
   
     /**

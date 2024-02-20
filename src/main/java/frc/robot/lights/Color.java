@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.lights;
 
 public class Color{
         private int red;

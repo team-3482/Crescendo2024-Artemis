@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -26,12 +26,25 @@ import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.utilities.Logger;
 import frc.robot.utilities.SwerveUtilities;
 
 public class SwerveSubsystem extends SubsystemBase {
+
+    // Singleton Design Pattern
+    private static SwerveSubsystem instance;
+    public static SwerveSubsystem getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new SwerveSubsystem();
+        }
+        return instance;
+    }
+
     // Instance of swerve modules, initalized with specific value
-    private SwerveModuleSubsystem moduleOne = new SwerveModuleSubsystem(
+    private SwerveModule moduleOne = new SwerveModule(
         SwerveModuleConstants.One.DRIVE,
         SwerveModuleConstants.One.TURN,
         SwerveModuleConstants.One.ENCODER,
@@ -40,7 +53,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.One.ABSOLUTE_ENCODER_REVERSED
     );
 
-    private SwerveModuleSubsystem moduleTwo = new SwerveModuleSubsystem(
+    private SwerveModule moduleTwo = new SwerveModule(
         SwerveModuleConstants.Two.DRIVE,
         SwerveModuleConstants.Two.TURN,
         SwerveModuleConstants.Two.ENCODER,
@@ -49,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.Two.ABSOLUTE_ENCODER_REVERSED
     );
 
-    private SwerveModuleSubsystem moduleThree = new SwerveModuleSubsystem(
+    private SwerveModule moduleThree = new SwerveModule(
         SwerveModuleConstants.Three.DRIVE,
         SwerveModuleConstants.Three.TURN,
         SwerveModuleConstants.Three.ENCODER,
@@ -58,7 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModuleConstants.Three.ABSOLUTE_ENCODER_REVERSED
     ); 
 
-    private SwerveModuleSubsystem moduleFour = new SwerveModuleSubsystem(
+    private SwerveModule moduleFour = new SwerveModule(
         SwerveModuleConstants.Four.DRIVE,
         SwerveModuleConstants.Four.TURN,
         SwerveModuleConstants.Four.ENCODER,
@@ -77,9 +90,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // Initialize a field to track of robot position in SmartDashboard
     private Field2d swerve_field = new Field2d();
 
-    // Used to update odometry with vision measurements
-    private LimelightSubsystem limelightSubsystem;
-
     // Shuffleboard
     private GenericEntry SB_GYRO = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("Robot Heading", 0)
@@ -94,9 +104,8 @@ public class SwerveSubsystem extends SubsystemBase {
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
     */
-    public SwerveSubsystem(LimelightSubsystem limelightSubsystem) {
-        this.limelightSubsystem = limelightSubsystem;
-        this.logger = new Logger(this);
+    private SwerveSubsystem() {
+        this.logger = new Logger();
 
         AutoBuilder.configureHolonomic(
             this::getPose,
@@ -232,12 +241,12 @@ public class SwerveSubsystem extends SubsystemBase {
         this.odometer.update(getRotation2d(), getModulePositions());
         this.logger.execute();
         
-        if (this.limelightSubsystem.getID() > 0) {
-            Pose2d botpose = this.limelightSubsystem.getBotpose();
+        if (LimelightSubsystem.getInstance().getID() > 0) {
+            Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
             Pose2d relative = botpose.relativeTo(getPose());
             if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
                 && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
-                this.odometer.addVisionMeasurement(this.limelightSubsystem.getBotpose(), Timer.getFPGATimestamp());
+                this.odometer.addVisionMeasurement(LimelightSubsystem.getInstance().getBotpose(), Timer.getFPGATimestamp());
             }
         }
         this.swerve_field.setRobotPose(getPose());

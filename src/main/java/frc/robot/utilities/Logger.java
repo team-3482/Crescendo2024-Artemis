@@ -10,13 +10,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.swerve.SwerveSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class Logger extends Command {
-
-    //Instance of swerve subsyetm.
-    private SwerveSubsystem swerveSubsystem;
     
     //Publishers
     private StructArrayPublisher<SwerveModuleState> swervePublisher = NetworkTableInstance.getDefault()
@@ -37,16 +34,14 @@ public class Logger extends Command {
     /*
      * Creates and initializes a new logger object
      */
-    public Logger(SwerveSubsystem swerveSubsystem) {
-        this.swerveSubsystem = swerveSubsystem;
-    }
+    public Logger() { }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         // Publishes the data to the network table
-        swervePublisher.set(swerveSubsystem.getModuleStates());
-        swervePosePublisher.set(swerveSubsystem.getPose());
-        swerveDesiredStatesPublisher.set(swerveSubsystem.getDesiredStates());
+        swervePublisher.set(SwerveSubsystem.getInstance().getModuleStates());
+        swervePosePublisher.set(SwerveSubsystem.getInstance().getPose());
+        swerveDesiredStatesPublisher.set(SwerveSubsystem.getInstance().getDesiredStates());
     }
 }

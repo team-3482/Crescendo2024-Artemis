@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.swerve;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -15,15 +15,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
-import frc.robot.subsystems.LEDSubsystem;
-import frc.robot.subsystems.LEDSubsystem.LightState;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.lights.LEDSubsystem;
+import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.limelight.LimelightSubsystem;
 
 public class SwerveOrbitCommand extends Command {
-    // Instance of the subsystems
-    private SwerveSubsystem swerveSubsystem;
-    private LimelightSubsystem limelightSubsystem;
     // Instances of suppliers that will gather the inputs from the controller
     private final Supplier<Double> xSpeedFunction;
     private final Supplier<Double> ySpeedFunction;
@@ -51,13 +47,11 @@ public class SwerveOrbitCommand extends Command {
     * @param fieldOrientedFunction - function that will return if the driver wants
     *                              to be field Oriented or robot oriented
     */
-    public SwerveOrbitCommand(SwerveSubsystem swerveSubsystem, LimelightSubsystem limelightSubsystem,
+    public SwerveOrbitCommand(
         Supplier<Double> xSpeedFunction, Supplier<Double> ySpeedFunction,
         Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> fineControlFunction,
         boolean enableDPadInput, Function<Integer, Boolean> povFunction) {
         
-        this.swerveSubsystem = swerveSubsystem;
-        this.limelightSubsystem = limelightSubsystem;
         this.xSpeedFunction = xSpeedFunction;
         this.ySpeedFunction = ySpeedFunction;
         this.fieldOrientedFunction = fieldOrientedFunction;
@@ -77,17 +71,17 @@ public class SwerveOrbitCommand extends Command {
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
         // Do not require limelight subsystem because it is getter functions only
-        this.addRequirements(this.swerveSubsystem); 
+        this.addRequirements(SwerveSubsystem.getInstance()); 
     }
 
     @Override
     public void execute() {
         // Double so it can be null if the ID cannot be orbited
-        Double orbitOffset = OrbitConstants.ORBIT_IDS.get(limelightSubsystem.getID()); 
+        Double orbitOffset = OrbitConstants.ORBIT_IDS.get(LimelightSubsystem.getInstance().getID()); 
         // If it isn't tags 3 or 4 or their respective blue tags
         if (orbitOffset == null) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-            swerveSubsystem.stopModules();
+            SwerveSubsystem.getInstance().stopModules();
             return;
         }
         LEDSubsystem.getInstance().setLightState(LightState.OFF);
@@ -98,10 +92,10 @@ public class SwerveOrbitCommand extends Command {
         boolean fineControl = fineControlFunction.get();
         
         // Orbit calculations
-        double[] botPose_TargetSpace = limelightSubsystem.getBotPose_TargetSpace();
+        double[] botPose_TargetSpace = LimelightSubsystem.getInstance().getBotPose_TargetSpace();
         double angleGoalRad = Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]); // +/- orbitOffset for [0]
         double turningSpeed = rotationPidController
-            .calculate(Units.degreesToRadians(swerveSubsystem.getHeading()), angleGoalRad);
+            .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
         System.out.println("Turning speed " + turningSpeed);
         
         // Checks for controller deadband in case joysticks do not return perfectly to origin
@@ -121,7 +115,7 @@ public class SwerveOrbitCommand extends Command {
         if (this.enableDPadInput && (dPadSpeeds[0] != 0 || dPadSpeeds[1] != 0)) {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    dPadSpeeds[0], dPadSpeeds[1], 0, swerveSubsystem.getRotation2d());
+                    dPadSpeeds[0], dPadSpeeds[1], 0, SwerveSubsystem.getInstance().getRotation2d());
             }
             else {
                 chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], 0);
@@ -130,7 +124,7 @@ public class SwerveOrbitCommand extends Command {
         else {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+                    xSpeed, ySpeed, turningSpeed, SwerveSubsystem.getInstance().getRotation2d());
             }
             else {
                 chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
@@ -144,7 +138,7 @@ public class SwerveOrbitCommand extends Command {
         
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
-        swerveSubsystem.setChassisSpeeds(chassisSpeeds);
+        SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
     /**
@@ -181,7 +175,7 @@ public class SwerveOrbitCommand extends Command {
     */
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        SwerveSubsystem.getInstance().stopModules();
         LEDSubsystem.getInstance().setLightState(LightState.OFF);
     }
 

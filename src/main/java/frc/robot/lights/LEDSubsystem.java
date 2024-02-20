@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.lights;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
@@ -14,7 +14,7 @@ public class LEDSubsystem extends SubsystemBase {
     private static LEDSubsystem instance;
     public static LEDSubsystem getInstance() {
         if(instance == null) {
-            new LEDSubsystem();
+            instance = new LEDSubsystem();
         }
         return instance;
     }
@@ -27,9 +27,7 @@ public class LEDSubsystem extends SubsystemBase {
     /**
      * Creates and initializes a new LEDSubsystem
      */
-    public LEDSubsystem() {
-        instance = this;
-
+    private LEDSubsystem() {
         underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT,LEDConstants.UNDERGLOW_LED_COUNT);
         this.lastLedUpdate = Timer.getFPGATimestamp();
         this.state = LightState.OFF;

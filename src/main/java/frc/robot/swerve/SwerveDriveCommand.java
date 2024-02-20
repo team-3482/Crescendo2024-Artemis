@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.swerve;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -12,12 +12,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.SwerveKinematics;
-import frc.robot.subsystems.SwerveSubsystem;
 
 public class SwerveDriveCommand extends Command {
 
-    // Instance of the swerve subsystem
-    private SwerveSubsystem swerveSubsystem;
     // Instances of suppliers that will gather the inputs from the controller
     private final Supplier<Double> xSpeedFunction;
     private final Supplier<Double> ySpeedFunction;
@@ -45,12 +42,11 @@ public class SwerveDriveCommand extends Command {
     * @param fieldOrientedFunction - function that will return if the driver wants
     *                              to be field Oriented or robot oriented
     */
-    public SwerveDriveCommand(SwerveSubsystem swerveSubsystem, Supplier<Double> xSpeedFunction,
+    public SwerveDriveCommand(Supplier<Double> xSpeedFunction,
         Supplier<Double> ySpeedFunction, Supplier<Double> turningSpeedFunction,
         Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> fineControlFunction, 
         boolean enableDPadInput, Function<Integer, Boolean> povFunction) {
 
-        this.swerveSubsystem = swerveSubsystem;
         this.xSpeedFunction = xSpeedFunction;
         this.ySpeedFunction = ySpeedFunction;
         this.turningSpeedFunction = turningSpeedFunction;
@@ -65,7 +61,7 @@ public class SwerveDriveCommand extends Command {
 
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
-        this.addRequirements(this.swerveSubsystem);
+        this.addRequirements(SwerveSubsystem.getInstance());
     }
 
     @Override
@@ -92,7 +88,7 @@ public class SwerveDriveCommand extends Command {
         if (this.enableDPadInput && (dPadSpeeds[0] != 0 || dPadSpeeds[1] != 0)) {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    dPadSpeeds[0], dPadSpeeds[1], 0, swerveSubsystem.getRotation2d());
+                    dPadSpeeds[0], dPadSpeeds[1], 0, SwerveSubsystem.getInstance().getRotation2d());
             }
             else {
                 chassisSpeeds = new ChassisSpeeds(dPadSpeeds[0], dPadSpeeds[1], 0);
@@ -101,7 +97,7 @@ public class SwerveDriveCommand extends Command {
         else {
             if (fieldOrientedFunction.get()) {
                 chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
+                    xSpeed, ySpeed, turningSpeed, SwerveSubsystem.getInstance().getRotation2d());
             }
             else {
                 chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
@@ -114,7 +110,7 @@ public class SwerveDriveCommand extends Command {
                                             chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent);
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
-        swerveSubsystem.setChassisSpeeds(chassisSpeeds);
+        SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
     /**
@@ -151,7 +147,7 @@ public class SwerveDriveCommand extends Command {
     */
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        SwerveSubsystem.getInstance().stopModules();
     }
 
     /**
