@@ -18,6 +18,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LightState;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** A pathfinding command that uses limelight and swerve subsystems. */
@@ -30,6 +32,7 @@ public class BezierToGoalCommand extends Command {
     
     private final SwerveSubsystem swerveSubsystem;
     private Character goal;
+    private Command bezierPath;
 
     /**
     * Creates a new PathfindAprilTagCommand.
@@ -49,7 +52,8 @@ public class BezierToGoalCommand extends Command {
     @Override
     public void initialize() {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) return;
+        if (!alliance.isPresent() || bezierPath != null) return;
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
 
         // The rotation component in these poses represents the direction of travel
         Pose2d startPos = new Pose2d(swerveSubsystem.getPose().getTranslation(), new Rotation2d());
@@ -66,9 +70,8 @@ public class BezierToGoalCommand extends Command {
         // Prevent this path from being flipped on the red alliance, since the given positions are already correct
         path.preventFlipping = true;
     
-        AutoBuilder.followPath(path).schedule();
-
-        this.cancel();
+        this.bezierPath = AutoBuilder.followPath(path);
+        this.bezierPath.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -77,11 +80,19 @@ public class BezierToGoalCommand extends Command {
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+        }
+        else {
+            LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        }
+        this.bezierPath = null;
+    }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return true;
+        return this.bezierPath.isFinished();
     }
 }
