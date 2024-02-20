@@ -30,7 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
     public LEDSubsystem() {
         instance = this;
 
-        underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_COUNT,LEDConstants.UNDERGLOW_LED_COUNT);
+        underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT,LEDConstants.UNDERGLOW_LED_COUNT);
         this.lastLedUpdate = Timer.getFPGATimestamp();
         this.state = LightState.OFF;
     }
