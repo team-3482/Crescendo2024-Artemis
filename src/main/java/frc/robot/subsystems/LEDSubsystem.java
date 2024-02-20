@@ -7,8 +7,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -20,11 +18,8 @@ public class LEDSubsystem extends SubsystemBase {
         }
         return instance;
     }
-
-    // LED
-    private static AddressableLED led;
-    // LED Buffer
-    private static AddressableLEDBuffer ledBuffer;
+    
+    private static LEDStrip underGlowStrip;
 
     private double lastLedUpdate = 0.0;
     private LightState state;
@@ -35,12 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
     public LEDSubsystem() {
         instance = this;
 
-        ledBuffer = new AddressableLEDBuffer(LEDConstants.LED_COUNT);
-
-        led = new AddressableLED(LEDConstants.LED_PORT);
-        led.setLength(ledBuffer.getLength());
-        led.start();
-
+        underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_COUNT,LEDConstants.UNDERGLOW_LED_COUNT);
         this.lastLedUpdate = Timer.getFPGATimestamp();
         this.state = LightState.OFF;
     }
@@ -56,13 +46,8 @@ public class LEDSubsystem extends SubsystemBase {
             }
         }
         Color color = this.state.getColor();
-        
-        // Assign Colors
-        for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, color.getRed(), color.getGreen(), color.getBlue());
-        }
-
-        led.setData(ledBuffer);
+      
+        underGlowStrip.setColor(color);
     };
 
     /**
@@ -115,52 +100,6 @@ public class LEDSubsystem extends SubsystemBase {
                 this.currentColorIndex = -1; // set to -1 to ensure doesnt skip first color
             }
             this.currentColorIndex++;
-        }
-    }
-
-    private static class Color{
-        private int red;
-        private int green;
-        private int blue;
-    
-        /**
-         * Creates and initializes a new Color object 
-         * @param r - red (0 - 255)
-         * @param g - green (0 - 255)
-         * @param b - blue (0 - 255)
-         */
-        public Color(int r, int g, int b) {
-            this.red = r;
-            this.green = g;
-            this.blue = b;
-        }
-        /**
-         * Creates and returns a Color object with no color values
-         * @return Color with 0 color values
-         */
-        public static Color off() {
-            return new Color(0,0,0);
-        }
-        /**
-         * Gets the red value of the color
-         * @return red value
-         */
-        public int getRed() {
-            return this.red;
-        }
-        /**
-         * Gets the green value of the color
-         * @return green value
-         */
-        public int getGreen() {
-            return this.green;
-        }
-        /**
-         * Gets the blue value of the color
-         * @return blue value
-         */
-        public int getBlue() {
-            return this.blue;
         }
     }
 }

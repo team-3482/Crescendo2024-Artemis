@@ -163,14 +163,9 @@ public final class Constants {
     /** Constants used with the LEDSubsystem */
     public static class LEDConstants {
         /** Port that the LED strip is plugged into */
-        public static int LED_PORT = 0;
+        public static int UNDERGLOW_LED_PORT = 9;
         /** Number of LEDs to iterate through */
-        public static int LED_COUNT = 150;
-
-        /** RGB values for red */
-        public static int[] RED_COLOR = { 255, 0, 0 };
-        /** RGB values for blue */
-        public static int[] BLUE_COLOR = { 0, 0, 255 };
+        public static int UNDERGLOW_LED_COUNT = 150;
     }
     
     /** Constants for the swerve modules */
