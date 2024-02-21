@@ -34,7 +34,7 @@ public class BezierToGoalCommand extends Command {
     private Command bezierPath;
 
     /**
-    * Creates a new PathfindAprilTagCommand.
+    * Creates a new BezierToGoalCommand.
     *
     * @param swerveSubsystem The swerve subsystem used by this command.
     * @param goal The location to line up at

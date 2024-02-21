@@ -99,7 +99,6 @@ public class SwerveOrbitCommand extends Command {
         double angleGoalRad = - Math.atan2(difference.getX(), difference.getY());
         double turningSpeed = rotationPidController
             .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
-        System.out.println("Turning speed " + turningSpeed);
         
         // Checks for controller deadband in case joysticks do not return perfectly to origin
         xSpeed = Math.abs(xSpeed) > ControllerConstants.DEADBAND ? xSpeed : 0.0;
@@ -108,9 +107,7 @@ public class SwerveOrbitCommand extends Command {
         // Limits the input to ensure smooth and depending on if fine control is active
         xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
         ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
-        turningSpeed = turningLimiter.calculate(turningSpeed)
-            * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
-        System.out.println("Turning speed limited " + turningSpeed);
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         
         // Creates the chassis speeds from the driver input depending on current orientation
         ChassisSpeeds chassisSpeeds;
