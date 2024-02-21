@@ -4,20 +4,22 @@
 
 package frc.robot.swerve;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
-import frc.robot.limelight.LimelightSubsystem;
 
 public class SwerveOrbitCommand extends Command {
     // Instances of suppliers that will gather the inputs from the controller
@@ -77,14 +79,13 @@ public class SwerveOrbitCommand extends Command {
     @Override
     public void execute() {
         // Double so it can be null if the ID cannot be orbited
-        Double orbitOffset = OrbitConstants.ORBIT_IDS.get(LimelightSubsystem.getInstance().getID()); 
-        // If it isn't tags 3 or 4 or their respective blue tags
-        if (orbitOffset == null) {
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        if (!alliance.isPresent()) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-            SwerveSubsystem.getInstance().stopModules();
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        Translation2d point = OrbitConstants.ORBIT_POINT.get(alliance.get());
         
         // Gets the driver's input
         double xSpeed = xSpeedFunction.get();
@@ -92,8 +93,10 @@ public class SwerveOrbitCommand extends Command {
         boolean fineControl = fineControlFunction.get();
         
         // Orbit calculations
-        double[] botPose_TargetSpace = LimelightSubsystem.getInstance().getBotPose_TargetSpace();
-        double angleGoalRad = Math.atan2(botPose_TargetSpace[0], -botPose_TargetSpace[2]); // +/- orbitOffset for [0]
+        Translation2d difference = point.minus(SwerveSubsystem.getInstance().getPose().getTranslation());
+        
+        // y is negative when the angle has to be positive and vice versa so it has to be reversed
+        double angleGoalRad = - Math.atan2(difference.getX(), difference.getY());
         double turningSpeed = rotationPidController
             .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
         System.out.println("Turning speed " + turningSpeed);
@@ -106,7 +109,7 @@ public class SwerveOrbitCommand extends Command {
         xSpeed = xLimiter.calculate(xSpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
         ySpeed = yLimiter.calculate(ySpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
         turningSpeed = turningLimiter.calculate(turningSpeed)
-        * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+            * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         System.out.println("Turning speed limited " + turningSpeed);
         
         // Creates the chassis speeds from the driver input depending on current orientation

@@ -23,22 +23,22 @@ public final class Constants {
     /** Values used for running autonomous code */
     public final static class AutonConstants {
         // These are used for on-the-fly paths
-        public static double MAX_LINEAR_VELOCITY =  1;
-        public static double MAX_LINEAR_ACCELERATION = 1;
-        public static double MAX_ANGULAR_VELOCITY = Math.PI / 2;
-        public static double MAX_ANGULAR_ACCELERATION = Math.PI / 2;
+        public static double MAX_LINEAR_VELOCITY = SwerveKinematics.DRIVE_SPEED_COEFFICENT; // 1
+        public static double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT; // 1
+        public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT; // Math.PI / 2
+        public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT; // Math.PI / 2
         
         public static char AMP = 'a';
         public static char SPEAKER = 's';
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
-                Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
+                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(AMP, new Pose2d(new Translation2d(15.5, 5.4), Rotation2d.fromDegrees(0))), // Previously 15
-                Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(15.5, 5.4), Rotation2d.fromDegrees(0))), // Previously 15
+                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             ))
         );
         
@@ -79,12 +79,14 @@ public final class Constants {
             public static double KD = 0;
         }
 
-        /** Tag IDs acceptable for orbit (keys) and the x offset needed for them in meters (values) */
-        public static Map<Integer, Double> ORBIT_IDS = Map.ofEntries(
-            Map.entry(4, 0.0), // Orbit Tag 4
-            Map.entry(3, PhysicalConstants.DIST_AMP_TAGS), // Orbit Tag 4
-            Map.entry(7, 0.0), // Orbit Tag 7
-            Map.entry(8, -PhysicalConstants.DIST_AMP_TAGS) // Orbit Tag 7
+        /** Position in space to orbit (SPEAKER) */
+        public static Map<DriverStation.Alliance, Translation2d> ORBIT_POINT = Map.ofEntries( 
+            Map.entry(DriverStation.Alliance.Red, 
+                new Translation2d(16.5, 5.55)
+            ),
+            Map.entry(DriverStation.Alliance.Blue, 
+                new Translation2d(0, 5.55)
+            )
         );
     }
     
@@ -143,8 +145,6 @@ public final class Constants {
         public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
         /** Ratio between motor rotations and wheel rotations */
         public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
-        /** Distance between the two april tags on the AMP in meters*/
-        public static double DIST_AMP_TAGS = 0.43;
     }
   
     /** Constants for the controller and any controller related assignments */

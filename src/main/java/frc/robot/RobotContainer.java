@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.lights.LEDSubsystem;
+import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.BezierToGoalCommand;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
@@ -97,7 +99,10 @@ public class RobotContainer {
             }
         }));
         // Cancel all scheduled commands
-        driveController.b().onTrue(Commands.runOnce(() -> CommandScheduler.getInstance().cancelAll()));
+        driveController.b().onTrue(Commands.runOnce(() -> {
+            CommandScheduler.getInstance().cancelAll();
+            LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        }));
         // Orbit April-Tag
         driveController.a().toggleOnTrue(new SwerveOrbitCommand(
             () -> -driveController.getLeftY(),
@@ -110,10 +115,10 @@ public class RobotContainer {
             ));
         
         // Operator controller
-        // Line up to AMP
-        driveController.x().onTrue(new BezierToGoalCommand(AutonConstants.AMP));
         // Line up to SPEAKER
-        // driveController.y().whileTrue(new PathfindLineUp(SwerveSubsystem.getInstance(), AutonConstants.SPEAKER));
+        driveController.x().onTrue(new BezierToGoalCommand(AutonConstants.SPEAKER));
+        // Line up to AMP
+        // driveController.y().whileTrue(new PathfindLineUp(SwerveSubsystem.getInstance(), AutonConstants.AMP));
     }
   
     /**

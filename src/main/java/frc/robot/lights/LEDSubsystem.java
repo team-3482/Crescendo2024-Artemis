@@ -58,7 +58,7 @@ public class LEDSubsystem extends SubsystemBase {
     
     public enum LightState { 
         OFF (Double.POSITIVE_INFINITY, Color.off()),
-        WARNING (0.2, new Color(255, 0, 0)),
+        WARNING (0.2, new Color(255, 0, 0), Color.off()),
         
         SOLID_GREEN (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
         SOLID_BLUE (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
@@ -70,9 +70,7 @@ public class LEDSubsystem extends SubsystemBase {
         
         Color[] colors;
         double interval;
-        int currentColorIndex;
-        int currentPixelOffset;
-        /**
+        int currentColorIndex;        /**
          * @param interval
          * @param blendMode
          * @param colors
@@ -81,7 +79,6 @@ public class LEDSubsystem extends SubsystemBase {
             this.colors = colors;
             this.interval = interval;
             this.currentColorIndex = 0;
-            this.currentPixelOffset = 0;
         }
         /**
          * Gets the current color from array

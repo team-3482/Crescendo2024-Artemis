@@ -54,14 +54,16 @@ public class BezierToGoalCommand extends Command {
 
         // The rotation component in these poses represents the direction of travel
         Pose2d startPos = new Pose2d(SwerveSubsystem.getInstance().getPose().getTranslation(), new Rotation2d());
-        Pose2d endPos = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
+        Pose2d endPos = new Pose2d(
+            AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal).getTranslation(),
+            new Rotation2d());
         
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
 
         PathPlannerPath path = new PathPlannerPath(
             bezierPoints,
             this.CONSTRAINTS,
-            new GoalEndState(0, new Rotation2d())
+            new GoalEndState(0, endPos.getRotation())
         );
     
         // Prevent this path from being flipped on the red alliance, since the given positions are already correct
@@ -69,6 +71,8 @@ public class BezierToGoalCommand extends Command {
     
         this.bezierPath = AutoBuilder.followPath(path);
         this.bezierPath.schedule();
+        
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -90,6 +94,9 @@ public class BezierToGoalCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.bezierPath.isFinished();
+        if (this.bezierPath != null) {
+            return this.bezierPath.isFinished();
+        }
+        return false;
     }
 }
