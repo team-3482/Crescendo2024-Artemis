@@ -23,10 +23,10 @@ public final class Constants {
     /** Values used for running autonomous code */
     public final static class AutonConstants {
         // These are used for on-the-fly paths
-        public static double MAX_LINEAR_VELOCITY = SwerveKinematics.DRIVE_SPEED_COEFFICENT; // 1
-        public static double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT; // 1
-        public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT; // Math.PI / 2
-        public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT; // Math.PI / 2
+        public static double MAX_LINEAR_VELOCITY = SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        public static double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
+        public static double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        public static double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT / 3;
         
         // This should be an enum
         public static char AMP = 'a';
@@ -62,7 +62,7 @@ public final class Constants {
     /** Constants used by the Swerve Orbit Command */
     public final static class OrbitConstants {
         /** Multipies by the chasis speeds to slow down the bot for more control when orbitting */
-        public static double ORBIT_SPEED_COEFFIECENT = 0.25; 
+        public static double ORBIT_SPEED_COEFFIECENT = 0.25;
         /** Multipies by the chasis speeds to slow down the bot for more control when orbitting and using fine control */
         public static double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = 0.125; 
 
@@ -74,8 +74,8 @@ public final class Constants {
         /** PID constants for controlling the turning speed during orbits */
         public static class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static double TOLERANCE = 2.5;
-            public static double KP = 0.5;
+            public static double TOLERANCE = 0.5;
+            public static double KP = 0.55;
             public static double KI = 0;
             public static double KD = 0;
         }

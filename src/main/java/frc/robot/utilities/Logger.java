@@ -34,7 +34,7 @@ public class Logger extends Command {
     /*
      * Creates and initializes a new logger object
      */
-    public Logger() { }
+    public Logger() {}
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override

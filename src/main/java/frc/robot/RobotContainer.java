@@ -104,8 +104,7 @@ public class RobotContainer {
         
         // Operator controller
         // Line up to SPEAKER
-        driveController.x().onTrue(new BezierToGoalCommand(AutonConstants.SPEAKER));
-        driveController.y().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
+        driveController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
         // Line up to AMP
         // driveController.y().whileTrue(new PathfindLineUp(SwerveSubsystem.getInstance(), AutonConstants.AMP));
     }

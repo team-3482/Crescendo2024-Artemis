@@ -50,8 +50,8 @@ public class PathfindToGoalCommand extends Command {
             return;
         }
         Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
-    
-        this.path = AutoBuilder.pathfindToPose(targetPose, CONSTRAINTS);
+        
+        this.path = AutoBuilder.pathfindToPose(targetPose, CONSTRAINTS, 0, 0.1);
         this.path.schedule();
     }
 
