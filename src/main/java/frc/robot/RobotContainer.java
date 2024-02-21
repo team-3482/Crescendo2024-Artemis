@@ -22,6 +22,7 @@ import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.BezierToGoalCommand;
+import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveDriveCommand;
@@ -117,6 +118,7 @@ public class RobotContainer {
         // Operator controller
         // Line up to SPEAKER
         driveController.x().onTrue(new BezierToGoalCommand(AutonConstants.SPEAKER));
+        driveController.y().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
         // Line up to AMP
         // driveController.y().whileTrue(new PathfindLineUp(SwerveSubsystem.getInstance(), AutonConstants.AMP));
     }
