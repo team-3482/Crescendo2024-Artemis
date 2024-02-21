@@ -19,10 +19,8 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // Singleton Design Pattern
     private static LimelightSubsystem instance;
-    public static LimelightSubsystem getInstance()
-    {
-        if(instance == null)
-        {
+    public static LimelightSubsystem getInstance() {
+        if(instance == null) {
             instance = new LimelightSubsystem();
         }
         return instance;
@@ -101,10 +99,6 @@ public class LimelightSubsystem extends SubsystemBase {
      * @return botpose
      */
     public Pose2d getBotpose() {
-        // var alliance = DriverStation.getAlliance();
-        // if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
-        //     return LimelightHelpers.getBotPose2d_wpiRed(LimelightConstants.FRONT_LIMELIGHT);
-        // }
         return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.FRONT_LIMELIGHT);
     }
 
@@ -116,16 +110,6 @@ public class LimelightSubsystem extends SubsystemBase {
     public double[] getBotPose_TargetSpace() {
         return LimelightHelpers.getBotPose_TargetSpace(LimelightConstants.FRONT_LIMELIGHT);
     }
-
-    // /**
-     // * Gets the angle the robot needs to have to face the current tag
-     // * 
-     // * @return Rotation2d for the angle
-     // */
-    // public Rotation2d getFacingAngle() {
-        // double[] botpose_targetspace = getBotPoseTargetSpace();
-        // return new Rotation2d(Math.atan2(botpose_targetspace[0], -botpose_targetspace[2]));
-    // }
     
     @Override
     public void periodic() {
