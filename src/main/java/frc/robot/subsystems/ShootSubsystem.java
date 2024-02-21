@@ -4,43 +4,42 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShootSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public ShootSubsystem() {}
-  
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  private static CANSparkFlex topMotor = new CANSparkFlex(ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+  private static CANSparkFlex bottomMotor = new CANSparkFlex(ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
+  private static CANSparkFlex feederMotor = new CANSparkFlex(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushless);
+
+  private double shooterSpeed, feederSpeed;
+
+  public ShootSubsystem() {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
+   * Sets the speed for the motors on the shooter
+   * 
+   * @param shooterSpeed the speed for the shooter motors.
+   * @param feederSpeed  the speed for the feeder motor.
    */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  public void SetShooterMotors(double shooterSpeed, double feederSpeed) {
+    this.shooterSpeed = shooterSpeed;
+    this.feederSpeed = feederSpeed;
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    topMotor.set(shooterSpeed);
+    bottomMotor.set(-shooterSpeed);
+    feederMotor.set(-feederSpeed);
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+    SmartDashboard.putNumber("Top Motor RPM", topMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Bottom Motor RPM", bottomMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Feeder Motor RPM", feederMotor.getEncoder().getVelocity());
   }
 }

@@ -21,11 +21,19 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class ShooterConstants {
+    public static final int TOP_MOTOR_ID = 12;
+    public static final int BOTTOM_MOTOR_ID = 11;
+    public static final int FEEDER_MOTOR_ID = 13;
+    public static final double SHOOTER_SPEED = 0.66;
+    public static final double FEEDER_SPEED = 0.20;
+  }
+
   public static class IntakeConstants {
-    public static final int topShooterMotorId = 12;
-    public static final int bottomShooterMotorId = 11;
-    public static final int feederShooterMotorId = 13;
-    public static final double shooterSpeed = 0.66;
-    public static final double feederSpeed = 0.20;
+    public static final int LEFT_MOTOR_ID = 5;
+    public static final int RIGHT_MOTOR_ID = 3;
+    public static final int INTAKE_MOTOR_ID = 4;
+
+    public static final double INTAKE_SPEED = 0.25;
   }
 }
