@@ -17,13 +17,13 @@ import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class CenterNoteCommand extends Command {
+public class DriveToNoteCommand extends Command {
     private final String LIMELIGHT = LimelightConstants.BACK_LIMELIGHT;
 
     private LimelightSubsystem limelightSubsystem;
     private SwerveSubsystem swerveSubsystem;
 
-    private final SlewRateLimiter turningLimiter;
+    private final SlewRateLimiter driveLimiter;
     private PIDController pidController;
 
     /**
@@ -31,16 +31,16 @@ public class CenterNoteCommand extends Command {
     *
     * @param subsystem The subsystem used by this command.
     */
-    public CenterNoteCommand() {
+    public DriveToNoteCommand() {
         this.limelightSubsystem = LimelightSubsystem.getInstance();
         this.swerveSubsystem = SwerveSubsystem.getInstance();
 
-        this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
+        this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
         this.pidController = new PIDController(
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+            NoteConstants.DRIVING_SPEED_PID_CONTROLLER.KP,
+            NoteConstants.DRIVING_SPEED_PID_CONTROLLER.KI,
+            NoteConstants.DRIVING_SPEED_PID_CONTROLLER.KD);
+        this.pidController.setTolerance(NoteConstants.DRIVING_SPEED_PID_CONTROLLER.TOLERANCE);
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(swerveSubsystem);
@@ -60,12 +60,13 @@ public class CenterNoteCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double errorDegrees = limelightSubsystem.getHorizontalOffset();
+        double targetArea = limelightSubsystem.getTargetArea();
 
-        double turningSpeed = pidController.calculate(errorDegrees, 0);
-        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        double drivingSpeed = pidController.calculate(targetArea, NoteConstants.TARGET_AREA_TARGET);
+        drivingSpeed = driveLimiter.calculate(drivingSpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
 
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
+        // Negative drivingSpeed because the note detection occurs opposite of the heading
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-drivingSpeed, 0, 0);
 
         swerveSubsystem.setChassisSpeeds(chassisSpeeds);
     }

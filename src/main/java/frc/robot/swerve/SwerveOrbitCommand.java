@@ -76,6 +76,12 @@ public class SwerveOrbitCommand extends Command {
         this.addRequirements(SwerveSubsystem.getInstance()); 
     }
 
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        rotationPidController.reset();
+    }
+
     @Override
     public void execute() {
         // Double so it can be null if the ID cannot be orbited

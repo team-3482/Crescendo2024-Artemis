@@ -92,6 +92,11 @@ public final class Constants {
     }
 
     public static final class NoteConstants {
+        /** The rate of change limit (units per second) for turning limiter in orbit mode */
+        public static double NOTE_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT; 
+        /** The rate limit in units per second for driving in orbit mode (x and y) */
+        public static double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
+
         /** PID constants for controlling the turning speed during centering */
         public static class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
@@ -101,8 +106,12 @@ public final class Constants {
             public static double KD = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD;
         };
 
+        /** What percent of the target area is considered close enough to the note  */
+        public static double TARGET_AREA_TARGET = 90;
         /** PID constants for controlling the turning speed during driving */
         public static class DRIVING_SPEED_PID_CONTROLLER {
+             /** Tolerance for the PID controller in % of image area */
+            public static double TOLERANCE = 10;
             public static double KP = 1;
             public static double KI = 0;
             public static double KD = 0;
