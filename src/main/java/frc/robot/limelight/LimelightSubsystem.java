@@ -66,24 +66,46 @@ public class LimelightSubsystem extends SubsystemBase {
     
     /**
      * Horizontal Offset From Crosshair To Target
+     * (uses LimelightConstants.BACK_LIMELIGHT)
      *
      * @return offset
      */
-    public double getTX() {
-        return LimelightHelpers.getTX(LimelightConstants.FRONT_LIMELIGHT);
+    public double getHorizontalOffset() {
+        return LimelightHelpers.getTX(LimelightConstants.BACK_LIMELIGHT);
     }
     
     /**
      * Vertical Offset From Crosshair To Target
+     * (uses LimelightConstants.BACK_LIMELIGHT)
      *
      * @return offset
      */
-    public double getTY() {
-        return LimelightHelpers.getTY(LimelightConstants.FRONT_LIMELIGHT);
+    public double getVerticalOffset() {
+        return LimelightHelpers.getTY(LimelightConstants.BACK_LIMELIGHT);
+    }
+    
+    /**
+     * Target Area (0% of image to 100% of image)
+     * (uses LimelightConstants.BACK_LIMELIGHT)
+     *
+     * @return area
+     */
+    public double getTargetArea() {
+        return LimelightHelpers.getTA(LimelightConstants.BACK_LIMELIGHT);
+    }
+
+    /**
+     * Wheter the Limelight has a target
+     *
+     * @return offset
+     */
+    public boolean hasTarget(String limelight) {
+        return LimelightHelpers.getTV(limelight);
     }
     
     /**
      * Gets the ID of the nearest AprilTag or 0 if not found
+     * (using LimelightConstants.FRONT_LIMELIGHT)
      *
      * @return ID
      */
@@ -93,8 +115,8 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the botpose relative to the current alliance, or Blue
-     * if no alliance is found
+     * Gets the botpose relative to the current blue alliance
+     * (using LimelightConstants.FRONT_LIMELIGHT)
      *
      * @return botpose
      */
@@ -103,22 +125,31 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the botpose in target space array of 6
+     * Gets the latency of the limelight to be used for odometry
      * 
-     * @return botpose array
+     * @return latency in seconds
      */
-    public double[] getBotPose_TargetSpace() {
-        return LimelightHelpers.getBotPose_TargetSpace(LimelightConstants.FRONT_LIMELIGHT);
+    public double getLatency(String limelight) {
+        return LimelightHelpers.getLatency_Pipeline(limelight) / 1000
+            - LimelightHelpers.getLatency_Capture(limelight) / 1000;
     }
+
+    // /**
+    //  * Gets the position of an object being targeted
+    //  * (uses LimelightConstants.BACK_LIMELIGHT)
+    //  * 
+    //  * @return the translation from the bot
+    //  */
+    // public Optional<Translation2d> 
     
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
-        int id = this.getID();
-        boolean see = id > 0;
-        SB_D_TID.setInteger(id);
-        SB_F_TID.setInteger(id);
-        SB_D_TSEE.setBoolean(see);
-        SB_F_TSEE.setBoolean(see);
+        int tid = this.getID();
+        boolean tSee = this.hasTarget(LimelightConstants.FRONT_LIMELIGHT);
+        SB_D_TID.setInteger(tid);
+        SB_F_TID.setInteger(tid);
+        SB_D_TSEE.setBoolean(tSee);
+        SB_F_TSEE.setBoolean(tSee);
     }
 }

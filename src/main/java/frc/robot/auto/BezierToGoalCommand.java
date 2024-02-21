@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.swerve;
+package frc.robot.auto;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.swerve.SwerveSubsystem;
 
 /** A pathfinding command that uses limelight and swerve subsystems. */
-public class BezierToPoseCommand extends Command {
+public class BezierToGoalCommand extends Command {
     private final PathConstraints CONSTRAINTS = new PathConstraints(
         AutonConstants.MAX_LINEAR_VELOCITY,
         AutonConstants.MAX_LINEAR_ACCELERATION,
@@ -38,7 +39,7 @@ public class BezierToPoseCommand extends Command {
     * @param swerveSubsystem The swerve subsystem used by this command.
     * @param goal The location to line up at
     */
-    public BezierToPoseCommand(Character goal) {
+    public BezierToGoalCommand(Character goal) {
         this.goal = goal;
 
         // Use addRequirements() here to declare subsystem dependencies.
@@ -49,40 +50,18 @@ public class BezierToPoseCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
-        if (this.bezierPath != null) {
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        if (!alliance.isPresent() || this.bezierPath != null) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-
+        
         Pose2d botPose = SwerveSubsystem.getInstance().getPose();
         // The rotatin component for endPos is used for the GoalEndState rotation
-        Pose2d endPos;
+        Pose2d endPos = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
         // The travelRotation represents the direction of travel
-        Rotation2d travelRotation;
-
-        if (this.goal == AutonConstants.NOTE) {
-            Optional<Translation2d> noteTrans = Optional.ofNullable(new Translation2d());// = LimelightSubsystem.getInstance().getNotePos(); once implemented
-            if (!noteTrans.isPresent()) {
-                LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-                return;
-            }
-            travelRotation = new Rotation2d();
-
-            // Do some math to face the note in travelRotation
-
-            endPos = new Pose2d(botPose.getTranslation().plus(noteTrans.get()), travelRotation);
-        }
-        else {
-            Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-            if (!alliance.isPresent()) {
-                LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-                return;
-            }
-            travelRotation = new Rotation2d();
-            endPos = new Pose2d(
-                AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal).getTranslation(),
-                travelRotation);
-        }
+        Rotation2d travelRotation = botPose.getRotation(); // May need to be endPos.getRotation()
+        
         Pose2d startPos = new Pose2d(botPose.getTranslation(), travelRotation);
         
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);

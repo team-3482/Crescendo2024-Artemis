@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.auto.BezierToGoalCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
-import frc.robot.swerve.BezierToPoseCommand;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.SwerveSubsystem;
@@ -57,9 +57,9 @@ public class RobotContainer {
         
         // Register named commands for pathplanner (do this after subsystem initialization)
         NamedCommands.registerCommand("Pathfind AMP",
-            new BezierToPoseCommand(AutonConstants.AMP));
+            new BezierToGoalCommand(AutonConstants.AMP));
         NamedCommands.registerCommand("Pathfind SPEAKER",
-            new BezierToPoseCommand(AutonConstants.SPEAKER));
+            new BezierToGoalCommand(AutonConstants.SPEAKER));
 
         // Sets the default command to driving swerve
         SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
@@ -116,7 +116,7 @@ public class RobotContainer {
         
         // Operator controller
         // Line up to SPEAKER
-        driveController.x().onTrue(new BezierToPoseCommand(AutonConstants.SPEAKER));
+        driveController.x().onTrue(new BezierToGoalCommand(AutonConstants.SPEAKER));
         // Line up to AMP
         // driveController.y().whileTrue(new PathfindLineUp(SwerveSubsystem.getInstance(), AutonConstants.AMP));
     }

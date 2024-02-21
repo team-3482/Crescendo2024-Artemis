@@ -31,7 +31,6 @@ public final class Constants {
         // This should be an enum
         public static char AMP = 'a';
         public static char SPEAKER = 's';
-        public static char NOTE = 'n';
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(

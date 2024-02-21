@@ -34,10 +34,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Singleton Design Pattern
     private static SwerveSubsystem instance;
-    public static SwerveSubsystem getInstance()
-    {
-        if(instance == null)
-        {
+    public static SwerveSubsystem getInstance() {
+        if(instance == null) {
             instance = new SwerveSubsystem();
         }
         return instance;
@@ -241,17 +239,29 @@ public class SwerveSubsystem extends SubsystemBase {
         this.odometer.update(getRotation2d(), getModulePositions());
         this.logger.execute();
         
-        if (LimelightSubsystem.getInstance().getID() > 0) {
-            Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
-            Pose2d relative = botpose.relativeTo(getPose());
-            if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
-                && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
-                this.odometer.addVisionMeasurement(LimelightSubsystem.getInstance().getBotpose(), Timer.getFPGATimestamp());
-            }
-        }
+        this.updateOdometryUsingVision();
+
         this.swerve_field.setRobotPose(getPose());
         this.SB_GYRO.setDouble(getHeading());
     }
+
+    /**
+     * Calculates the necessary updates for the odometer
+     */
+    private void updateOdometryUsingVision() {
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.FRONT_LIMELIGHT)) return;
+
+        Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
+        Pose2d relative = botpose.relativeTo(getPose());
+
+        if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
+            && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
+            this.odometer.addVisionMeasurement(
+                botpose, Timer.getFPGATimestamp()
+                - LimelightSubsystem.getInstance().getLatency(LimelightConstants.FRONT_LIMELIGHT));
+        }
+    }
+
     /**
     * Stops all the swerve modules
     */
