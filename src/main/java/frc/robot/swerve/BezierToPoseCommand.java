@@ -22,7 +22,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
 /** A pathfinding command that uses limelight and swerve subsystems. */
-public class BezierToGoalCommand extends Command {
+public class BezierToPoseCommand extends Command {
     private final PathConstraints CONSTRAINTS = new PathConstraints(
         AutonConstants.MAX_LINEAR_VELOCITY,
         AutonConstants.MAX_LINEAR_ACCELERATION,
@@ -38,7 +38,7 @@ public class BezierToGoalCommand extends Command {
     * @param swerveSubsystem The swerve subsystem used by this command.
     * @param goal The location to line up at
     */
-    public BezierToGoalCommand(Character goal) {
+    public BezierToPoseCommand(Character goal) {
         this.goal = goal;
 
         // Use addRequirements() here to declare subsystem dependencies.
@@ -48,15 +48,42 @@ public class BezierToGoalCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent() || bezierPath != null) return;
         LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        if (this.bezierPath != null) {
+            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+            return;
+        }
 
-        // The rotation component in these poses represents the direction of travel
-        Pose2d startPos = new Pose2d(SwerveSubsystem.getInstance().getPose().getTranslation(), new Rotation2d());
-        Pose2d endPos = new Pose2d(
-            AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal).getTranslation(),
-            new Rotation2d());
+        Pose2d botPose = SwerveSubsystem.getInstance().getPose();
+        // The rotatin component for endPos is used for the GoalEndState rotation
+        Pose2d endPos;
+        // The travelRotation represents the direction of travel
+        Rotation2d travelRotation;
+
+        if (this.goal == AutonConstants.NOTE) {
+            Optional<Translation2d> noteTrans = Optional.ofNullable(new Translation2d());// = LimelightSubsystem.getInstance().getNotePos(); once implemented
+            if (!noteTrans.isPresent()) {
+                LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+                return;
+            }
+            travelRotation = new Rotation2d();
+
+            // Do some math to face the note in travelRotation
+
+            endPos = new Pose2d(botPose.getTranslation().plus(noteTrans.get()), travelRotation);
+        }
+        else {
+            Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+            if (!alliance.isPresent()) {
+                LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+                return;
+            }
+            travelRotation = new Rotation2d();
+            endPos = new Pose2d(
+                AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal).getTranslation(),
+                travelRotation);
+        }
+        Pose2d startPos = new Pose2d(botPose.getTranslation(), travelRotation);
         
         List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
 
@@ -71,13 +98,13 @@ public class BezierToGoalCommand extends Command {
     
         this.bezierPath = AutoBuilder.followPath(path);
         this.bezierPath.schedule();
-        
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+    }
 
     // Called once the command ends or is interrupted.
     @Override
@@ -97,6 +124,6 @@ public class BezierToGoalCommand extends Command {
         if (this.bezierPath != null) {
             return this.bezierPath.isFinished();
         }
-        return false;
+        return true;
     }
 }
