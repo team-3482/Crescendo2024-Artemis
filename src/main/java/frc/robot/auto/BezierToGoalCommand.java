@@ -60,7 +60,7 @@ public class BezierToGoalCommand extends Command {
         // The rotatin component for endPos is used for the GoalEndState rotation
         Pose2d endPos = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
         // The travelRotation represents the direction of travel
-        Rotation2d travelRotation = botPose.getRotation(); // May need to be endPos.getRotation()
+        Rotation2d travelRotation = botPose.getRotation(); // May need to be endPos.getRotation() or new Rotation2d()
         
         Pose2d startPos = new Pose2d(botPose.getTranslation(), travelRotation);
         
