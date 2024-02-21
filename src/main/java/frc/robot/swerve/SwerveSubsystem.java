@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -226,9 +227,24 @@ public class SwerveSubsystem extends SubsystemBase {
   
     /**
     * Resets the odometry of the robot
+    * 
+    * @param pose to reset to
     */
     public void resetOdometry(Pose2d pose) {
         this.odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
+    }
+  
+    /**
+    * Reset odometry translation to the position that the limelight sees.
+    * Does not reset rotation, which is tracked by the gyro.
+    */
+    public void resetOdometryLimelight() {
+        Translation2d translation = LimelightSubsystem.getInstance().getBotpose().getTranslation();
+        if (translation.equals(new Translation2d())) return;
+        this.resetOdometry(new Pose2d(
+            translation,
+            Rotation2d.fromDegrees(SwerveSubsystem.getInstance().getHeading()))
+        );
     }
   
     /**

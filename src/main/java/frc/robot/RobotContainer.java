@@ -7,10 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -28,7 +24,6 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.SwerveSubsystem;
-import frc.robot.limelight.LimelightSubsystem;
 
 public class RobotContainer {
     // Singleton design pattern
@@ -90,16 +85,8 @@ public class RobotContainer {
         // Driver controller
         // Zeroing functions
         driveController.rightBumper().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
-        // Reset odometry translation to the position that the limelight sees.
-        // Does not reset rotation, which is tracked by the gyro.
-        driveController.leftBumper().onTrue(Commands.runOnce(() -> {
-            Translation2d translation = LimelightSubsystem.getInstance().getBotpose().getTranslation();
-            if (!translation.equals(new Translation2d(0, 0))) {
-                SwerveSubsystem.getInstance().resetOdometry(new Pose2d(
-                    translation, Rotation2d.fromDegrees(SwerveSubsystem.getInstance().getHeading())));
-            }
-        }));
-        // Cancel all scheduled commands
+        driveController.leftBumper().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
+        // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
             LEDSubsystem.getInstance().setLightState(LightState.OFF);
