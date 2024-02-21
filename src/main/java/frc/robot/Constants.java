@@ -74,7 +74,7 @@ public final class Constants {
         /** PID constants for controlling the turning speed during orbits */
         public static class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static double TOLERANCE = 1;
+            public static double TOLERANCE = 2.5;
             public static double KP = 0.5;
             public static double KI = 0;
             public static double KD = 0;
@@ -89,6 +89,24 @@ public final class Constants {
                 new Translation2d(0, 5.55)
             )
         );
+    }
+
+    public static final class NoteConstants {
+        /** PID constants for controlling the turning speed during centering */
+        public static class TURNING_SPEED_PID_CONTROLLER {
+            /** Tolerance for the PID controller in degrees */
+            public static double TOLERANCE = 5;
+            public static double KP = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP;
+            public static double KI = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI;
+            public static double KD = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD;
+        };
+
+        /** PID constants for controlling the turning speed during driving */
+        public static class DRIVING_SPEED_PID_CONTROLLER {
+            public static double KP = 1;
+            public static double KI = 0;
+            public static double KD = 0;
+        }
     }
     
     // Constants for limelight-related data
