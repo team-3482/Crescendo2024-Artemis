@@ -21,9 +21,6 @@ import frc.robot.swerve.SwerveSubsystem;
 public class DriveToNoteCommand extends Command {
     private final String LIMELIGHT = LimelightConstants.BACK_LIMELIGHT;
 
-    private LimelightSubsystem limelightSubsystem;
-    private SwerveSubsystem swerveSubsystem;
-
     private final SlewRateLimiter driveLimiter;
     private final SlewRateLimiter turningLimiter;
     private PIDController pidController;
@@ -34,9 +31,6 @@ public class DriveToNoteCommand extends Command {
     * @param subsystem The subsystem used by this command.
     */
     public DriveToNoteCommand() {
-        this.limelightSubsystem = LimelightSubsystem.getInstance();
-        this.swerveSubsystem = SwerveSubsystem.getInstance();
-
         this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
 
@@ -47,13 +41,13 @@ public class DriveToNoteCommand extends Command {
         this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
 
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(swerveSubsystem);
+        addRequirements(SwerveSubsystem.getInstance());
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!limelightSubsystem.hasTarget(LIMELIGHT)) {
+        if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
@@ -66,7 +60,7 @@ public class DriveToNoteCommand extends Command {
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
 
-        double errorDegrees = limelightSubsystem.getHorizontalOffset();
+        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset();
 
         double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
@@ -75,13 +69,13 @@ public class DriveToNoteCommand extends Command {
 
         // Negative drivingSpeed because the note detection occurs opposite of the heading
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-drivingSpeed, 0, turningSpeed);
-        swerveSubsystem.setChassisSpeeds(chassisSpeeds);
+        SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        SwerveSubsystem.getInstance().stopModules();
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
         }
@@ -93,6 +87,6 @@ public class DriveToNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return limelightSubsystem.hasTarget(LIMELIGHT); // Simulate intakeSubsystem.getLaser() or something
+        return LimelightSubsystem.getInstance().hasTarget(LIMELIGHT); // Simulate intakeSubsystem.getLaser() or something
     }
 }

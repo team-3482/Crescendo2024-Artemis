@@ -21,9 +21,6 @@ import frc.robot.swerve.SwerveSubsystem;
 public class CenterNoteCommand extends Command {
     private final String LIMELIGHT = LimelightConstants.BACK_LIMELIGHT;
 
-    private LimelightSubsystem limelightSubsystem;
-    private SwerveSubsystem swerveSubsystem;
-
     private final SlewRateLimiter turningLimiter;
     private PIDController pidController;
 
@@ -33,9 +30,6 @@ public class CenterNoteCommand extends Command {
     * @param subsystem The subsystem used by this command.
     */
     public CenterNoteCommand() {
-        this.limelightSubsystem = LimelightSubsystem.getInstance();
-        this.swerveSubsystem = SwerveSubsystem.getInstance();
-
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
         this.pidController = new PIDController(
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
@@ -44,13 +38,13 @@ public class CenterNoteCommand extends Command {
         this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
 
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(swerveSubsystem);
+        addRequirements(SwerveSubsystem.getInstance());
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!limelightSubsystem.hasTarget(LIMELIGHT)) {
+        if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
@@ -63,20 +57,20 @@ public class CenterNoteCommand extends Command {
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
 
-        double errorDegrees = limelightSubsystem.getHorizontalOffset();
+        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset();
 
         double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
 
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
 
-        swerveSubsystem.setChassisSpeeds(chassisSpeeds);
+        SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.stopModules();
+        SwerveSubsystem.getInstance().stopModules();
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
         }
@@ -88,6 +82,6 @@ public class CenterNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(limelightSubsystem.getHorizontalOffset()) <= NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
+        return Math.abs(LimelightSubsystem.getInstance().getHorizontalOffset()) <= NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
     }
 }

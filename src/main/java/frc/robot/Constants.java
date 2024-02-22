@@ -5,7 +5,6 @@
 package frc.robot;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
