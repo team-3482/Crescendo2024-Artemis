@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.swerve;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -27,7 +27,6 @@ public class SwerveModule {
 
     // Instances of values used to help calculate encoder positions for the turning motor
     private boolean absoluteEncoderReversed;
-    private double absoluteEncoderOffsetRot;
 
     /**
     * Creates an Instance of the Swerve Module with the specified options
@@ -38,13 +37,11 @@ public class SwerveModule {
     *                                swerve CAN bus)
     * @param driveMotorReversed      - is the driving motor inverted?
     * @param turningMotorReversed    - is the turning motor inverted?
-    * @param absoluteEcoderOffset    - absolute offset for the turning encoder
     * @param absoluteEncoderReversed - is the turning encoder inverted?
     */
     public SwerveModule(int driveMotorID, int turningMotorID, int turningEncoderID,
             boolean driveMotorReversed, boolean turningMotorReversed,
-            double absoluteEcoderOffset, boolean absoluteEncoderReversed) {
-        this.absoluteEncoderOffsetRot = absoluteEcoderOffset;
+            boolean absoluteEncoderReversed) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
 
         // Initializes the driving and turning motor
@@ -60,12 +57,13 @@ public class SwerveModule {
         this.turningEncoder = new CANcoder(turningEncoderID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
         // Initializes the PID controller using the determined values
-        this.turningPidController = new PIDController(SwerveKinematics.KP, SwerveKinematics.KI, SwerveKinematics.KD);
+        this.turningPidController = new PIDController(
+            SwerveKinematics.TURNING_PID_CONTROLLER.KP,
+            SwerveKinematics.TURNING_PID_CONTROLLER.KI,
+            SwerveKinematics.TURNING_PID_CONTROLLER.KD);
 
         // Makes the values continuous, so that 0 == 360 degrees
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);
-
-        this.resetEncoders();
     }
 
     /**
@@ -101,13 +99,6 @@ public class SwerveModule {
         return Units.rotationsToRadians(angle) * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
-    /*
-    * Resets the encoder position to absolute encoder position
-    */
-    public void resetEncoders() {
-        // this.turningEncoder.setPosition(this.getAbsoluteEncoderRad());
-    }
-
     /**
     * Returns the current state of the swerve module
     * 
@@ -131,7 +122,6 @@ public class SwerveModule {
         // Gets drive position as rotations
         double positionRot = this.driveMotor.getEncoder().getPosition();
         // Turns rotations to radians
-        // position *= PhysicalConstants.ROT_TO_RAD;
         double positionMeters = positionRot * PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModulePosition(positionMeters, new Rotation2d(getTurningPosition()));
     }
@@ -149,12 +139,10 @@ public class SwerveModule {
     * @param state - desired state of the swerve module
     */
     public void setDesiredState(SwerveModuleState state) {
-        state = SwerveModuleState.optimize((state), getState().angle);
+        state = SwerveModuleState.optimize(state, getState().angle);
 
-        double driveMotorSpeed = state.speedMetersPerSecond / SwerveKinematics.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
-
+        double driveMotorSpeed = state.speedMetersPerSecond / SwerveKinematics.PHYSICAL_MAX_MODULE_SPEED;
         double turnMotorSpeed = turningPidController.calculate(getTurningPosition(), state.angle.getRadians());
-        // SmartDashboard.putNumber("Swerve[" + this.turningEncoder.getDeviceID() + "] turn motor speed", turnMotorSpeed);
 
         driveMotor.set(driveMotorSpeed);
         turningMotor.set(turnMotorSpeed);
@@ -183,16 +171,5 @@ public class SwerveModule {
     */
     public double getTurnVoltage() {
         return this.turningMotor.getBusVoltage() * this.turningMotor.getAppliedOutput();
-    }
-
-    /**
-    * Outputs information of the swerve module to SmartDashboard
-    */
-    public void outputEncoderPosition() {
-        int turnID = this.turningEncoder.getDeviceID();
-        String id = "Swerve[" + turnID + "] ";
-        // SmartDashboard.putString(id + "Position", this.getPosition().distanceMeters + " m");
-        // SmartDashboard.putNumber(id + "Drive Voltage",  this.getDriveVoltage() );
-        // SmartDashboard.putNumber(id + "Turn Voltage",  this.getTurnVoltage() );
     }
 }

@@ -10,9 +10,9 @@
     "Pos 2",
     "Other"
   ],
-  "defaultMaxVel": 15.0,
-  "defaultMaxAccel": 2.0,
-  "defaultMaxAngVel": 720.0,
+  "defaultMaxVel": 5.0,
+  "defaultMaxAccel": 1.0,
+  "defaultMaxAngVel": 180.0,
   "defaultMaxAngAccel": 360.0,
-  "maxModuleSpeed": 15.0
+  "maxModuleSpeed": 5.0
 }
