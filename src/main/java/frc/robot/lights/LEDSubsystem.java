@@ -63,6 +63,7 @@ public class LEDSubsystem extends SubsystemBase {
         SOLID_GREEN (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
         SOLID_BLUE (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
         SOLID_RED (Double.POSITIVE_INFINITY, new Color(255, 0, 0)),
+        SOLID_ORANGE (Double.POSITIVE_INFINITY, new Color(255, 127, 0)),
         
         FLASHING_GREEN (0.2, new Color(0,255, 0), Color.off()),
         FLASHING_BLUE (0.2, new Color(0, 0, 255), Color.off()),

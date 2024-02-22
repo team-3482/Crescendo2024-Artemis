@@ -7,6 +7,7 @@ package frc.robot.auto;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.NoteConstants;
@@ -53,16 +54,18 @@ public class CenterNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
         pidController.reset();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+
         double errorDegrees = limelightSubsystem.getHorizontalOffset();
 
-        double turningSpeed = pidController.calculate(errorDegrees, 0);
+        double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
 
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
@@ -74,12 +77,17 @@ public class CenterNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.stopModules();
-        LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        if (interrupted) {
+            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+        }
+        else {
+            LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        }
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return pidController.atSetpoint();
+        return Math.abs(limelightSubsystem.getHorizontalOffset()) <= NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
     }
 }

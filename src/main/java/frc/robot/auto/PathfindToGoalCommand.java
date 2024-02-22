@@ -43,12 +43,13 @@ public class PathfindToGoalCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent() || this.path != null) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
+        
         Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
         
         this.path = AutoBuilder.pathfindToPose(targetPose, CONSTRAINTS, 0, 0.1);

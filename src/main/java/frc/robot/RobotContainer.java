@@ -18,6 +18,7 @@ import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.BezierToGoalCommand;
+import frc.robot.auto.DriveToNoteCommand;
 import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
@@ -101,6 +102,8 @@ public class RobotContainer {
             ControllerConstants.DPAD_DRIVE_INPUT,
             (Integer angle) -> driveController.pov(angle).getAsBoolean()
             ));
+        
+        driveController.y().onFalse(new DriveToNoteCommand());
         
         // Operator controller
         // Line up to SPEAKER

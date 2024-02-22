@@ -7,6 +7,7 @@ package frc.robot.auto;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.NoteConstants;
@@ -24,6 +25,7 @@ public class DriveToNoteCommand extends Command {
     private SwerveSubsystem swerveSubsystem;
 
     private final SlewRateLimiter driveLimiter;
+    private final SlewRateLimiter turningLimiter;
     private PIDController pidController;
 
     /**
@@ -36,11 +38,13 @@ public class DriveToNoteCommand extends Command {
         this.swerveSubsystem = SwerveSubsystem.getInstance();
 
         this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
+        this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
+
         this.pidController = new PIDController(
-            NoteConstants.DRIVING_SPEED_PID_CONTROLLER.KP,
-            NoteConstants.DRIVING_SPEED_PID_CONTROLLER.KI,
-            NoteConstants.DRIVING_SPEED_PID_CONTROLLER.KD);
-        this.pidController.setTolerance(NoteConstants.DRIVING_SPEED_PID_CONTROLLER.TOLERANCE);
+            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
+            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
+            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
+        this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(swerveSubsystem);
@@ -53,21 +57,24 @@ public class DriveToNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
         pidController.reset();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double targetArea = limelightSubsystem.getTargetArea();
+        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
 
-        double drivingSpeed = pidController.calculate(targetArea, NoteConstants.TARGET_AREA_TARGET);
-        drivingSpeed = driveLimiter.calculate(drivingSpeed) * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        double errorDegrees = limelightSubsystem.getHorizontalOffset();
+
+        double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        double drivingSpeed = driveLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
+            * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
 
         // Negative drivingSpeed because the note detection occurs opposite of the heading
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-drivingSpeed, 0, 0);
-
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-drivingSpeed, 0, turningSpeed);
         swerveSubsystem.setChassisSpeeds(chassisSpeeds);
     }
 
@@ -75,12 +82,17 @@ public class DriveToNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.stopModules();
-        LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        if (interrupted) {
+            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+        }
+        else {
+            LEDSubsystem.getInstance().setLightState(LightState.OFF);
+        }
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return pidController.atSetpoint();
+        return limelightSubsystem.hasTarget(LIMELIGHT); // Simulate intakeSubsystem.getLaser() or something
     }
 }
