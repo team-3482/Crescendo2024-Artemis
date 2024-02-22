@@ -4,10 +4,6 @@
 
 package frc.robot.limelight;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -80,26 +76,26 @@ public class LimelightSubsystem extends SubsystemBase {
 
   /** Creates a new LimelightSubsystem. */
   public LimelightSubsystem() {
-    final HttpCamera backLimelightFeed = new HttpCamera(
-        "front limelight",
-        "http://10.34.82.3:5800/stream.mjpg",
-        HttpCameraKind.kMJPGStreamer);
+    // HttpCamera backLimelightFeed = new HttpCamera(
+    //     LimelightConstants.BACK_LIMELIGHT,
+    //     "http://" + LimelightConstants.BACK_LIMELIGHT + ".local:5800/stream.mjpg",
+    //     HttpCameraKind.kMJPGStreamer);
 
-    final MjpegServer backLimelight = CameraServer.startAutomaticCapture(backLimelightFeed);
-
+    // MjpegServer backLimelight = CameraServer.startAutomaticCapture(backLimelightFeed);
+    
+    // Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+    //     .add(LimelightConstants.BACK_LIMELIGHT, backLimelight.getSource())
+    //     .withWidget(BuiltInWidgets.kCameraStream)
+    //     .withPosition(6, 3)
+    //     .withSize(6, 3)
+    //     .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
+    
     Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
         .add("Field (limelight)", limelight_field)
         .withWidget(BuiltInWidgets.kField)
         .withPosition(7, 0)
         .withSize(7, 4);
-
-    Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        .add("back limelight view", backLimelight)
-        .withWidget(BuiltInWidgets.kCameraStream)
-        .withPosition(0, 0)
-        .withSize(4, 3);
-
-  }
+}
 
   /**
    * Horizontal Offset From Crosshair To Target
