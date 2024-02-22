@@ -74,7 +74,7 @@ public class RobotContainer {
             .add("Auto Chooser", autoChooser)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withPosition(0, 3)
-            .withSize(3, 1);
+            .withSize(3, 2);
     }
 
     /**

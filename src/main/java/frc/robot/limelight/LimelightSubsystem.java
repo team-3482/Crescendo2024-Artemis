@@ -8,7 +8,6 @@ import java.util.Map;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -39,7 +38,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private GenericEntry SB_D_TID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
       .add("T-ID", 0)
       .withWidget(BuiltInWidgets.kTextView)
-      .withPosition(3, 3)
+      .withPosition(12, 2)
       .withSize(1, 1)
       .getEntry();
   private GenericEntry SB_D_NSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
@@ -82,17 +81,27 @@ public class LimelightSubsystem extends SubsystemBase {
 
   /** Creates a new LimelightSubsystem. */
   public LimelightSubsystem() {
-    HttpCamera backLimelightFeed = new HttpCamera(
+    HttpCamera limelightBackFeed = new HttpCamera(
         LimelightConstants.BACK_LIMELIGHT,
         "http://" + LimelightConstants.BACK_LIMELIGHT + ".local:5800/stream.mjpg",
         HttpCameraKind.kMJPGStreamer);
-
-    CameraServer.addCamera(backLimelightFeed);
-
+    CameraServer.addCamera(limelightBackFeed);
     Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add(LimelightConstants.BACK_LIMELIGHT, backLimelightFeed)
+        .add("Back Limelight", limelightBackFeed)
         .withWidget(BuiltInWidgets.kCameraStream)
-        .withPosition(6, 3)
+        .withPosition(3, 3)
+        .withSize(6, 3)
+        .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
+    
+    HttpCamera limelightFrontFeed = new HttpCamera(
+        LimelightConstants.FRONT_LIMELIGHT,
+        "http://" + LimelightConstants.FRONT_LIMELIGHT + ".local:5800/stream.mjpg",
+        HttpCameraKind.kMJPGStreamer);
+    CameraServer.addCamera(limelightBackFeed);
+    Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("Front Limelight", limelightFrontFeed)
+        .withWidget(BuiltInWidgets.kCameraStream)
+        .withPosition(9, 3)
         .withSize(6, 3)
         .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
 
