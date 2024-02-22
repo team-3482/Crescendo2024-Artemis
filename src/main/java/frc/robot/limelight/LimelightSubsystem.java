@@ -4,6 +4,12 @@
 
 package frc.robot.limelight;
 
+import java.util.Map;
+
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -42,18 +48,18 @@ public class LimelightSubsystem extends SubsystemBase {
       .withPosition(3, 0)
       .withSize(3, 3)
       .getEntry();
-    private GenericEntry SB_D_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("TAG-SEE", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(6, 0)
-        .withSize(3, 3)
-        .getEntry();
-    private GenericEntry SB_D_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("ADD-VISION", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(9, 0)
-        .withSize(3, 3)
-        .getEntry();
+  private GenericEntry SB_D_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+      .add("TAG-SEE", false)
+      .withWidget(BuiltInWidgets.kBooleanBox)
+      .withPosition(6, 0)
+      .withSize(3, 3)
+      .getEntry();
+  private GenericEntry SB_D_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+      .add("ADD-VISION", false)
+      .withWidget(BuiltInWidgets.kBooleanBox)
+      .withPosition(9, 0)
+      .withSize(3, 3)
+      .getEntry();
 
   private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
       .add("T-ID", 0)
@@ -63,12 +69,12 @@ public class LimelightSubsystem extends SubsystemBase {
       .getEntry();
   private GenericEntry SB_F_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
       .add("TAG-SEE", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(14, 0)
-        .withSize(2, 2)
-        .getEntry();
-    private GenericEntry SB_F_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        .add("ADD-VISION", false)
+      .withWidget(BuiltInWidgets.kBooleanBox)
+      .withPosition(14, 0)
+      .withSize(2, 2)
+      .getEntry();
+  private GenericEntry SB_F_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+      .add("ADD-VISION", false)
       .withWidget(BuiltInWidgets.kBooleanBox)
       .withPosition(14, 2)
       .withSize(2, 2)
@@ -76,26 +82,26 @@ public class LimelightSubsystem extends SubsystemBase {
 
   /** Creates a new LimelightSubsystem. */
   public LimelightSubsystem() {
-    // HttpCamera backLimelightFeed = new HttpCamera(
-    //     LimelightConstants.BACK_LIMELIGHT,
-    //     "http://" + LimelightConstants.BACK_LIMELIGHT + ".local:5800/stream.mjpg",
-    //     HttpCameraKind.kMJPGStreamer);
+    HttpCamera backLimelightFeed = new HttpCamera(
+        LimelightConstants.BACK_LIMELIGHT,
+        "http://" + LimelightConstants.BACK_LIMELIGHT + ".local:5800/stream.mjpg",
+        HttpCameraKind.kMJPGStreamer);
 
-    // MjpegServer backLimelight = CameraServer.startAutomaticCapture(backLimelightFeed);
-    
-    // Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-    //     .add(LimelightConstants.BACK_LIMELIGHT, backLimelight.getSource())
-    //     .withWidget(BuiltInWidgets.kCameraStream)
-    //     .withPosition(6, 3)
-    //     .withSize(6, 3)
-    //     .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
-    
+    CameraServer.addCamera(backLimelightFeed);
+
+    Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add(LimelightConstants.BACK_LIMELIGHT, backLimelightFeed)
+        .withWidget(BuiltInWidgets.kCameraStream)
+        .withPosition(6, 3)
+        .withSize(6, 3)
+        .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
+
     Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
         .add("Field (limelight)", limelight_field)
         .withWidget(BuiltInWidgets.kField)
         .withPosition(7, 0)
         .withSize(7, 4);
-}
+  }
 
   /**
    * Horizontal Offset From Crosshair To Target
@@ -167,38 +173,38 @@ public class LimelightSubsystem extends SubsystemBase {
         - LimelightHelpers.getLatency_Capture(limelight) / 1000;
   }
 
-    // /**
-    //  * Gets the position of an object being targeted
-    //  * (uses LimelightConstants.BACK_LIMELIGHT)
-    //  * 
-    //  * @return the translation from the bot
-    //  */
-    // public Optional<Translation2d> 
-    
-    /**
-     * Update the ADD-VISION Shuffleboard entries
-     * 
-     * @param bool whether or not it is updating odometry using vision
-     */
-    public void updateAddVisionEntry(boolean bool) {
-        SB_D_TUPDATE.setBoolean(bool);
-        SB_F_TUPDATE.setBoolean(bool);
-    }
+  // /**
+  // * Gets the position of an object being targeted
+  // * (uses LimelightConstants.BACK_LIMELIGHT)
+  // *
+  // * @return the translation from the bot
+  // */
+  // public Optional<Translation2d>
 
-    @Override
-    public void periodic() {
-        limelight_field.setRobotPose(this.getBotpose());
-        int tid = this.getID();
-        boolean tSee = this.hasTarget(LimelightConstants.FRONT_LIMELIGHT);
-        boolean nSee = this.hasTarget(LimelightConstants.BACK_LIMELIGHT);
-        
-        // Default Shuffleboard
-        SB_D_TID.setInteger(tid);
-        SB_D_TSEE.setBoolean(tSee);
-        SB_D_NSEE.setBoolean(nSee);
+  /**
+   * Update the ADD-VISION Shuffleboard entries
+   * 
+   * @param bool whether or not it is updating odometry using vision
+   */
+  public void updateAddVisionEntry(boolean bool) {
+    SB_D_TUPDATE.setBoolean(bool);
+    SB_F_TUPDATE.setBoolean(bool);
+  }
 
-        // Field Shuffleboard
-        SB_F_TID.setInteger(tid);
-        SB_F_TSEE.setBoolean(tSee);
-    }
+  @Override
+  public void periodic() {
+    limelight_field.setRobotPose(this.getBotpose());
+    int tid = this.getID();
+    boolean tSee = this.hasTarget(LimelightConstants.FRONT_LIMELIGHT);
+    boolean nSee = this.hasTarget(LimelightConstants.BACK_LIMELIGHT);
+
+    // Default Shuffleboard
+    SB_D_TID.setInteger(tid);
+    SB_D_TSEE.setBoolean(tSee);
+    SB_D_NSEE.setBoolean(nSee);
+
+    // Field Shuffleboard
+    SB_F_TID.setInteger(tid);
+    SB_F_TSEE.setBoolean(tSee);
+  }
 }
