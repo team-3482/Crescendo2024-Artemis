@@ -255,7 +255,8 @@ public class SwerveSubsystem extends SubsystemBase {
         this.odometer.update(getRotation2d(), getModulePositions());
         this.logger.execute();
         
-        this.updateOdometryUsingVision();
+        boolean updated = this.updateOdometryUsingVision();
+        LimelightSubsystem.getInstance().updateAddVisionEntry(updated);
 
         this.swerve_field.setRobotPose(getPose());
         this.SB_GYRO.setDouble(getHeading());
@@ -263,9 +264,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /**
      * Calculates the necessary updates for the odometer
+     * 
+     * @return whether or not it updated
      */
-    private void updateOdometryUsingVision() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.FRONT_LIMELIGHT)) return;
+    private boolean updateOdometryUsingVision() {
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.FRONT_LIMELIGHT)) return false;
 
         Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
         Pose2d relative = botpose.relativeTo(getPose());
@@ -275,7 +278,9 @@ public class SwerveSubsystem extends SubsystemBase {
             this.odometer.addVisionMeasurement(
                 botpose, Timer.getFPGATimestamp()
                 - LimelightSubsystem.getInstance().getLatency(LimelightConstants.FRONT_LIMELIGHT));
+            return true;
         }
+        return false;
     }
 
     /**

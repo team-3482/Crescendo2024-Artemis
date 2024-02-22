@@ -35,24 +35,42 @@ public class LimelightSubsystem extends SubsystemBase {
         .withPosition(3, 3)
         .withSize(1, 1)
         .getEntry();
-    private GenericEntry SB_D_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("T-SEE", false)
+    private GenericEntry SB_D_NSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("NOTE-SEE", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withPosition(3, 0)
+        .withSize(3, 3)
+        .getEntry();
+    private GenericEntry SB_D_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("TAG-SEE", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(6, 0)
+        .withSize(3, 3)
+        .getEntry();
+    private GenericEntry SB_D_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("ADD-VISION", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(9, 0)
         .withSize(3, 3)
         .getEntry();
     
     private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
         .add("T-ID", 0)
         .withWidget(BuiltInWidgets.kTextView)
-        .withPosition(14, 0)
+        .withPosition(14, 4)
         .withSize(2, 1)
         .getEntry();
     private GenericEntry SB_F_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        .add("T-SEE", false)
+        .add("TAG-SEE", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(14, 1)
-        .withSize(2, 3)
+        .withPosition(14, 0)
+        .withSize(2, 2)
+        .getEntry();
+    private GenericEntry SB_F_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+        .add("ADD-VISION", false)
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(14, 2)
+        .withSize(2, 2)
         .getEntry();
     
     /** Creates a new LimelightSubsystem. */
@@ -142,14 +160,30 @@ public class LimelightSubsystem extends SubsystemBase {
     //  */
     // public Optional<Translation2d> 
     
+    /**
+     * Update the ADD-VISION Shuffleboard entries
+     * 
+     * @param bool whether or not it is updating odometry using vision
+     */
+    public void updateAddVisionEntry(boolean bool) {
+        SB_D_TUPDATE.setBoolean(bool);
+        SB_F_TUPDATE.setBoolean(bool);
+    }
+
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
         int tid = this.getID();
         boolean tSee = this.hasTarget(LimelightConstants.FRONT_LIMELIGHT);
+        boolean nSee = this.hasTarget(LimelightConstants.BACK_LIMELIGHT);
+        
+        // Default Shuffleboard
         SB_D_TID.setInteger(tid);
-        SB_F_TID.setInteger(tid);
         SB_D_TSEE.setBoolean(tSee);
+        SB_D_NSEE.setBoolean(nSee);
+
+        // Field Shuffleboard
+        SB_F_TID.setInteger(tid);
         SB_F_TSEE.setBoolean(tSee);
     }
 }
