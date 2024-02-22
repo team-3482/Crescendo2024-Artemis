@@ -5,25 +5,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.ShootSubsystem;
+import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.IntakeSubsystem;
 
-public class Shoot extends Command {
+public class Intake extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final ShootSubsystem m_subsystem;
+  private final IntakeSubsystem m_subsystem;
 
-  public Shoot(ShootSubsystem subsystem) {
+  public Intake(IntakeSubsystem subsystem) {
     m_subsystem = subsystem;
     addRequirements(subsystem);
   }
 
   @Override
   public void execute() {
-    m_subsystem.SetShooterMotors(ShooterConstants.SHOOTER_SPEED, ShooterConstants.FEEDER_SPEED);
+    m_subsystem.SetIntakeMotor(IntakeConstants.INTAKE_SPEED);
   }
 
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.SetShooterMotors(0, 0);
+    m_subsystem.SetIntakeMotor(0);
   }
 }
