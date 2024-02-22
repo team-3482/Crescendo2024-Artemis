@@ -35,5 +35,10 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ID = 6;
 
     public static final double INTAKE_SPEED = 0.25;
+    public static final double PIVOT_SPEED = 0.5;
+    public static final double PIVOT_TOLERANCE = 2.5;
+
+    public static final int PIVOT_DOWN_DEGREE = -90;
+    public static final int PIVOT_UP_DEGREE = 0;
   }
 }

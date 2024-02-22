@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -17,12 +18,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private static CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
   private double intakeSpeed;
+  private PIDController pid = new PIDController(IntakeConstants.PIVOT_SPEED, 0, 0);
 
   public IntakeSubsystem() {
+    pid.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
   }
 
   /**
-   * Sets the speed for the motors on the shooter
+   * Sets the speed for the intake motor
    * 
    * @param intakeSpeed the speed for the intake motor.
    */
@@ -30,8 +33,14 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeSpeed = intakeSpeed;
   }
 
-  public void IntakePivot(int degree) {
-
+  /**
+   * Set pivot motors to a specific rotation (degrees)
+   * 
+   * @param degree the rotation to move to
+   */
+  public void SetPivot(int degree) {
+    leftMotor.set(pid.calculate(leftMotor.getEncoder().getPosition(), degree));
+    rightMotor.set(pid.calculate(rightMotor.getEncoder().getPosition(), degree));
   }
 
   @Override
