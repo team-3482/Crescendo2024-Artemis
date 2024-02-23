@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -18,10 +19,10 @@ public class IntakeSubsystem extends SubsystemBase {
   //private static CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
   private double intakeSpeed;
-  private PIDController pid = new PIDController(IntakeConstants.PIVOT_SPEED, 0, 0);
 
   public IntakeSubsystem() {
-    pid.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
+    leftMotor.getEncoder().setPosition(0);
+    rightMotor.getEncoder().setPosition(0);
   }
 
   /**
@@ -36,13 +37,16 @@ public class IntakeSubsystem extends SubsystemBase {
   /**
    * Set pivot motors to a specific rotation (degrees)
    * 
-   * @param degree the rotation to move to
+   * @param speed the rotation speed to move with
    */
-  public void SetPivot(int degree) {
-    leftMotor.set(-pid.calculate(leftMotor.getEncoder().getPosition(), degree));
-    rightMotor.set(pid.calculate(rightMotor.getEncoder().getPosition(), degree));
+  public void SetPivotSpeed(double speed) {
+    leftMotor.set(-speed);
+    rightMotor.set(speed);
   }
 
+  public double getEncoderPositionRad() {
+    return Units.rotationsToRadians(this.rightMotor.getEncoder().getPosition());
+  }
   @Override
   public void periodic() {
     //intakeMotor.set(intakeSpeed);

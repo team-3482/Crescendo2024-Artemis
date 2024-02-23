@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -35,10 +37,10 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ID = 6;
 
     public static final double INTAKE_SPEED = 0.25;
-    public static final double PIVOT_SPEED = 0.05;
-    public static final double PIVOT_TOLERANCE = 2.5;
+    public static final double PIVOT_SPEED = 0.02;
+    public static final double PIVOT_TOLERANCE = Units.degreesToRadians(2.5) * 9;
 
-    public static final int PIVOT_DOWN_DEGREE = -90;
-    public static final int PIVOT_UP_DEGREE = 0;
+    public static final int PIVOT_DOWN_DEGREE = -90 * 9;
+    public static final int PIVOT_UP_DEGREE = 0 * 9;
   }
 }

@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Intake;
@@ -63,7 +64,8 @@ public class RobotContainer {
     // cancelling on release.
     //m_driverController.a().whileTrue(new Shoot(m_shootSubsystem));
     //m_driverController.b().whileTrue(new Intake(m_intakeSubsystem));
-    m_driverController.x().whileTrue(new IntakePivot(m_intakeSubsystem));
+    m_driverController.x().onTrue(new IntakePivot(m_intakeSubsystem, IntakeConstants.PIVOT_DOWN_DEGREE));
+    m_driverController.y().onTrue(new IntakePivot(m_intakeSubsystem, IntakeConstants.PIVOT_UP_DEGREE));
 
   }
 
