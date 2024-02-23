@@ -1,5 +1,6 @@
 package frc.robot.swerve;
 
+import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -134,6 +135,8 @@ public class SwerveSubsystem extends SubsystemBase {
             .withPosition(0, 0)
             .withSize(7, 4);
 
+        gyro.getConfigurator().apply((new MountPoseConfigs()).withMountPoseYaw(PhysicalConstants.GYRO_OFFSET));
+        
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -141,7 +144,8 @@ public class SwerveSubsystem extends SubsystemBase {
             }
             catch (Exception error) {
                 error.printStackTrace();
-            }});
+            }
+        });
     }
 
     /**
@@ -268,7 +272,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return whether or not it updated
      */
     private boolean updateOdometryUsingVision() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.FRONT_LIMELIGHT)) return false;
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
 
         Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
         Pose2d relative = botpose.relativeTo(getPose());
@@ -277,7 +281,7 @@ public class SwerveSubsystem extends SubsystemBase {
             && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
             this.odometer.addVisionMeasurement(
                 botpose, Timer.getFPGATimestamp()
-                - LimelightSubsystem.getInstance().getLatency(LimelightConstants.FRONT_LIMELIGHT));
+                - LimelightSubsystem.getInstance().getLatency(LimelightConstants.SHOOTER_LLIGHT));
             return true;
         }
         return false;

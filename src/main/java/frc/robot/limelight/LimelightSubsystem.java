@@ -16,9 +16,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.utilities.LimelightHelpers;
 
 public class LimelightSubsystem extends SubsystemBase {
 
@@ -82,8 +82,8 @@ public class LimelightSubsystem extends SubsystemBase {
   /** Creates a new LimelightSubsystem. */
   public LimelightSubsystem() {
     HttpCamera limelightBackFeed = new HttpCamera(
-        LimelightConstants.BACK_LIMELIGHT,
-        "http://" + LimelightConstants.BACK_LIMELIGHT + ".local:5800/stream.mjpg",
+        LimelightConstants.INTAKE_LLIGHT,
+        "http://" + LimelightConstants.INTAKE_LLIGHT + ".local:5800/stream.mjpg",
         HttpCameraKind.kMJPGStreamer);
     CameraServer.addCamera(limelightBackFeed);
     Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
@@ -94,8 +94,8 @@ public class LimelightSubsystem extends SubsystemBase {
         .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
     
     HttpCamera limelightFrontFeed = new HttpCamera(
-        LimelightConstants.FRONT_LIMELIGHT,
-        "http://" + LimelightConstants.FRONT_LIMELIGHT + ".local:5800/stream.mjpg",
+        LimelightConstants.SHOOTER_LLIGHT,
+        "http://" + LimelightConstants.SHOOTER_LLIGHT + ".local:5800/stream.mjpg",
         HttpCameraKind.kMJPGStreamer);
     CameraServer.addCamera(limelightBackFeed);
     Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
@@ -119,7 +119,7 @@ public class LimelightSubsystem extends SubsystemBase {
    * @return offset
    */
   public double getHorizontalOffset() {
-    return LimelightHelpers.getTX(LimelightConstants.BACK_LIMELIGHT);
+    return LimelightHelpers.getTX(LimelightConstants.INTAKE_LLIGHT);
   }
 
   /**
@@ -129,7 +129,7 @@ public class LimelightSubsystem extends SubsystemBase {
    * @return offset
    */
   public double getVerticalOffset() {
-    return LimelightHelpers.getTY(LimelightConstants.BACK_LIMELIGHT);
+    return LimelightHelpers.getTY(LimelightConstants.INTAKE_LLIGHT);
   }
 
   /**
@@ -139,7 +139,7 @@ public class LimelightSubsystem extends SubsystemBase {
    * @return area
    */
   public double getTargetArea() {
-    return LimelightHelpers.getTA(LimelightConstants.BACK_LIMELIGHT);
+    return LimelightHelpers.getTA(LimelightConstants.INTAKE_LLIGHT);
   }
 
   /**
@@ -158,7 +158,7 @@ public class LimelightSubsystem extends SubsystemBase {
    * @return ID
    */
   public int getID() {
-    return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.FRONT_LIMELIGHT)
+    return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.SHOOTER_LLIGHT)
         .getEntry("tid").getInteger(0);
   }
 
@@ -169,7 +169,7 @@ public class LimelightSubsystem extends SubsystemBase {
    * @return botpose
    */
   public Pose2d getBotpose() {
-    return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.FRONT_LIMELIGHT);
+    return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.SHOOTER_LLIGHT);
   }
 
   /**
@@ -204,8 +204,8 @@ public class LimelightSubsystem extends SubsystemBase {
   public void periodic() {
     limelight_field.setRobotPose(this.getBotpose());
     int tid = this.getID();
-    boolean tSee = this.hasTarget(LimelightConstants.FRONT_LIMELIGHT);
-    boolean nSee = this.hasTarget(LimelightConstants.BACK_LIMELIGHT);
+    boolean tSee = this.hasTarget(LimelightConstants.SHOOTER_LLIGHT);
+    boolean nSee = this.hasTarget(LimelightConstants.INTAKE_LLIGHT);
 
     // Default Shuffleboard
     SB_D_TID.setInteger(tid);

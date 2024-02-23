@@ -20,7 +20,7 @@ import frc.robot.swerve.SwerveSubsystem;
 
 /** An example command that uses an example subsystem. */
 public class CenterNoteCommand extends Command {
-    private final String LIMELIGHT = LimelightConstants.BACK_LIMELIGHT;
+    private final String LIMELIGHT = LimelightConstants.INTAKE_LLIGHT;
 
     private final SlewRateLimiter turningLimiter;
     private PIDController pidController;

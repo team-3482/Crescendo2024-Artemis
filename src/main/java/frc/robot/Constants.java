@@ -13,6 +13,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 
+/** Constants used throughout the code.
+ * Remember : BACK of bot is shooter/battery, use that as reference for directions.
+ * Remember : BACK of the bot is 0 degrees in heading
+ */
 public final class Constants {
     /** Tab names in Shuffleboard */
     public static final class ShuffleboardTabConstants {
@@ -20,8 +24,52 @@ public final class Constants {
         public static String FIELDS = "Field";
     }
 
+    /** Constants used for the sterilizer */
+    public static final class SterilizerConstants {
+        public static int NEO_MOTOR_ID = 24;
+        public static int LASER_ID = 25;
+        /** How fast the motor should spin in rpm to safely move the note */
+        public static double MOVING_SPEED = 50;
+        /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters*/
+        public static double NOTE_DISTANCE_LASER = 20;
+    }
+
+    /**
+     * Constants relating to Shooter code.
+     * Remember : LEFT/RIGHT for motors is based on the Note's POV as it travels through the shooter
+     */
+    public static final class ShooterConstants {
+        public static int LEFT_SHOOTER_MOTOR_ID = 20;
+        public static int RIGHT_SHOOTER_MOTOR_ID = 21;
+        public static int LEFT_PIVOT_MOTOR_ID = 22;
+        public static int RIGHT_PIVOT_MOTOR_ID = 23;
+
+        // Shooting stuff
+        /** Allowed RPM error for the shooter motors */
+        public static double ALLOWED_RPM_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(10);
+
+        // Pivot Stuff
+        public static double MOTOR_TO_PIVOT_RATIO = 1;
+        public static final class SLOT_0_CONFIGS {
+            /** Volts added to overcome friction */
+            public static double kS = 0.24;
+            /** Volts added for a target velocity */
+            public static double kV = 0.12; // Target velocity of 100 rps
+            public static double kP = 4.8;
+            public static double kI = 0;
+            public static double kD = 0.1;
+        }
+        
+        /** Cruise velocity in rps */
+        public static int CRUISE_SPEED = 80;
+        /** Acceleration in rps/s */
+        public static int CRUISE_ACCELERATION = 160;
+        /** Jerk in rps/s^2 (0.1 seconds)*/
+        public static int MOTION_MAGIC_JERK = 1600;
+    }
+
     /** Values used for running autonomous code */
-    public final static class AutonConstants {
+    public static final class AutonConstants {
         // These are used for on-the-fly paths
         public static double MAX_LINEAR_VELOCITY = SwerveKinematics.DRIVE_SPEED_COEFFICENT;
         public static double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
@@ -38,7 +86,7 @@ public final class Constants {
                 Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(SPEAKER, new Pose2d(new Translation2d(15.5, 5.4), Rotation2d.fromDegrees(0))), // Previously 15
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(15, 5.4), Rotation2d.fromDegrees(0))),
                 Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
             ))
         );
@@ -46,7 +94,7 @@ public final class Constants {
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries( 
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(1, new Pose2d(new Translation2d(1,1), new Rotation2d())),
+                Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
                 Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
                 Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
             )),
@@ -60,7 +108,7 @@ public final class Constants {
     }
   
     /** Constants used by the Swerve Orbit Command */
-    public final static class OrbitConstants {
+    public static final class OrbitConstants {
         /** Multipies by the chasis speeds to slow down the bot for more control when orbitting */
         public static double ORBIT_SPEED_COEFFIECENT = 0.25;
         /** Multipies by the chasis speeds to slow down the bot for more control when orbitting and using fine control */
@@ -72,7 +120,7 @@ public final class Constants {
         public static double ORBIT_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
 
         /** PID constants for controlling the turning speed during orbits */
-        public static class TURNING_SPEED_PID_CONTROLLER {
+        public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static double TOLERANCE = 0.5;
             public static double KP = 0.55;
@@ -82,15 +130,16 @@ public final class Constants {
 
         /** Position in space to orbit (SPEAKER) */
         public static Map<DriverStation.Alliance, Translation2d> ORBIT_POINT = Map.ofEntries( 
-            Map.entry(DriverStation.Alliance.Red, 
+            Map.entry(DriverStation.Alliance.Red,
                 new Translation2d(16.5, 5.55)
             ),
-            Map.entry(DriverStation.Alliance.Blue, 
+            Map.entry(DriverStation.Alliance.Blue,
                 new Translation2d(0, 5.55)
             )
         );
     }
 
+    /** Constants for autos that use the intake limelight */
     public static final class NoteConstants {
         /** The rate of change limit (units per second) for turning limiter in orbit mode */
         public static double NOTE_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT; 
@@ -98,13 +147,11 @@ public final class Constants {
         public static double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
         /** The input speed the bot should have when driving to a note (between 0 and 1) */
         public static double NOTE_DRIVE_INPUT_SPEED = 0.25;
-        /** How far right from the center of the bot the camera is in meters (right when looking forward) */
-        public static double LIMELIGHT_OFFSET_RIGHT = 0.038;
 
         /** Time limit for the centering command in seconds */
         public static double CENTERING_TIMEOUT = 1.5;
         /** PID constants for controlling the turning speed during centering */
-        public static class TURNING_SPEED_PID_CONTROLLER {
+        public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static double TOLERANCE = 2;
             public static double KP = 0.65;
@@ -113,19 +160,19 @@ public final class Constants {
         };
     }
     
-    // Constants for limelight-related data
-    public final static class LimelightConstants {
+    /** Constants for limelight-related data */
+    public static final class LimelightConstants {
         /** Name of the front-facing limelight (shooter / AprilTags) */
-        public static String FRONT_LIMELIGHT = "limelight-three";
-        /** Name of the backwards-facing limelight (Intake / Note Detection) */
-        public static String BACK_LIMELIGHT = "limelight-two";
+        public static String SHOOTER_LLIGHT = "limelight-three";
+        /** Name of the back-facing limelight (Intake / Note Detection) */
+        public static String INTAKE_LLIGHT = "limelight-two";
         
-        /** Only accepts limelight values that differ by these x and y values from the internal odometer */
+        /** Only accept limelight values that differ by these x and y values in meters at most from the internal odometer */
         public static double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[]{1, 1};
     }
 
     /** Constants for the kinematics and driving of the swerve system */
-    public final static class SwerveKinematics {
+    public static final class SwerveKinematics {
         /** Distance between wheel positions */
         public static SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
             new Translation2d(PhysicalConstants.WHEEL_BASE / 2, -PhysicalConstants.TRACK_WIDTH / 2),
@@ -152,7 +199,7 @@ public final class Constants {
         public static double D_PAD_SPEED = 0.25; // Previously 1
         
         /** PID constants used for controlling the turning position of the swerve modules */
-        public static class TURNING_PID_CONTROLLER {
+        public static final class TURNING_PID_CONTROLLER {
             public static double KP = 0.325;
             public static double KI = 0; 
             public static double KD = 0; 
@@ -160,18 +207,23 @@ public final class Constants {
     }
 
     /** Constants of physical attributes of the robot */
-    public final static class PhysicalConstants {
-        public static double TRACK_WIDTH = Units.inchesToMeters(21.5); // Y (not sure if left-right or front-back) distance between wheels
-        public static double WHEEL_BASE = Units.inchesToMeters(21.5); // X (not sure if left-right or front-back) distance between wheels
+    public static final class PhysicalConstants {
+        /** Y (not sure if left-right or front-back) distance between wheels in meters */
+        public static double TRACK_WIDTH = Units.inchesToMeters(21.5); 
+        /** X (not sure if left-right or front-back) distance between wheels in meters */
+        public static double WHEEL_BASE = Units.inchesToMeters(21.5);
         
-        /** Diameter in meters */
-        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5); // Diameter of the wheels
+        /** Diameter of the wheels in meters */
+        public static double SWERVE_WHEEL_DIAMETER = Units.inchesToMeters(3.5);
         /** Ratio between motor rotations and wheel rotations */
         public static double SWERVE_MOTOR_TO_WHEEL_RATIO = Math.PI * 5.80 * 2 / 3;
+
+        /** How much to add to the gyro's heading when retrieving it in degrees */
+        public static double GYRO_OFFSET = 180;
     }
   
     /** Constants for the controller and any controller related assignments */
-    public final static class ControllerConstants {
+    public static final class ControllerConstants {
         /** DriverStation ID of the driver controller */
         public static int DRIVE_CONTROLLER_ID = 0;
         /** DriverStation ID of the operator controller */
@@ -184,7 +236,7 @@ public final class Constants {
     }
   
     /** Constants used with the LEDSubsystem */
-    public static class LEDConstants {
+    public static final class LEDConstants {
         /** Port that the LED strip is plugged into */
         public static int UNDERGLOW_LED_PORT = 9;
         /** Number of LEDs to iterate through */
@@ -192,9 +244,9 @@ public final class Constants {
     }
     
     /** Constants for the swerve modules */
-    public final static class SwerveModuleConstants {
+    public static final class SwerveModuleConstants {
         /** Configuration for swerve module one */
-        public final static class One {
+        public static final class One {
             public static boolean ENABLED = true;
             public static int DRIVE = 3;
             public static int TURN = 2;
@@ -205,7 +257,7 @@ public final class Constants {
         }
 
         /** Configuration for swerve module three */
-        public final static class Two {
+        public static final class Two {
             public static boolean ENABLED = true;
             public static int DRIVE = 5;
             public static int TURN = 4;
@@ -216,7 +268,7 @@ public final class Constants {
         }
 
         /** Configuration for swerve module three */
-        public final static class Three {
+        public static final class Three {
             public static boolean ENABLED = true;
             public static int DRIVE = 7;
             public static int TURN = 6;
@@ -227,7 +279,7 @@ public final class Constants {
         }
 
         /** Configuration for swerve module four */
-        public final static class Four {
+        public static final class Four {
             public static boolean ENABLED = true;
             public static int DRIVE = 9;
             public static int TURN = 8;
