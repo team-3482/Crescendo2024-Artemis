@@ -15,7 +15,7 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem extends SubsystemBase {
   private static CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
   private static CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-  private static CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
+  //private static CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
   private double intakeSpeed;
   private PIDController pid = new PIDController(IntakeConstants.PIVOT_SPEED, 0, 0);
@@ -39,14 +39,14 @@ public class IntakeSubsystem extends SubsystemBase {
    * @param degree the rotation to move to
    */
   public void SetPivot(int degree) {
-    leftMotor.set(pid.calculate(leftMotor.getEncoder().getPosition(), degree));
+    leftMotor.set(-pid.calculate(leftMotor.getEncoder().getPosition(), degree));
     rightMotor.set(pid.calculate(rightMotor.getEncoder().getPosition(), degree));
   }
 
   @Override
   public void periodic() {
-    intakeMotor.set(intakeSpeed);
+    //intakeMotor.set(intakeSpeed);
 
-    SmartDashboard.putNumber("Intake Motor RPM", intakeMotor.getEncoder().getVelocity());
+    //SmartDashboard.putNumber("Intake Motor RPM", intakeMotor.getEncoder().getVelocity());
   }
 }
