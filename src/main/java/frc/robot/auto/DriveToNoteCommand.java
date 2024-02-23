@@ -87,6 +87,8 @@ public class DriveToNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return LimelightSubsystem.getInstance().hasTarget(LIMELIGHT); // Simulate intakeSubsystem.getLaser() or something
+        return LimelightSubsystem.getInstance().getTargetArea() >= 30
+        || !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT); 
+        // Simulate intakeSubsystem.getLaser() or something
     }
 }

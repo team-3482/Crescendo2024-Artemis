@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.NoteConstants;
@@ -23,6 +24,7 @@ public class CenterNoteCommand extends Command {
 
     private final SlewRateLimiter turningLimiter;
     private PIDController pidController;
+    private Timer timer;
 
     /**
     * Creates a new CenterNoteCommand.
@@ -36,6 +38,7 @@ public class CenterNoteCommand extends Command {
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
         this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        this.timer = new Timer();
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(SwerveSubsystem.getInstance());
@@ -50,6 +53,7 @@ public class CenterNoteCommand extends Command {
         }
         LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
         pidController.reset();
+        timer.restart();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -71,6 +75,7 @@ public class CenterNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
+        this.timer.stop();
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
         }
@@ -82,6 +87,7 @@ public class CenterNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(LimelightSubsystem.getInstance().getHorizontalOffset()) <= NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
+        return Math.abs(LimelightSubsystem.getInstance().getHorizontalOffset()) <= (NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1)
+            || timer.get() >= NoteConstants.CENTERING_TIMEOUT;
     }
 }

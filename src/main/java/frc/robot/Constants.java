@@ -97,17 +97,19 @@ public final class Constants {
         /** The rate limit in units per second for driving in orbit mode (x and y) */
         public static double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
         /** The input speed the bot should have when driving to a note (between 0 and 1) */
-        public static double NOTE_DRIVE_INPUT_SPEED = 1;
+        public static double NOTE_DRIVE_INPUT_SPEED = 0.25;
         /** How far right from the center of the bot the camera is in meters (right when looking forward) */
         public static double LIMELIGHT_OFFSET_RIGHT = 0.038;
 
+        /** Time limit for the centering command in seconds */
+        public static double CENTERING_TIMEOUT = 1.5;
         /** PID constants for controlling the turning speed during centering */
         public static class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static double TOLERANCE = 1;
-            public static double KP = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP;
-            public static double KI = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI;
-            public static double KD = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD;
+            public static double TOLERANCE = 2;
+            public static double KP = 0.65;
+            public static double KI = 0;
+            public static double KD = 0;
         };
     }
     
