@@ -5,24 +5,23 @@
 package frc.robot.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.intake.IntakeSubsystem;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final IntakeSubsystem m_subsystem;
 
-    public Intake(IntakeSubsystem subsystem) {
-        m_subsystem = subsystem;
-        addRequirements(subsystem);
+    public Intake() {
+        this.addRequirements(IntakeSubsystem.getInstance());  
     }
 
     @Override
     public void execute() {
-        m_subsystem.SetIntakeMotor(IntakeConstants.INTAKE_SPEED);
+        IntakeSubsystem.getInstance().setIntakeMotor(IntakeConstants.INTAKE_SPEED);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_subsystem.SetIntakeMotor(0);
+        IntakeSubsystem.getInstance().setIntakeMotor(0);
     }
 }

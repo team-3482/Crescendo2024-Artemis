@@ -13,6 +13,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
+    // Singleton Design Pattern
+    private static IntakeSubsystem instance;
+    public static IntakeSubsystem getInstance() {
+        if(instance == null) {
+            instance = new IntakeSubsystem();
+        }
+        return instance;
+    }
+
     private static CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
     private static CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
     // private static CANSparkFlex intakeMotor = new
@@ -30,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * 
      * @param intakeSpeed the speed for the intake motor.
      */
-    public void SetIntakeMotor(double intakeSpeed) {
+    public void setIntakeMotor(double intakeSpeed) {
         this.intakeSpeed = intakeSpeed;
     }
 
@@ -39,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * 
      * @param speed the rotation speed to move with
      */
-    public void SetPivotSpeed(double speed) {
+    public void setPivotSpeed(double speed) {
         leftMotor.set(-speed);
         rightMotor.set(speed);
     }

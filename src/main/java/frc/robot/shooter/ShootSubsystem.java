@@ -12,6 +12,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShootSubsystem extends SubsystemBase {
+    // Singleton Design Pattern
+    private static ShootSubsystem instance;
+    public static ShootSubsystem getInstance() {
+        if(instance == null) {
+            instance = new ShootSubsystem();
+        }
+        return instance;
+    }
+
     private static CANSparkFlex topMotor = new CANSparkFlex(ShooterConstants.TOP_MOTOR_ID, MotorType.kBrushless);
     private static CANSparkFlex bottomMotor = new CANSparkFlex(ShooterConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
     private static CANSparkFlex feederMotor = new CANSparkFlex(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushless);

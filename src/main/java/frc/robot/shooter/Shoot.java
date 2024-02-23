@@ -9,20 +9,18 @@ import frc.robot.Constants.ShooterConstants;
 
 public class Shoot extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final ShootSubsystem m_subsystem;
 
-    public Shoot(ShootSubsystem subsystem) {
-        m_subsystem = subsystem;
-        addRequirements(subsystem);
+    public Shoot() {
+        this.addRequirements(ShootSubsystem.getInstance());
     }
 
     @Override
     public void execute() {
-        m_subsystem.SetShooterMotors(ShooterConstants.SHOOTER_SPEED, ShooterConstants.FEEDER_SPEED);
+        ShootSubsystem.getInstance().SetShooterMotors(ShooterConstants.SHOOTER_SPEED, ShooterConstants.FEEDER_SPEED);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_subsystem.SetShooterMotors(0, 0);
+        ShootSubsystem.getInstance().SetShooterMotors(0, 0);
     }
 }

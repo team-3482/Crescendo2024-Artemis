@@ -43,8 +43,6 @@ public class RobotContainer {
     private CommandXboxController driveController;
     private CommandXboxController operatorController;
 
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-
     /**
      * Creates an instance of the robot controller
      */
@@ -113,10 +111,10 @@ public class RobotContainer {
         // AutonConstants.AMP));
 
         operatorController.a()
-                .onTrue(new IntakePivot(intakeSubsystem, IntakeConstants.PIVOT_DOWN_DEGREE))
-                .onFalse(new IntakePivot(intakeSubsystem, IntakeConstants.PIVOT_UP_DEGREE));
+                .onTrue(new IntakePivot(IntakeConstants.PIVOT_DOWN_DEGREE))
+                .onFalse(new IntakePivot(IntakeConstants.PIVOT_UP_DEGREE));
 
-        operatorController.b().onTrue(new Intake(intakeSubsystem));
+        operatorController.b().onTrue(new Intake());
     }
 
     /**

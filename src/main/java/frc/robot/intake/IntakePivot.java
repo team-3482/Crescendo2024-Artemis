@@ -8,19 +8,18 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.intake.IntakeSubsystem;
 
 public class IntakePivot extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-    private final IntakeSubsystem m_subsystem;
     private PIDController pid;
     private double position;
 
-    public IntakePivot(IntakeSubsystem subsystem, double position) {
+    public IntakePivot(double position) {
         pid = new PIDController(IntakeConstants.PIVOT_SPEED, 0, 0);
         pid.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
         this.position = position;
-        m_subsystem = subsystem;
-        addRequirements(subsystem);
+        this.addRequirements(IntakeSubsystem.getInstance());  
     }
 
     @Override
@@ -30,17 +29,17 @@ public class IntakePivot extends Command {
 
     @Override
     public void execute() {
-        double speed = pid.calculate(m_subsystem.getEncoderPositionRad(), Units.degreesToRadians(position));
-        m_subsystem.SetPivotSpeed(speed);
+        double speed = pid.calculate(IntakeSubsystem.getInstance().getEncoderPositionRad(), Units.degreesToRadians(position));
+        IntakeSubsystem.getInstance().setPivotSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_subsystem.SetPivotSpeed(0);
+        IntakeSubsystem.getInstance().setPivotSpeed(0);
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_subsystem.getEncoderPositionRad() - position) <= IntakeConstants.PIVOT_TOLERANCE;
+        return Math.abs(IntakeSubsystem.getInstance().getEncoderPositionRad() - position) <= IntakeConstants.PIVOT_TOLERANCE;
     }
 }
