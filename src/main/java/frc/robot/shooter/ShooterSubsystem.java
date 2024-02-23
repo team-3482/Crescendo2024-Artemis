@@ -122,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void setShootingVelocities(double[] velocities) {
         leftShooter.set(velocities[0]);
-        rightShooter.set(velocities[0]);
+        rightShooter.set(velocities[1]);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         AutoBuilder.configureHolonomic(
             this::getPose,
-            this::resetOdometry,
+            this::setPose,
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
@@ -155,7 +155,7 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void setHeading(double heading) {
         this.gyro.setYaw(heading);
-        this.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(heading)));
+        this.setPose(new Pose2d(getPose().getTranslation(), new Rotation2d(heading)));
     }
 
     /**
@@ -234,7 +234,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * 
     * @param pose to reset to
     */
-    public void resetOdometry(Pose2d pose) {
+    public void setPose(Pose2d pose) {
         this.odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
     }
   
@@ -245,7 +245,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void resetOdometryLimelight() {
         Translation2d translation = LimelightSubsystem.getInstance().getBotpose().getTranslation();
         if (translation.equals(new Translation2d())) return;
-        this.resetOdometry(new Pose2d(
+        this.setPose(new Pose2d(
             translation,
             Rotation2d.fromDegrees(SwerveSubsystem.getInstance().getHeading()))
         );
