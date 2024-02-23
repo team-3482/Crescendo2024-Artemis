@@ -36,7 +36,6 @@ public class IntakePivot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("ended");
         m_subsystem.SetPivotSpeed(0);
     }
 
