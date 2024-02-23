@@ -82,26 +82,26 @@ public final class Constants {
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(SPEAKER, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0))),
-                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(-90)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(SPEAKER, new Pose2d(new Translation2d(15, 5.4), Rotation2d.fromDegrees(0))),
-                Map.entry(AMP, new Pose2d(new Translation2d(), Rotation2d.fromDegrees(0)))
+                Map.entry(AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(90))),
+                Map.entry(SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(0)))
             ))
         );
         
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries( 
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(1, new Pose2d(new Translation2d(), new Rotation2d())),
-                Map.entry(2, new Pose2d(new Translation2d(), new Rotation2d())),
-                Map.entry(3, new Pose2d(new Translation2d(), new Rotation2d()))
+                Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(60))),
+                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(-60)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(1, new Pose2d(new Translation2d(16, 4.4), Rotation2d.fromDegrees(55))),
-                Map.entry(2, new Pose2d(new Translation2d(15.4, 5.4), Rotation2d.fromDegrees(0))),
-                Map.entry(3, new Pose2d(new Translation2d(16, 7), Rotation2d.fromDegrees(-60)))
+                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(-60))),
+                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(60)))
             ))
         );
         
