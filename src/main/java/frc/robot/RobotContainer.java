@@ -17,12 +17,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.auto.BezierToGoalCommand;
+import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
+import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.intake.*;
 
@@ -53,9 +53,9 @@ public class RobotContainer {
         // Register named commands for pathplanner (do this after subsystem
         // initialization)
         NamedCommands.registerCommand("Pathfind AMP",
-                new BezierToGoalCommand(AutonConstants.AMP));
+            new PathfindToGoalCommand(AutonConstants.AMP));
         NamedCommands.registerCommand("Pathfind SPEAKER",
-                new BezierToGoalCommand(AutonConstants.SPEAKER));
+            new PathfindToGoalCommand(AutonConstants.SPEAKER));
 
         // Sets the default command to driving swerve
         SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
@@ -91,17 +91,17 @@ public class RobotContainer {
         }));
         // Orbit April-Tag
         driveController.a().toggleOnTrue(new SwerveOrbitCommand(
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
-                () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
-                // D-Pad / POV Movement
-                ControllerConstants.DPAD_DRIVE_INPUT,
-                (Integer angle) -> driveController.pov(angle).getAsBoolean()));
-
-        // driveController.y().onTrue(Commands.sequence(new CenterNoteCommand(), new
-        // DriveToNoteCommand()));
-
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
+            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
+            // D-Pad / POV Movement
+            ControllerConstants.DPAD_DRIVE_INPUT,
+            (Integer angle) -> driveController.pov(angle).getAsBoolean()
+            ));
+        
+        // driveController.y().onTrue(Commands.sequence(new CenterNoteCommand(), new DriveToNoteCommand()));
+        driveController.y().onTrue(new CenterSpeakerCommand());
         // Operator controller
         // Line up to SPEAKER
         // driveController.x().onTrue(new

@@ -69,7 +69,7 @@ public class SwerveOrbitCommand extends Command {
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD);
         this.rotationPidController.setTolerance(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
-        this.rotationPidController.enableContinuousInput(-Math.PI, Math.PI);
+        this.rotationPidController.enableContinuousInput(0, 2 * Math.PI);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
@@ -102,9 +102,10 @@ public class SwerveOrbitCommand extends Command {
         // Orbit calculations
         Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
         
-        // y is negative when the angle has to be positive and vice versa so it has to be reversed
-        double angleGoalRad = Math.atan(difference.getX() / - difference.getY()) - Math.PI / 2;
+        // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+        double angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
         System.out.println("angleGoal " + Units.radiansToDegrees(angleGoalRad));
+        
         double turningSpeed = rotationPidController
             .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
         
