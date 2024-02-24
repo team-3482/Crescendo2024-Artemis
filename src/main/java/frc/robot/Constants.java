@@ -43,10 +43,13 @@ public final class Constants {
         public static int RIGHT_SHOOTER_MOTOR_ID = 21;
         public static int LEFT_PIVOT_MOTOR_ID = 22;
         public static int RIGHT_PIVOT_MOTOR_ID = 23;
+        public static int HEX_PIVOT_ENCODER_ID = 26;
 
         // Shooting stuff
         /** Allowed RPM error for the shooter motors */
         public static double ALLOWED_RPM_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(10);
+        /** Allowed pivot error for the pivot rotation in degrees */
+        public static double ALLOWED_PIVOT_ERROR = 1;
 
         // Pivot Stuff
         public static double MOTOR_TO_PIVOT_RATIO = 1;

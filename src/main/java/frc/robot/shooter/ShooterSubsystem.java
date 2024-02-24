@@ -9,7 +9,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -19,15 +18,16 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     // Singleton Design Pattern
-    private static SterilizerSubsystem instance;
-    public static SterilizerSubsystem getInstance() {
+    private static ShooterSubsystem instance;
+    public static ShooterSubsystem getInstance() {
         if(instance == null) {
-            instance = new SterilizerSubsystem();
+            instance = new ShooterSubsystem();
         }
         return instance;
     }
@@ -38,6 +38,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX leaderPivot = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID);
     private TalonFX followerPivot = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID);
+    private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(ShooterConstants.HEX_PIVOT_ENCODER_ID);
 
     /** Creates a new ShooterSubsystem.*/
     public ShooterSubsystem() {
@@ -52,7 +53,6 @@ public class ShooterSubsystem extends SubsystemBase {
      * Configures motion magic for the intake pivot talon
      */
     private void configureMotionMagic() {
-        TalonFXConfigurator configurator = this.leaderPivot.getConfigurator();
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         
         FeedbackConfigs feedbackConfigs = configuration.Feedback;
@@ -88,10 +88,10 @@ public class ShooterSubsystem extends SubsystemBase {
         // Shouldn't need to zero the sensor due to using Tuner X configured absolute 0 
         // Talon is always initialized to absolute position
         // this.leaderPivot.setSelectedSensorPosition(0, ShooterConstants.PID_LOOP_IDX, ShooterConstants.TIMEOUT_MS);
-
-        configurator.apply(configuration);
+        
+        this.leaderPivot.getConfigurator().apply(configuration);
     }
-
+    
     /**
      * Sets the position of the pivot using Motion Magic slot 0
      * 
@@ -102,7 +102,16 @@ public class ShooterSubsystem extends SubsystemBase {
         motionMagicVoltage.Slot = 0;
         leaderPivot.setControl(motionMagicVoltage.withPosition(Units.degreesToRotations(position)));
     }
-    
+
+    /**
+     * Gets the position of the pivot using the hex encoder
+     * 
+     * @return position in degrees
+     */
+    public double getPivotPosition() {
+        return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());
+    }
+
     /**
      * Gets the velocities of the shooter motors. Left is [0] and right is [1]
      * 
