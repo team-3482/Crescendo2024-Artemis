@@ -62,8 +62,10 @@ public class CenterSpeakerCommand extends Command {
         Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
         
         // y is negative when the angle has to be positive and vice versa so it has to be reversed
-        double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+        // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+        double angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
         System.out.println(angleGoalRad);
+
         this.finished = Math.abs(angleGoalRad) <= OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
         
         double turningSpeed = rotationPidController

@@ -102,9 +102,10 @@ public class SwerveOrbitCommand extends Command {
         // Orbit calculations
         Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
         
-        // y is negative when the angle has to be positive and vice versa so it has to be reversed
-        double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+        // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+        double angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
         System.out.println("angleGoal " + Units.radiansToDegrees(angleGoalRad));
+        
         double turningSpeed = rotationPidController
             .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
         
