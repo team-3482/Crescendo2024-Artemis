@@ -52,7 +52,7 @@ public final class Constants {
         public static double ALLOWED_PIVOT_ERROR = 1;
 
         // Pivot Stuff
-        public static double MOTOR_TO_PIVOT_RATIO = 1;
+        public static int MOTOR_TO_PIVOT_RATIO = 240;
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */
             public static double kS = 0.24;
