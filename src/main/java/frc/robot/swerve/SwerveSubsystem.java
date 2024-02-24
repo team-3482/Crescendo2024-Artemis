@@ -100,6 +100,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     private Logger logger;
     private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
+    
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
@@ -135,7 +136,7 @@ public class SwerveSubsystem extends SubsystemBase {
             .withPosition(0, 0)
             .withSize(7, 4);
 
-        gyro.getConfigurator().apply((new MountPoseConfigs()).withMountPoseYaw(PhysicalConstants.GYRO_OFFSET));
+        gyro.getConfigurator().apply((new MountPoseConfigs()).withMountPoseYaw(0));
         
         new Thread(() -> {
             try {
@@ -164,6 +165,16 @@ public class SwerveSubsystem extends SubsystemBase {
     public void zeroHeading() {
         setHeading(0);
     }
+    
+    /**
+    * Returns the current heading of the robot in degrees
+    * 
+    * @return current heading of the robot
+    */
+    public double getHeading() {
+        return this.gyro.getYaw().getValueAsDouble();
+    }
+
     /**
      * Zeros the position of the drive encoders
      */
@@ -172,15 +183,6 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.zeroDriveEncoder();
         this.moduleThree.zeroDriveEncoder();
         this.moduleFour.zeroDriveEncoder();
-    }
-
-    /**
-    * Returns the current heading of the robot in degrees
-    * 
-    * @return current heading of the robot
-    */
-    public double getHeading() {
-        return this.gyro.getYaw().getValueAsDouble();
     }
 
     /**

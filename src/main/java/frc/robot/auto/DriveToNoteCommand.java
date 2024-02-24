@@ -66,9 +66,8 @@ public class DriveToNoteCommand extends Command {
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         double drivingSpeed = driveLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
             * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
-
-        // Negative drivingSpeed because the note detection occurs opposite of the heading
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-drivingSpeed, 0, turningSpeed);
+        
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(drivingSpeed, 0, turningSpeed);
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
