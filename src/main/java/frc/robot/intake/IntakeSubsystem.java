@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
@@ -22,46 +21,58 @@ public class IntakeSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private static CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-    private static CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-    // private static CANSparkFlex intakeMotor = new
-    // CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
-
-    private double intakeSpeed;
+    private CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
 
     public IntakeSubsystem() {
-        leftMotor.getEncoder().setPosition(0);
-        rightMotor.getEncoder().setPosition(0);
+        // These motors should be zeroed in the app
+        // leftMotor.getEncoder().setPosition(0);
+        // rightMotor.getEncoder().setPosition(0);
+        
+        leftMotor.follow(rightMotor, true);
+        rightMotor.getEncoder().setPositionConversionFactor(IntakeConstants.MOTOR_TO_PIVOT_RATIO);
     }
 
     /**
-     * Sets the speed for the intake motor
-     * 
-     * @param intakeSpeed the speed for the intake motor.
+     * Moves the note forward through the intake
      */
-    public void setIntakeMotor(double intakeSpeed) {
-        this.intakeSpeed = intakeSpeed;
+    public void enableIntake() {
+        intakeMotor.set(IntakeConstants.INTAKE_SPEED);
+    }
+
+    /**
+     * Stops the intake motor
+     */
+    public void stopIntake() {
+        intakeMotor.set(0);
+    }
+
+    /**
+     * Reverses the intake motor
+     */
+    public void ejectIntake() {
+        intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
     }
 
     /**
      * Set pivot motors to a specific rotation (degrees)
      * 
-     * @param speed the rotation speed to move with
+     * @param speed between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        leftMotor.set(-speed);
         rightMotor.set(speed);
     }
 
-    public double getEncoderPositionRad() {
-        return Units.rotationsToRadians(this.rightMotor.getEncoder().getPosition());
+    /**
+     * Gets the position of the encoder
+     * 
+     * @return position of the intake in degrees
+     */
+    public double getPivotPositionDegrees() {
+        return Units.rotationsToDegrees(this.rightMotor.getEncoder().getPosition());
     }
 
     @Override
-    public void periodic() {
-        // intakeMotor.set(intakeSpeed);
-
-        // SmartDashboard.putNumber("Intake Motor RPM",
-        // intakeMotor.getEncoder().getVelocity());
-    }
+    public void periodic() {}
 }

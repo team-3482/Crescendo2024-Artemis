@@ -50,14 +50,14 @@ public class SterilizerSubsystem extends SubsystemBase {
      * Moves the note forwards to the shooter
      */
     public void moveForward() {
-        neoMotor.set(SterilizerConstants.MOVING_SPEED);
+        neoMotor.set(SterilizerConstants.FEEDING_SPEED);
     }
     
     /**
      * Moves the note backwards to the intake
      */
     public void moveBackward() {
-        neoMotor.set(-SterilizerConstants.MOVING_SPEED);
+        neoMotor.set(-SterilizerConstants.FEEDING_SPEED);
     }
     
     /**

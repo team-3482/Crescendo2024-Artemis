@@ -16,15 +16,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.PathfindToGoalCommand;
+import frc.robot.intake.IntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
-import frc.robot.intake.*;
 
 public class RobotContainer {
     // Singleton design pattern
@@ -39,7 +40,7 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    // Instance of the controller used to drive the robot
+    // Instance of the controllers used to drive the robot
     private CommandXboxController driveController;
     private CommandXboxController operatorController;
 
@@ -102,19 +103,18 @@ public class RobotContainer {
         
         // driveController.y().onTrue(Commands.sequence(new CenterNoteCommand(), new DriveToNoteCommand()));
         driveController.y().onTrue(new CenterSpeakerCommand());
+        
         // Operator controller
         // Line up to SPEAKER
-        // driveController.x().onTrue(new
+        // operatorController.x().onTrue(new
         // PathfindToGoalCommand(AutonConstants.SPEAKER));
         // Line up to AMP
-        // driveController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
+        // operatorController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));
 
         operatorController.a()
-                .onTrue(new IntakePivot(IntakeConstants.PIVOT_DOWN_DEGREE))
-                .onFalse(new IntakePivot(IntakeConstants.PIVOT_UP_DEGREE));
-
-        operatorController.b().onTrue(new Intake());
+            .onTrue(new IntakeCommand(IntakeConstants.PIVOT_DOWN_DEGREE))
+            .onFalse(new IntakeCommand(IntakeConstants.PIVOT_UP_DEGREE));
     }
 
     /**
