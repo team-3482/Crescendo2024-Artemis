@@ -5,6 +5,7 @@
 package frc.robot.intake;
 
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
@@ -14,45 +15,49 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem extends SubsystemBase {
     // Singleton Design Pattern
     private static IntakeSubsystem instance;
+
     public static IntakeSubsystem getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new IntakeSubsystem();
         }
         return instance;
     }
 
-    private CANSparkFlex leftMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkFlex rightMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.INTAKE_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex leftPivotMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex rightPivotMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex topIntakeMotor = new CANSparkFlex(IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
 
     public IntakeSubsystem() {
         // These motors should be zeroed in the app
         // leftMotor.getEncoder().setPosition(0);
         // rightMotor.getEncoder().setPosition(0);
-        
-        leftMotor.follow(rightMotor, true);
-        rightMotor.getEncoder().setPositionConversionFactor(IntakeConstants.MOTOR_TO_PIVOT_RATIO);
+
+        leftPivotMotor.follow(rightPivotMotor, true);
+        rightPivotMotor.getEncoder().setPositionConversionFactor(IntakeConstants.MOTOR_TO_PIVOT_RATIO);
+
+        bottomIntakeMotor.follow(topIntakeMotor, false);
     }
 
     /**
      * Moves the note forward through the intake
      */
     public void enableIntake() {
-        intakeMotor.set(IntakeConstants.INTAKE_SPEED);
+        topIntakeMotor.set(IntakeConstants.INTAKE_SPEED);
     }
 
     /**
      * Stops the intake motor
      */
     public void stopIntake() {
-        intakeMotor.set(0);
+        topIntakeMotor.set(0);
     }
 
     /**
      * Reverses the intake motor
      */
     public void ejectIntake() {
-        intakeMotor.set(-IntakeConstants.INTAKE_SPEED);
+        topIntakeMotor.set(-IntakeConstants.INTAKE_SPEED);
     }
 
     /**
@@ -61,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        rightMotor.set(speed);
+        rightPivotMotor.set(speed);
     }
 
     /**
@@ -70,9 +75,6 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return position of the intake in degrees
      */
     public double getPivotPositionDegrees() {
-        return Units.rotationsToDegrees(this.rightMotor.getEncoder().getPosition());
+        return Units.rotationsToDegrees(this.rightPivotMotor.getEncoder().getPosition());
     }
-
-    @Override
-    public void periodic() {}
 }
