@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.LimelightConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,6 +31,14 @@ public class Robot extends TimedRobot {
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
         RobotContainer.getInstance();
+
+        // port forward required LL ports. not necessary for use with wifi but
+        // if we are controlling the bot over ethernet (eg. at comp) the LLs 
+        // will not work without this code.
+        for (int port = 5800; port <= 5807; port++) {
+            PortForwarder.add(port, LimelightConstants.INTAKE_LLIGHT + ".local", port);
+            PortForwarder.add(port, LimelightConstants.SHOOTER_LLIGHT + ".local", port);
+        }
     }
 
     /**
