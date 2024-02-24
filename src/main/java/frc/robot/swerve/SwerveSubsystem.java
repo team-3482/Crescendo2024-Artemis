@@ -1,5 +1,6 @@
 package frc.robot.swerve;
 
+import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -99,6 +100,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     private Logger logger;
     private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
+    
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
     * and zeros the heading after a delay to allow the pigeon to turn on and load
@@ -108,7 +110,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         AutoBuilder.configureHolonomic(
             this::getPose,
-            this::resetOdometry,
+            this::setPose,
             this::getChassisSpeeds,
             this::setChassisSpeeds,
             new HolonomicPathFollowerConfig(
@@ -134,6 +136,8 @@ public class SwerveSubsystem extends SubsystemBase {
             .withPosition(0, 0)
             .withSize(7, 4);
 
+        gyro.getConfigurator().apply((new MountPoseConfigs()).withMountPoseYaw(0));
+        
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -141,7 +145,8 @@ public class SwerveSubsystem extends SubsystemBase {
             }
             catch (Exception error) {
                 error.printStackTrace();
-            }});
+            }
+        });
     }
 
     /**
@@ -151,7 +156,7 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void setHeading(double heading) {
         this.gyro.setYaw(heading);
-        this.resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d(heading)));
+        this.setPose(new Pose2d(getPose().getTranslation(), new Rotation2d(heading)));
     }
 
     /**
@@ -160,6 +165,16 @@ public class SwerveSubsystem extends SubsystemBase {
     public void zeroHeading() {
         setHeading(0);
     }
+    
+    /**
+    * Returns the current heading of the robot in degrees
+    * 
+    * @return current heading of the robot
+    */
+    public double getHeading() {
+        return this.gyro.getYaw().getValueAsDouble();
+    }
+
     /**
      * Zeros the position of the drive encoders
      */
@@ -168,15 +183,6 @@ public class SwerveSubsystem extends SubsystemBase {
         this.moduleTwo.zeroDriveEncoder();
         this.moduleThree.zeroDriveEncoder();
         this.moduleFour.zeroDriveEncoder();
-    }
-
-    /**
-    * Returns the current heading of the robot in degrees
-    * 
-    * @return current heading of the robot
-    */
-    public double getHeading() {
-        return this.gyro.getYaw().getValueAsDouble();
     }
 
     /**
@@ -230,7 +236,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * 
     * @param pose to reset to
     */
-    public void resetOdometry(Pose2d pose) {
+    public void setPose(Pose2d pose) {
         this.odometer.resetPosition(getRotation2d(), getModulePositions(), pose);
     }
   
@@ -241,7 +247,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void resetOdometryLimelight() {
         Translation2d translation = LimelightSubsystem.getInstance().getBotpose().getTranslation();
         if (translation.equals(new Translation2d())) return;
-        this.resetOdometry(new Pose2d(
+        this.setPose(new Pose2d(
             translation,
             Rotation2d.fromDegrees(SwerveSubsystem.getInstance().getHeading()))
         );
@@ -268,7 +274,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return whether or not it updated
      */
     private boolean updateOdometryUsingVision() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.FRONT_LIMELIGHT)) return false;
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
 
         Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
         Pose2d relative = botpose.relativeTo(getPose());
@@ -277,7 +283,7 @@ public class SwerveSubsystem extends SubsystemBase {
             && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
             this.odometer.addVisionMeasurement(
                 botpose, Timer.getFPGATimestamp()
-                - LimelightSubsystem.getInstance().getLatency(LimelightConstants.FRONT_LIMELIGHT));
+                - LimelightSubsystem.getInstance().getLatency(LimelightConstants.SHOOTER_LLIGHT));
             return true;
         }
         return false;
