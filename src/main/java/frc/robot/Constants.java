@@ -297,4 +297,25 @@ public final class Constants {
         /** ID of the Pigeon2's connection */
         public static int GRYO_ID = 14;
     }
+  public static class ShooterConstants {
+    public static final int TOP_MOTOR_ID = 12;
+    public static final int BOTTOM_MOTOR_ID = 11;
+    public static final int FEEDER_MOTOR_ID = 13;
+    public static final double SHOOTER_SPEED = 0.66;
+    public static final double FEEDER_SPEED = 0.20;
+  }
+
+  public static class IntakeConstants {
+    public static final int LEFT_MOTOR_ID = 15;
+    public static final int RIGHT_MOTOR_ID = 14;
+    public static final int INTAKE_MOTOR_ID = 16;
+
+    public static final double INTAKE_SPEED = 0.25;
+    public static final double PIVOT_SPEED = 0.02;
+    public static final double PIVOT_TOLERANCE = Units.degreesToRadians(2.5) * 9;
+
+    public static final int PIVOT_DOWN_DEGREE = -90 * 9;
+    public static final int PIVOT_UP_DEGREE = 0 * 9;
+  }
+
 }
