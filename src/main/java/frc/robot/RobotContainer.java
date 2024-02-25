@@ -19,7 +19,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.PathfindToGoalCommand;
-import frc.robot.intake.IntakeCommand;
+import frc.robot.intake.IntakePivotCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveDriveCommand;
@@ -113,8 +113,8 @@ public class RobotContainer {
         // AutonConstants.AMP));
 
         operatorController.a()
-            .onTrue(new IntakeCommand(IntakeConstants.PIVOT_DOWN_DEGREE))
-            .onFalse(new IntakeCommand(IntakeConstants.PIVOT_UP_DEGREE));
+            .onTrue(new IntakePivotCommand(IntakeConstants.IntakeState.INTAKING))
+            .onFalse(new IntakePivotCommand(IntakeConstants.IntakeState.IDLE));
     }
 
     /**

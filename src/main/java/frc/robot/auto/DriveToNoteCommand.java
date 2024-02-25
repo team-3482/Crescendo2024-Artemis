@@ -51,14 +51,14 @@ public class DriveToNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         pidController.reset();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
 
         double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset();
 

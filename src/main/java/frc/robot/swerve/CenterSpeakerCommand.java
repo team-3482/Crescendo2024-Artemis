@@ -44,6 +44,7 @@ public class CenterSpeakerCommand extends Command {
     public void initialize() {
         this.finished = false;
         rotationPidController.reset();
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class CenterSpeakerCommand extends Command {
             this.finished = true;
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         Translation2d point = OrbitConstants.ORBIT_POINT.get(alliance.get());
         
         // Orbit calculations

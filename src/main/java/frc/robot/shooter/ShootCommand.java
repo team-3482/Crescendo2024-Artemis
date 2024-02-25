@@ -36,7 +36,7 @@ public class ShootCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.finished = false;
         this.goals = calculateShootingSpeedAndPosition(0);
         ShooterSubsystem.getInstance().setPivotPosition(this.goals[2]);
@@ -48,7 +48,7 @@ public class ShootCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
 
         double position = ShooterSubsystem.getInstance().getPivotPosition();
         if (Math.abs(this.goals[2] - position) > ShooterConstants.ALLOWED_PIVOT_ERROR) return;

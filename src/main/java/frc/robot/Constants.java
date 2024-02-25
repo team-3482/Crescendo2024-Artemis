@@ -38,9 +38,22 @@ public final class Constants {
         public static final double PIVOT_TOLERANCE = 2.5;
 
         /** Position for the intake opened in degrees */
-        public static final int PIVOT_DOWN_DEGREE = -90;
-        public static final int PIVOT_UP_DEGREE = 0;
         public static final int MOTOR_TO_PIVOT_RATIO = 9;
+
+        public enum IntakeState{
+            INTAKING(-90.0),
+            IDLE(0);
+            /* Angle of the intake in degrees */
+            double intakeAngle;
+            private IntakeState(double intakeAngle)
+            {
+                this.intakeAngle = intakeAngle;
+            }
+            public double getAngle()
+            {
+                return this.intakeAngle;
+            }
+        }
     }
 
     /** Constants used for the sterilizer */

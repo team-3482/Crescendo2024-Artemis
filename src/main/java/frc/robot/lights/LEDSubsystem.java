@@ -19,10 +19,11 @@ public class LEDSubsystem extends SubsystemBase {
         return instance;
     }
     
-    private static LEDStrip underGlowStrip;
+    private LEDStrip underGlowStrip;
 
     private double lastLedUpdate = 0.0;
     private LightState state;
+    private LightState defaultState;
     
     /**
      * Creates and initializes a new LEDSubsystem
@@ -31,6 +32,7 @@ public class LEDSubsystem extends SubsystemBase {
         underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT,LEDConstants.UNDERGLOW_LED_COUNT);
         this.lastLedUpdate = Timer.getFPGATimestamp();
         this.state = LightState.OFF;
+        this.defaultState = LightState.OFF;
     }
 
     @Override
@@ -55,23 +57,29 @@ public class LEDSubsystem extends SubsystemBase {
     public void setLightState(LightState state) {
         this.state = state;
     }
+    public void setDefaultLightState(LightState state)
+    {
+        this.defaultState = state;
+    }
     
     public enum LightState { 
         OFF (Double.POSITIVE_INFINITY, Color.off()),
         WARNING (0.2, new Color(255, 0, 0), Color.off()),
         
-        SOLID_GREEN (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
-        SOLID_BLUE (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
-        SOLID_RED (Double.POSITIVE_INFINITY, new Color(255, 0, 0)),
-        SOLID_ORANGE (Double.POSITIVE_INFINITY, new Color(255, 127, 0)),
+        /** Command is considered not autonoumous if the human driver has control over the robot movement during the command */
+        CMD_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
+        /** Command is considered autonoumous if the human driver does not have control over the robot movement during the command */
+        AUTO_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
+        /** For when the command is initializing (if see this color, there is an issue) */
+        CMD_INIT(Double.POSITIVE_INFINITY, new Color(255, 255, 0)),
         
-        FLASHING_GREEN (0.2, new Color(0,255, 0), Color.off()),
-        FLASHING_BLUE (0.2, new Color(0, 0, 255), Color.off()),
+        HOLDING_NOTE(0.2, new Color(255, 127, 0), Color.off())
         ;
         
         Color[] colors;
         double interval;
-        int currentColorIndex;        /**
+        int currentColorIndex;        
+        /**
          * @param interval
          * @param blendMode
          * @param colors
@@ -96,6 +104,16 @@ public class LEDSubsystem extends SubsystemBase {
                 this.currentColorIndex = -1; // set to -1 to ensure doesnt skip first color
             }
             this.currentColorIndex++;
+        }
+    }
+
+    public void setCommandStopState(boolean commandInterrupted)
+    {
+        if (commandInterrupted) {
+            this.setLightState(LightState.WARNING);
+        }
+        else {
+            this.setLightState(this.defaultState);
         }
     }
 }

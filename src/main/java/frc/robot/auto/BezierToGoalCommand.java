@@ -49,7 +49,7 @@ public class BezierToGoalCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent() || this.bezierPath != null) {
@@ -83,7 +83,7 @@ public class BezierToGoalCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     // Called once the command ends or is interrupted.

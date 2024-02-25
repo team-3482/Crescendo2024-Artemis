@@ -48,7 +48,7 @@ public class PathfindToGoalCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         
         Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
         
@@ -59,7 +59,7 @@ public class PathfindToGoalCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     // Called once the command ends or is interrupted.

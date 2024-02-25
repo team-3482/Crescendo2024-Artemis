@@ -81,6 +81,7 @@ public class SwerveOrbitCommand extends Command {
     @Override
     public void initialize() {
         rotationPidController.reset();
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
     }
 
     @Override
@@ -91,7 +92,7 @@ public class SwerveOrbitCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_GREEN);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
         Translation2d point = OrbitConstants.ORBIT_POINT.get(alliance.get());
         
         // Gets the driver's input
