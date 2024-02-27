@@ -16,10 +16,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.limelight.LimelightSubsystem;
 
 public class SwerveOrbitCommand extends Command {
     // Instances of suppliers that will gather the inputs from the controller
@@ -95,20 +97,26 @@ public class SwerveOrbitCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
         Translation2d point = OrbitConstants.ORBIT_POINT.get(alliance.get());
         
+        // Orbit calculations
+        double angleGoalRad;
+        if (LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
+            double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT);
+            angleGoalRad = Units.degreesToRadians(errorDegrees);
+            System.out.println("goal limelight " + errorDegrees);
+        }
+        else { // Position
+            Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
+            // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+            angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
+            System.out.println("goal odometry " + Units.radiansToDegrees(angleGoalRad));
+        }
+        double turningSpeed = rotationPidController
+            .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
+        
         // Gets the driver's input
         double xSpeed = xSpeedFunction.get();
         double ySpeed = ySpeedFunction.get();
         boolean fineControl = fineControlFunction.get();
-        
-        // Orbit calculations
-        Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
-        
-        // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
-        double angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
-        System.out.println("angleGoal " + Units.radiansToDegrees(angleGoalRad));
-        
-        double turningSpeed = rotationPidController
-            .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
         
         // Checks for controller deadband in case joysticks do not return perfectly to origin
         xSpeed = Math.abs(xSpeed) > ControllerConstants.DEADBAND ? xSpeed : 0.0;

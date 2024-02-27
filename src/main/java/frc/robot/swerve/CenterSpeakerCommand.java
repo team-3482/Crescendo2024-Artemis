@@ -13,10 +13,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.limelight.LimelightSubsystem;
 
 public class CenterSpeakerCommand extends Command {
     // Instances of Rate Limiters to ensure that the robot moves smoothly
@@ -60,12 +62,18 @@ public class CenterSpeakerCommand extends Command {
         Translation2d point = OrbitConstants.ORBIT_POINT.get(alliance.get());
         
         // Orbit calculations
-        Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
-        
-        // y is negative when the angle has to be positive and vice versa so it has to be reversed
-        // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
-        double angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
-        System.out.println(angleGoalRad);
+        double angleGoalRad;
+        if (LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
+            double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT);
+            angleGoalRad = Units.degreesToRadians(errorDegrees);
+            System.out.println("goal limelight " + errorDegrees);
+        }
+        else { // Position
+            Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
+            // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
+            angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
+            System.out.println("goal odometry " + Units.radiansToDegrees(angleGoalRad));
+        }
 
         this.finished = Math.abs(angleGoalRad) <= OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
         

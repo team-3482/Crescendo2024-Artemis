@@ -114,22 +114,20 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /**
      * Horizontal Offset From Crosshair To Target
-     * (uses LimelightConstants.BACK_LIMELIGHT)
      *
      * @return offset
      */
-    public double getHorizontalOffset() {
-        return LimelightHelpers.getTX(LimelightConstants.INTAKE_LLIGHT);
+    public double getHorizontalOffset(String limelight) {
+        return LimelightHelpers.getTX(limelight);
     }
 
     /**
      * Vertical Offset From Crosshair To Target
-     * (uses LimelightConstants.BACK_LIMELIGHT)
      *
      * @return offset
      */
-    public double getVerticalOffset() {
-        return LimelightHelpers.getTY(LimelightConstants.INTAKE_LLIGHT);
+    public double getVerticalOffset(String limelight) {
+        return LimelightHelpers.getTY(limelight);
     }
 
     /**
