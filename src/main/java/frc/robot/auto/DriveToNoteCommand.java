@@ -60,7 +60,7 @@ public class DriveToNoteCommand extends Command {
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
 
-        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset();
+        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
 
         double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
