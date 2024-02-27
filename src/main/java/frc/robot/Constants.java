@@ -42,7 +42,7 @@ public final class Constants {
 
         public enum IntakeState{
             INTAKING(-90.0),
-            IDLE(0);
+            IDLE(0.0);
             /* Angle of the intake in degrees */
             double intakeAngle;
             private IntakeState(double intakeAngle)
@@ -116,20 +116,21 @@ public final class Constants {
         public static final double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static final double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT / 3;
 
-        // This should be an enum
-        public static final char AMP = 'a';
-        public static final char SPEAKER = 's';
+        public static enum PathfindingPosition {
+            SPEAKER,
+            AMP,
+        }
         /**
          * Position the robot will line up to in front of each AprilTag, blue-alliance
          * relative
          */
-        public static final Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
+        public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
                 Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                        Map.entry(SPEAKER, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                        Map.entry(AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
+                        Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
+                        Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
                 Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                        Map.entry(AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
-                        Map.entry(SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))))));
+                        Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
+                        Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))))));
 
         /**
          * Initial bot positions used for initializing odometry, blue-alliance relative
@@ -299,6 +300,8 @@ public final class Constants {
         /** Removes input around the joystick's center (eliminates stick drift) */
         public static final double DEADBAND = 0.075;
 
+        public static final int XBOX_BURGER = 9;
+        public static final int XBOX_SQUARES = 10;
         /** Whether or not to accept directional pad input for movement */
         public static final boolean DPAD_DRIVE_INPUT = true;
     }

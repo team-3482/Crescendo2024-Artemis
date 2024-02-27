@@ -13,7 +13,10 @@ public class SequencedCommands{
     public static Command intakeCommand(){
         return Commands.sequence(
             new IntakePivotCommand(IntakeState.INTAKING), 
-            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, 2.0)).andThen(new IntakePivotCommand(IntakeState.IDLE));
+            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, 2.0)
+        ).andThen(
+            new IntakePivotCommand(IntakeState.IDLE)
+        );
     }
     public static Command collectNote(){
         return Commands.sequence(

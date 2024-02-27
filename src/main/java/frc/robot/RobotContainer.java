@@ -14,18 +14,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.AutonConstants;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.auto.PathfindToGoalCommand;
-import frc.robot.intake.IntakePivotCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.SequencedCommands;
 
 public class RobotContainer {
     // Singleton design pattern
@@ -54,9 +53,9 @@ public class RobotContainer {
         // Register named commands for pathplanner (do this after subsystem
         // initialization)
         NamedCommands.registerCommand("Pathfind AMP",
-            new PathfindToGoalCommand(AutonConstants.AMP));
+            new PathfindToGoalCommand(PathfindingPosition.AMP));
         NamedCommands.registerCommand("Pathfind SPEAKER",
-            new PathfindToGoalCommand(AutonConstants.SPEAKER));
+            new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
 
         // Sets the default command to driving swerve
         SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
@@ -82,16 +81,16 @@ public class RobotContainer {
     private void configureBindings() {
         // Driver controller
         // Zeroing functions
-        driveController.rightBumper().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
-        driveController.leftBumper()
-                .onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
+        driveController.back()
+            .onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
+        driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
             LEDSubsystem.getInstance().setLightState(LightState.OFF);
         }));
         // Orbit April-Tag
-        driveController.a().toggleOnTrue(new SwerveOrbitCommand(
+        driveController.leftBumper().toggleOnTrue(new SwerveOrbitCommand(
             () -> -driveController.getLeftY(),
             () -> -driveController.getLeftX(),
             () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
@@ -101,8 +100,12 @@ public class RobotContainer {
             (Integer angle) -> driveController.pov(angle).getAsBoolean()
             ));
         
-        // driveController.y().onTrue(Commands.sequence(new CenterNoteCommand(), new DriveToNoteCommand()));
-        driveController.y().onTrue(new CenterSpeakerCommand());
+        driveController.rightBumper().onTrue(SequencedCommands.collectNote());
+        driveController.y().onTrue(SequencedCommands.intakeCommand());
+        driveController.x().onTrue(new PathfindToGoalCommand(PathfindingPosition.AMP));
+        // driveController.a().onTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
+        
+        driveController.a().onTrue(new CenterSpeakerCommand());
         
         // Operator controller
         // Line up to SPEAKER
@@ -111,10 +114,6 @@ public class RobotContainer {
         // Line up to AMP
         // operatorController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));
-
-        operatorController.a()
-            .onTrue(new IntakePivotCommand(IntakeConstants.IntakeState.INTAKING))
-            .onFalse(new IntakePivotCommand(IntakeConstants.IntakeState.IDLE));
     }
 
     /**

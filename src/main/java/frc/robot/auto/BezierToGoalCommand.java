@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
@@ -30,7 +31,7 @@ public class BezierToGoalCommand extends Command {
         AutonConstants.MAX_ANGULAR_VELOCITY,
         AutonConstants.MAX_ANGULAR_ACCELERATION);
     
-    private Character goal;
+    private PathfindingPosition targetPosition;
     private Command bezierPath;
 
     /**
@@ -39,8 +40,8 @@ public class BezierToGoalCommand extends Command {
     * @param swerveSubsystem The swerve subsystem used by this command.
     * @param goal The location to line up at
     */
-    public BezierToGoalCommand(Character goal) {
-        this.goal = goal;
+    public BezierToGoalCommand(PathfindingPosition targetPosition) {
+        this.targetPosition = targetPosition;
 
         // Use addRequirements() here to declare subsystem dependencies.
         // addRequirements(swerveSubsystem);
@@ -59,7 +60,7 @@ public class BezierToGoalCommand extends Command {
         
         Pose2d botPose = SwerveSubsystem.getInstance().getPose();
         // The rotation component for endPos is used for the GoalEndState rotation
-        Pose2d endPos = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
+        Pose2d endPos = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.targetPosition);
         // The travelRotation represents the direction of travel
         Rotation2d travelRotation = endPos.getRotation();
         
