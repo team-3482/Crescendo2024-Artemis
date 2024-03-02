@@ -9,6 +9,7 @@ import java.util.Optional;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,7 +60,8 @@ public class CenterSpeakerCommand extends Command {
             return;
         }
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-        Translation2d point = OrbitConstants.ORBIT_POINT.get(alliance.get());
+        Translation3d _point = OrbitConstants.ORBIT_POINT.get(alliance.get());
+        Translation2d point = new Translation2d(_point.getX(), _point.getY());
         
         // Orbit calculations
         double angleGoalRad;
