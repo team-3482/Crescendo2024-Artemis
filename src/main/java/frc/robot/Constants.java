@@ -68,6 +68,8 @@ public final class Constants {
          * sterilizer in millimeters
          */
         public static final double NOTE_DISTANCE_LASER = 20;
+        /** The angle in degrees at which the shooter is idle */
+        public static final double IDLE_PIVOT_ANGLE = 0;
     }
 
     /**

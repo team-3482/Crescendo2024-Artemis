@@ -18,6 +18,7 @@ public class SequencedCommands{
             new IntakePivotCommand(IntakeState.IDLE)
         );
     }
+    
     public static Command collectNote(){
         return Commands.sequence(
             new CenterNoteCommand(), 

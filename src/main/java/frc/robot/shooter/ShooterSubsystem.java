@@ -104,13 +104,22 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Testing method to be removed later.
+     * Stops the pivot motors in case of a problem
+     */
+    public void TESTING_STOP_PIVOT() {
+        leaderPivot.set(0);
+    }
+
+
+    /**
      * Gets the position of the pivot using the hex encoder
      * 
      * @return position in degrees
      */
     public double getPivotPosition() {
         // return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());
-        return 0;
+        return Units.rotationsToDegrees(leaderPivot.getPosition().getValueAsDouble());
     }
 
     /**

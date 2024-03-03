@@ -20,6 +20,7 @@ import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
@@ -59,22 +60,23 @@ public class RobotContainer {
 
         // Sets the default command to driving swerve
         SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getLeftX(),
-                () -> -driveController.getRightX(),
-                () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
-                () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
-                // D-Pad / POV movement
-                ControllerConstants.DPAD_DRIVE_INPUT,
-                (Integer angle) -> driveController.pov(angle).getAsBoolean()));
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
+            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
+            // D-Pad / POV movement
+            ControllerConstants.DPAD_DRIVE_INPUT,
+            (Integer angle) -> driveController.pov(angle).getAsBoolean()
+        ));
         configureBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-                .add("Auto Chooser", autoChooser)
-                .withWidget(BuiltInWidgets.kComboBoxChooser)
-                .withPosition(0, 3)
-                .withSize(3, 2);
+            .add("Auto Chooser", autoChooser)
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(0, 3)
+            .withSize(3, 2);
     }
 
     // Configures the button bindings of the controllers
@@ -84,11 +86,13 @@ public class RobotContainer {
         driveController.back()
             .onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
         driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
+        
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
             LEDSubsystem.getInstance().setLightState(LightState.OFF);
         }));
+        
         // Orbit April-Tag
         driveController.leftBumper().toggleOnTrue(new SwerveOrbitCommand(
             () -> -driveController.getLeftY(),
@@ -98,19 +102,27 @@ public class RobotContainer {
             // D-Pad / POV Movement
             ControllerConstants.DPAD_DRIVE_INPUT,
             (Integer angle) -> driveController.pov(angle).getAsBoolean()
-            ));
+        ));
         
         driveController.rightBumper().onTrue(SequencedCommands.collectNote());
         driveController.y().onTrue(SequencedCommands.intakeCommand());
         driveController.x().onTrue(new PathfindToGoalCommand(PathfindingPosition.AMP));
         // driveController.a().onTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
         
-        driveController.a().onTrue(new CenterSpeakerCommand());
-        
+        // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
+        driveController.a().whileTrue(
+            Commands.runEnd(
+                () -> {
+                    double pos = ShooterSubsystem.getInstance().getPivotPosition(); // for now using motor encoder
+                    ShooterSubsystem.getInstance().setPivotPosition(pos + 1); // Move 1 degree
+                },
+                () -> ShooterSubsystem.getInstance().TESTING_STOP_PIVOT() // In case of issues with motion magic
+            )
+        );
+
         // Operator controller
         // Line up to SPEAKER
-        // operatorController.x().onTrue(new
-        // PathfindToGoalCommand(AutonConstants.SPEAKER));
+        // operatorController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
         // Line up to AMP
         // operatorController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));

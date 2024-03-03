@@ -32,9 +32,7 @@ public class Robot extends TimedRobot {
         // and put our autonomous chooser on the dashboard.
         RobotContainer.getInstance();
 
-        // port forward required LL ports. not necessary for use with wifi but
-        // if we are controlling the bot over ethernet (eg. at comp) the LLs 
-        // will not work without this code.
+        // Port forward all required LL ports. Necessary for robot connections over ethernet (eg. at comp)
         for (int port = 5800; port <= 5807; port++) {
             PortForwarder.add(port, LimelightConstants.INTAKE_LLIGHT + ".local", port);
             PortForwarder.add(port, LimelightConstants.SHOOTER_LLIGHT + ".local", port);
