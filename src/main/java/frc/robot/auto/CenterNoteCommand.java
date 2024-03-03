@@ -51,7 +51,7 @@ public class CenterNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         pidController.reset();
         timer.restart();
     }
@@ -59,9 +59,9 @@ public class CenterNoteCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
 
-        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset();
+        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
 
         double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
@@ -87,7 +87,8 @@ public class CenterNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(LimelightSubsystem.getInstance().getHorizontalOffset()) <= (NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1)
+        return Math.abs(LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT))
+            <= (NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1)
             || timer.get() >= NoteConstants.CENTERING_TIMEOUT;
     }
 }

@@ -14,6 +14,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SterilizerConstants;
+import frc.robot.lights.LEDSubsystem;
+import frc.robot.lights.LEDSubsystem.LightState;
 
 public class SterilizerSubsystem extends SubsystemBase {
     // Singleton Design Pattern
@@ -68,5 +70,7 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        LEDSubsystem.getInstance().setDefaultLightState(this.hasNote().get()? LightState.HOLDING_NOTE : LightState.OFF);
+    }
 }

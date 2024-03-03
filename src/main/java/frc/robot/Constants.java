@@ -9,6 +9,7 @@ import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -38,9 +39,22 @@ public final class Constants {
         public static final double PIVOT_TOLERANCE = 2.5;
 
         /** Position for the intake opened in degrees */
-        public static final int PIVOT_DOWN_DEGREE = -90;
-        public static final int PIVOT_UP_DEGREE = 0;
         public static final int MOTOR_TO_PIVOT_RATIO = 9;
+
+        public enum IntakeState{
+            INTAKING(-90.0),
+            IDLE(0.0);
+            /* Angle of the intake in degrees */
+            double intakeAngle;
+            private IntakeState(double intakeAngle)
+            {
+                this.intakeAngle = intakeAngle;
+            }
+            public double getAngle()
+            {
+                return this.intakeAngle;
+            }
+        }
     }
 
     /** Constants used for the sterilizer */
@@ -75,7 +89,7 @@ public final class Constants {
         public static final double ALLOWED_PIVOT_ERROR = 1;
 
         // Pivot Stuff
-        public static final int MOTOR_TO_PIVOT_RATIO = 240;
+        public static final int MOTOR_TO_PIVOT_RATIO = 250;
 
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */
@@ -93,6 +107,9 @@ public final class Constants {
         public static final int CRUISE_ACCELERATION = 160;
         /** Jerk in rps/s^2 (0.1 seconds) */
         public static final int MOTION_MAGIC_JERK = 1600;
+
+        /** Slower [0] and faster [1] speeds for the shooter from -1.0 to 1.0 */
+        public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
     }
 
     /** Values used for running autonomous code */
@@ -103,33 +120,36 @@ public final class Constants {
         public static final double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static final double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT / 3;
 
-        // This should be an enum
-        public static final char AMP = 'a';
-        public static final char SPEAKER = 's';
+        public static enum PathfindingPosition {
+            SPEAKER,
+            AMP,
+        }
+
         /**
-         * Position the robot will line up to in front of each AprilTag, blue-alliance
-         * relative
+         * Position the robot will line up to in front of each AprilTag, blue-alliance relative
          */
-        public static final Map<DriverStation.Alliance, Map<Character, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
-                Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                        Map.entry(SPEAKER, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                        Map.entry(AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
-                Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                        Map.entry(AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
-                        Map.entry(SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))))));
+        public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
+                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
+                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
+            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
+                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
+                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))))
+        );
 
         /**
          * Initial bot positions used for initializing odometry, blue-alliance relative
          */
         public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
-                Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                        Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
-                        Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(0))),
-                        Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(120))))),
-                Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                        Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(120))),
-                        Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(0))),
-                        Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(-120))))));
+            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
+                Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
+                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(120))))),
+            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
+                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(120))),
+                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(-120)))))
+        );
 
     }
 
@@ -163,11 +183,12 @@ public final class Constants {
         }
 
         /** Position in space to orbit (SPEAKER) */
-        public static final Map<DriverStation.Alliance, Translation2d> ORBIT_POINT = Map.ofEntries(
-                Map.entry(DriverStation.Alliance.Red,
-                        new Translation2d(16.5, 5.55)),
-                Map.entry(DriverStation.Alliance.Blue,
-                        new Translation2d(0, 5.55)));
+        public static final Map<DriverStation.Alliance, Translation3d> ORBIT_POINT = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Red,
+                new Translation3d(16.5, 5.55, 2.47)),
+            Map.entry(DriverStation.Alliance.Blue,
+                new Translation3d(0, 5.55, 2.47))
+            );
     }
 
     /** Constants for autos that use the intake limelight */
@@ -275,6 +296,9 @@ public final class Constants {
 
         /** How much to add to the gyro's heading when retrieving it in degrees */
         public static final double GYRO_OFFSET = 180;
+
+        /** Height of the pivot shaft above the floor */
+        public static final double SHOOTER_PIVOT_HEIGHT = 0;
     }
 
     /** Constants for the controller and any controller related assignments */
@@ -286,6 +310,8 @@ public final class Constants {
         /** Removes input around the joystick's center (eliminates stick drift) */
         public static final double DEADBAND = 0.075;
 
+        public static final int XBOX_BURGER = 9;
+        public static final int XBOX_SQUARES = 10;
         /** Whether or not to accept directional pad input for movement */
         public static final boolean DPAD_DRIVE_INPUT = true;
     }

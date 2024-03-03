@@ -41,9 +41,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Moves the note forward through the intake
+     * @param intakeSpeed the speed of the intake motors
      */
-    public void enableIntake() {
-        topIntakeMotor.set(IntakeConstants.INTAKE_SPEED);
+    public void setIntakeSpeed(double intakeSpeed) {
+        topIntakeMotor.set(intakeSpeed);
     }
 
     /**
@@ -51,13 +52,6 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public void stopIntake() {
         topIntakeMotor.set(0);
-    }
-
-    /**
-     * Reverses the intake motor
-     */
-    public void ejectIntake() {
-        topIntakeMotor.set(-IntakeConstants.INTAKE_SPEED);
     }
 
     /**

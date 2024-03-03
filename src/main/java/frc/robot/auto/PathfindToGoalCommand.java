@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
@@ -24,17 +25,17 @@ public class PathfindToGoalCommand extends Command {
         AutonConstants.MAX_ANGULAR_VELOCITY,
         AutonConstants.MAX_ANGULAR_ACCELERATION);
     
-    private Character goal;
+    private PathfindingPosition targetPosition;
     private Command path;
 
     /**
     * Creates a new BezierToGoalCommand.
     *
     * @param swerveSubsystem The swerve subsystem used by this command.
-    * @param goal The location to line up at
+    * @param targetPosition The selected location to line up with
     */
-    public PathfindToGoalCommand(Character goal) {
-        this.goal = goal;
+    public PathfindToGoalCommand(PathfindingPosition targetPosition) {
+        this.targetPosition = targetPosition;
 
         // Use addRequirements() here to declare subsystem dependencies.
         // addRequirements(swerveSubsystem);
@@ -48,9 +49,9 @@ public class PathfindToGoalCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         
-        Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.goal);
+        Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(this.targetPosition);
         
         this.path = AutoBuilder.pathfindToPose(targetPose, CONSTRAINTS, 0, 0.1);
         this.path.schedule();
@@ -59,7 +60,7 @@ public class PathfindToGoalCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     // Called once the command ends or is interrupted.
