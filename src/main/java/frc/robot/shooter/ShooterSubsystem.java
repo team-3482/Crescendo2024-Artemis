@@ -32,17 +32,17 @@ public class ShooterSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    // private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    // private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
     
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX leaderPivot = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID);
     private TalonFX followerPivot = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID);
-    private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(ShooterConstants.HEX_PIVOT_ENCODER_ID);
+    // private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(ShooterConstants.HEX_PIVOT_ENCODER_ID);
 
     /** Creates a new ShooterSubsystem.*/
     public ShooterSubsystem() {
-        leftShooter.setInverted(true);
+        // leftShooter.setInverted(true);
         // https://v6.docs.ctr-electronics.com/en/2023-v6/docs/migration/migration-guide/control-requests-guide.html#follower-motors
         followerPivot.setControl(new Follower(leaderPivot.getDeviceID(), true));
         
@@ -62,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
         motorOutputConfigs.DutyCycleNeutralDeadband = 0.001;
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Not inverted
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Inverted
         
         // Not sure what these do, but we shouldn't need to change the update frequencies. If needed, the way to do it is detailed here
         this.leaderPivot.getPosition().setUpdateFrequency(50); // 50 hz or 20 ms update time, same as robot loop
@@ -109,7 +109,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return position in degrees
      */
     public double getPivotPosition() {
-        return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());
+        // return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());
+        return 0;
     }
 
     /**
@@ -119,8 +120,8 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double[] getShootingVelocities() {
         return new double[]{
-            Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
-            Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
+            // Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
+            // Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
         };
     }
 
@@ -130,8 +131,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocities between -1.0 and 1.0
      */
     public void setShootingVelocities(double[] velocities) {
-        leftShooter.set(velocities[0]);
-        rightShooter.set(velocities[1]);
+        // leftShooter.set(velocities[0]);
+        // rightShooter.set(velocities[1]);
     }
 
     @Override

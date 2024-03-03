@@ -46,7 +46,7 @@ public final class Constants {
     /** Constants used for the sterilizer */
     public static final class SterilizerConstants {
         public static final int NEO_MOTOR_ID = 24;
-        public static final int LASER_ID = 25;
+        public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
         public static final double FEEDING_SPEED = 0.20;
         /**
@@ -62,11 +62,11 @@ public final class Constants {
      * through the shooter
      */
     public static final class ShooterConstants {
-        public static final int LEFT_SHOOTER_MOTOR_ID = 20;
-        public static final int RIGHT_SHOOTER_MOTOR_ID = 21;
-        public static final int LEFT_PIVOT_MOTOR_ID = 22;
-        public static final int RIGHT_PIVOT_MOTOR_ID = 23;
-        public static final int HEX_PIVOT_ENCODER_ID = 26;
+        public static final int LEFT_PIVOT_MOTOR_ID = 20;
+        public static final int RIGHT_PIVOT_MOTOR_ID = 21;
+        public static final int LEFT_SHOOTER_MOTOR_ID = 22;
+        public static final int RIGHT_SHOOTER_MOTOR_ID = 23;
+        public static final int HEX_PIVOT_ENCODER_ID = 30;
 
         // Shooting stuff
         /** Allowed RPM error for the shooter motors */
