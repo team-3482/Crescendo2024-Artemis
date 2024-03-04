@@ -27,8 +27,8 @@ public class SterilizerSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private CANSparkMax neoMotor = new CANSparkMax(SterilizerConstants.NEO_MOTOR_ID, MotorType.kBrushless);
-    private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
+    private CANSparkMax feederMotor = new CANSparkMax(SterilizerConstants.NEO_MOTOR_ID, MotorType.kBrushless);
+    // private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
 
     /** Creates a new ShooterSubsystem.*/
     public SterilizerSubsystem() {
@@ -40,11 +40,11 @@ public class SterilizerSubsystem extends SubsystemBase {
      * 
      * @return contains a note, null if invalid measurements
      */
-    public Optional<Boolean> hasNote() {
-        LaserCan.Measurement measurement = laser.getMeasurement();
-        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
-        }
+    public Optional<Boolean> hasNote() {;
+        // LaserCan.Measurement measurement = laser.getMeasurement();
+        // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+        //     return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
+        // }
         return null;
     }
     
@@ -52,25 +52,26 @@ public class SterilizerSubsystem extends SubsystemBase {
      * Moves the note forwards to the shooter
      */
     public void moveForward() {
-        neoMotor.set(SterilizerConstants.FEEDING_SPEED);
+        feederMotor.set(SterilizerConstants.FEEDING_SPEED);
     }
     
     /**
      * Moves the note backwards to the intake
      */
     public void moveBackward() {
-        neoMotor.set(-SterilizerConstants.FEEDING_SPEED);
+        feederMotor.set(-SterilizerConstants.FEEDING_SPEED);
     }
     
     /**
      * Stops the NEO motor
      */
-    public void stopMoving() {
-        neoMotor.set(0);
+    public void moveStop() {
+        feederMotor.set(0);
     }
 
     @Override
     public void periodic() {
-        LEDSubsystem.getInstance().setDefaultLightState(this.hasNote().get()? LightState.HOLDING_NOTE : LightState.OFF);
+        LEDSubsystem.getInstance().setDefaultLightState(
+            this.hasNote() == null || !this.hasNote().get() ? LightState.OFF : LightState.HOLDING_NOTE);
     }
 }

@@ -21,6 +21,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.SwerveModuleConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     // Singleton Design Pattern
@@ -32,20 +33,19 @@ public class ShooterSubsystem extends SubsystemBase {
         return instance;
     }
 
-    // private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
-    // private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
     
-    private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-    private TalonFX leaderPivot = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID);
-    private TalonFX followerPivot = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID);
+    private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+    private TalonFX leaderPivot = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private TalonFX followerPivot = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     // private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(ShooterConstants.HEX_PIVOT_ENCODER_ID);
 
     /** Creates a new ShooterSubsystem.*/
     public ShooterSubsystem() {
-        // leftShooter.setInverted(true);
+        leftShooter.setInverted(true);
         // https://v6.docs.ctr-electronics.com/en/2023-v6/docs/migration/migration-guide/control-requests-guide.html#follower-motors
         followerPivot.setControl(new Follower(leaderPivot.getDeviceID(), true));
-        
         configureMotionMagic();
     }
 
@@ -104,11 +104,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Testing method to be removed later.
-     * Stops the pivot motors in case of a problem
+     * Testing method to be removed later
      */
-    public void TESTING_STOP_PIVOT() {
-        leaderPivot.set(0);
+    public void TESTING_SET_PIVOT(double speed) {
+        leaderPivot.set(speed);
     }
 
 
@@ -129,8 +128,8 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double[] getShootingVelocities() {
         return new double[]{
-            // Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
-            // Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
+            Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
+            Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
         };
     }
 
@@ -140,8 +139,15 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocities between -1.0 and 1.0
      */
     public void setShootingVelocities(double[] velocities) {
-        // leftShooter.set(velocities[0]);
-        // rightShooter.set(velocities[1]);
+        leftShooter.set(velocities[0]);
+        rightShooter.set(velocities[1]);
+    }
+
+    /**
+     * Stops the shooting motors (overloaded)
+     */
+    public void setShootingVelocities() {
+        setShootingVelocities(new double[2]);
     }
 
     @Override

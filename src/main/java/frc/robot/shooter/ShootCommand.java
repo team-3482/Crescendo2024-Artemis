@@ -112,7 +112,7 @@ public class ShootCommand extends Command {
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0, 0});
         ShooterSubsystem.getInstance().setPivotPosition(0);
-        SterilizerSubsystem.getInstance().stopMoving();
+        SterilizerSubsystem.getInstance().moveStop();
 
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
