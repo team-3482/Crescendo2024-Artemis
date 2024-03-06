@@ -27,8 +27,13 @@ public class SpinIntakeCommand extends Command {
         this.timeout = timeout;
         this.timer = new Timer();
     }
-    public SpinIntakeCommand(double speed)
-    {
+
+    /**
+     * Initializes a new IntakeCommand using a default timeout of Double.POSITIVE_INFINITY
+     * 
+     * @param state state of the intake
+     */
+    public SpinIntakeCommand(double speed) {
         this(speed, Double.POSITIVE_INFINITY);
     }
 
