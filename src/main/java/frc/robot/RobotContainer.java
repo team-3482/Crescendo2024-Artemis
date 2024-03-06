@@ -114,21 +114,28 @@ public class RobotContainer {
         
         // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
         driveController.a().onTrue(
-            Commands.run(
+            Commands.runOnce(
                 () -> {
-                    double pos = ShooterSubsystem.getInstance().getPivotPosition(); // for now using motor encoder
-                    System.out.println(pos);
-                    ShooterSubsystem.getInstance().setPivotPosition(pos - 5); // Move 1 degree
+                    ShooterSubsystem.getInstance().setPivotPosition(120);
                 }//,
-                // () -> ShooterSubsystem.getInstance().TESTING_STOP_PIVOT() // In case of issues with motion magic
-        ));
+                // () -> {
+                //     System.out.println(ShooterSubsystem.getInstance().getPivotPosition());
+                //     ShooterSubsystem.getInstance().TESTING_SET_PIVOT(0);
+                // }
+        )).onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotPosition(0)));
+        driveController.y().onTrue(
+            Commands.runOnce(() -> System.out.println(ShooterSubsystem.getInstance().getPivotPosition()))
+        );
+        driveController.start().onTrue(
+            Commands.runOnce(() -> ShooterSubsystem.getInstance().TESTING_RESET_PIVOT_POSITION())
+        );
         driveController.leftBumper().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT(0.2),
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT(0)
+            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(0.2),
+            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(0)
         ));
         driveController.rightBumper().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT(-0.2),
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT(0)
+            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(-0.2),
+            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(0)
         ));
         // driveController.x().whileTrue(
         //     Commands.runEnd(
@@ -141,17 +148,17 @@ public class RobotContainer {
         //             SterilizerSubsystem.getInstance().moveStop();
         //         }
         // ));
-        driveController.y().whileTrue(
-            Commands.runEnd(
-                () -> {
-                    ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
-                    SterilizerSubsystem.getInstance().moveForward();
-                },
-                () -> {
-                    ShooterSubsystem.getInstance().setShootingVelocities();
-                    SterilizerSubsystem.getInstance().moveStop();
-                }
-        ));
+        // driveController.y().whileTrue(
+        //     Commands.runEnd(
+        //         () -> {
+        //             ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
+        //             SterilizerSubsystem.getInstance().moveForward();
+        //         },
+        //         () -> {
+        //             ShooterSubsystem.getInstance().setShootingVelocities();
+        //             SterilizerSubsystem.getInstance().moveStop();
+        //         }
+        // ));
 
         // Operator controller
         // Line up to SPEAKER

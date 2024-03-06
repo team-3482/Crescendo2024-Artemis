@@ -91,7 +91,7 @@ public final class Constants {
         public static final double ALLOWED_PIVOT_ERROR = 1;
 
         // Pivot Stuff
-        public static final int MOTOR_TO_PIVOT_RATIO = 250;
+        public static final double MOTOR_TO_PIVOT_RATIO = 53.33;
 
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */

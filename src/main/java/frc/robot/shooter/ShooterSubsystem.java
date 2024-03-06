@@ -33,20 +33,21 @@ public class ShooterSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    // private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    // private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
     
-    private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+    private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX leaderPivot = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     private TalonFX followerPivot = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     // private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(ShooterConstants.HEX_PIVOT_ENCODER_ID);
 
     /** Creates a new ShooterSubsystem.*/
     public ShooterSubsystem() {
-        leftShooter.setInverted(true);
+        // leftShooter.setInverted(true);
         // https://v6.docs.ctr-electronics.com/en/2023-v6/docs/migration/migration-guide/control-requests-guide.html#follower-motors
         followerPivot.setControl(new Follower(leaderPivot.getDeviceID(), true));
         configureMotionMagic();
+        leaderPivot.setPosition(0);
     }
 
     /**
@@ -61,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
         feedbackConfigs.SensorToMechanismRatio = ShooterConstants.MOTOR_TO_PIVOT_RATIO;
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
-        motorOutputConfigs.DutyCycleNeutralDeadband = 0.001;
+        // motorOutputConfigs.DutyCycleNeutralDeadband = 0.05;
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Inverted
         
         // Not sure what these do, but we shouldn't need to change the update frequencies. If needed, the way to do it is detailed here
@@ -85,11 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicAcceleration = ShooterConstants.CRUISE_ACCELERATION;
         motionMagicConfigs.MotionMagicJerk = ShooterConstants.MOTION_MAGIC_JERK;
         
-        // Shouldn't need to zero the sensor due to using Tuner X configured absolute 0 
-        // Talon is always initialized to absolute position
-        // this.leaderPivot.setSelectedSensorPosition(0, ShooterConstants.PID_LOOP_IDX, ShooterConstants.TIMEOUT_MS);
-        
-        this.leaderPivot.getConfigurator().apply(configuration);
+        this.leaderPivot.getConfigurator().apply(configuration, 5);
     }
     
     /**
@@ -99,17 +96,25 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void setPivotPosition(double position) {
         // Select Slot 0 for Motion Magic
-        motionMagicVoltage.Slot = 0;
-        leaderPivot.setControl(motionMagicVoltage.withPosition(Units.degreesToRotations(position)));
+        leaderPivot.setControl(motionMagicVoltage
+            .withSlot(0)
+            .withPosition(Units.degreesToRotations(position))
+        );
     }
 
     /**
      * Testing method to be removed later
      */
-    public void TESTING_SET_PIVOT(double speed) {
+    public void TESTING_SET_PIVOT_SPEED(double speed) {
         leaderPivot.set(speed);
     }
 
+    /**
+     * Testing method to be removed later
+     */
+    public void TESTING_RESET_PIVOT_POSITION() {
+        leaderPivot.setPosition(0);
+    }
 
     /**
      * Gets the position of the pivot using the hex encoder
@@ -117,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return position in degrees
      */
     public double getPivotPosition() {
-        // return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());
+        // return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());        
         return Units.rotationsToDegrees(leaderPivot.getPosition().getValueAsDouble());
     }
 
@@ -127,10 +132,11 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return velocities in rad/s
      */
     public double[] getShootingVelocities() {
-        return new double[]{
-            Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
-            Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
-        };
+        // return new double[]{
+        //     Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
+        //     Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
+        // };
+        return new double[2];
     }
 
     /**
@@ -139,8 +145,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocities between -1.0 and 1.0
      */
     public void setShootingVelocities(double[] velocities) {
-        leftShooter.set(velocities[0]);
-        rightShooter.set(velocities[1]);
+        // leftShooter.set(velocities[0]);
+        // rightShooter.set(velocities[1]);
     }
 
     /**
