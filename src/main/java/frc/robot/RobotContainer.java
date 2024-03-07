@@ -23,6 +23,7 @@ import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
@@ -74,6 +75,7 @@ public class RobotContainer {
         //     (Integer angle) -> driveController.pov(angle).getAsBoolean()
         // ));
         configureBindings();
+        initializeSubsystems();
 
         // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
         // Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
@@ -83,7 +85,7 @@ public class RobotContainer {
         //     .withSize(3, 2);
     }
 
-    // Configures the button bindings of the controllers
+    /** Configures the button bindings of the controllers */
     private void configureBindings() {
         // Driver controller
         // Zeroing functions
@@ -94,7 +96,7 @@ public class RobotContainer {
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
-            LEDSubsystem.getInstance().setCommandStopState(false);;
+            LEDSubsystem.getInstance().setCommandStopState(false);
         }));
         
         // Orbit April-Tag
@@ -114,17 +116,18 @@ public class RobotContainer {
         // driveController.a().onTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
         
         // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
-        driveController.rightBumper().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
-        ));
-        driveController.leftBumper().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
-        ));
+        
+        // driveController.rightBumper().whileTrue(Commands.runEnd(
+        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
+        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        // ));
+        // driveController.leftBumper().whileTrue(Commands.runEnd(
+        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
+        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        // ));
         driveController.a().onTrue(
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotPosition(45)))
-                    .onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotPosition(0)));
+            Commands.runOnce(() -> ShooterSubsystem.getInstance().pivotGoToPosition(45)))
+                    .onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().pivotGoToPosition(0)));
         driveController.y().onTrue(
             Commands.runOnce(() -> System.out.println("leader " + ShooterSubsystem.getInstance().getPivotPosition()))
         );
@@ -164,13 +167,23 @@ public class RobotContainer {
         // AutonConstants.AMP));
         // Move the pivot manually (last resort, not recommended)
         driveController.povUp().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.2),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.1),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
         driveController.povDown().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.2),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.1),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
+    }
+
+    /** Creates instances of each subsystem so periodic runs */
+    private void initializeSubsystems() {
+        // SwerveSubsystem.getInstance();
+        // IntakeSubsystem.getInstance();
+        // SterilizerSubsystem.getInstance();
+        ShooterSubsystem.getInstance();
+        // LEDSubsystem.getInstance();
+        // LimelightSubsystem.getInstance();
     }
 
     /**

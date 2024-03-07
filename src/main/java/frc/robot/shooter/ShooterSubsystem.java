@@ -18,7 +18,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveModuleConstants;
@@ -48,17 +47,9 @@ public class ShooterSubsystem extends SubsystemBase {
         // leftShooter.setInverted(true);
         
         configureMotionMagic();
-        // Uses the absolute position and the vertical position to make 0 rotations parallel to the floor
-        // The motors are always initialized to their absolute positions
-        leftPivotMotor.setPosition(
-            90 - (ShooterConstants.PIVOT_VERTICAL_ANGLES[0] - leftPivotMotor.getPosition().getValueAsDouble()) 
-        );
-        rightPivotMotor.setPosition(
-            90 - (ShooterConstants.PIVOT_VERTICAL_ANGLES[1] - rightPivotMotor.getPosition().getValueAsDouble()) 
-        );
-        
-        System.out.println("left motor pos " + leftPivotMotor.getPosition().getValueAsDouble());
-        System.out.println("right motor pos " + rightPivotMotor.getPosition().getValueAsDouble());
+        // Reset absolute position (ONLY DO THIS WITH THE PIVOT VERTICAL)
+        // leftPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
+        // rightPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
     }
 
     /**
@@ -100,11 +91,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     
     /**
-     * Sets the position of the pivot using Motion Magic slot 0
+     * Goes to the position of the pivot using Motion Magic slot 0
      * 
      * @param position in degrees
      */
-    public void setPivotPosition(double position) {
+    public void pivotGoToPosition(double position) {
         position = MathUtil.clamp(position, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
         MotionMagicVoltage control = motionMagicVoltage
         // Select Slot 0 for Motion Magic (should be done by default)

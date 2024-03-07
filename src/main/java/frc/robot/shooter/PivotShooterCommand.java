@@ -59,7 +59,7 @@ public class PivotShooterCommand extends Command {
             return;
         }
 
-        ShooterSubsystem.getInstance().setPivotPosition(this.shootingAngle);
+        ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

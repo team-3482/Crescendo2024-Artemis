@@ -45,7 +45,7 @@ public class SterilizerSubsystem extends SubsystemBase {
         // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
         //     return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
         // }
-        return null;
+        return Optional.empty();
     }
     
     /**
