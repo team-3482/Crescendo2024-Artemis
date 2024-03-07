@@ -42,14 +42,23 @@ public class ShooterSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    // private DutyCycleEncoder pivotEncoder = new DutyCycleEncoder(ShooterConstants.HEX_PIVOT_ENCODER_ID);
-
-    /** Creates a new ShooterSubsystem.*/
+    
+    /** Creates a new ShooterSubsystem and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
         // leftShooter.setInverted(true);
-        // https://v6.docs.ctr-electronics.com/en/2023-v6/docs/migration/migration-guide/control-requests-guide.html#follower-motors
+        
         configureMotionMagic();
-        rightPivotMotor.setPosition(0);
+        // Uses the absolute position and the vertical position to make 0 rotations parallel to the floor
+        // The motors are always initialized to their absolute positions
+        leftPivotMotor.setPosition(
+            90 - (ShooterConstants.PIVOT_VERTICAL_ANGLES[0] - leftPivotMotor.getPosition().getValueAsDouble()) 
+        );
+        rightPivotMotor.setPosition(
+            90 - (ShooterConstants.PIVOT_VERTICAL_ANGLES[1] - rightPivotMotor.getPosition().getValueAsDouble()) 
+        );
+        
+        System.out.println("left motor pos " + leftPivotMotor.getPosition().getValueAsDouble());
+        System.out.println("right motor pos " + rightPivotMotor.getPosition().getValueAsDouble());
     }
 
     /**
@@ -98,9 +107,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setPivotPosition(double position) {
         position = MathUtil.clamp(position, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
         MotionMagicVoltage control = motionMagicVoltage
+        // Select Slot 0 for Motion Magic (should be done by default)
         .withSlot(0)
         .withPosition(Units.degreesToRotations(position * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
-        // Select Slot 0 for Motion Magic
         rightPivotMotor.setControl(control);
         leftPivotMotor.setControl(control);
     }
@@ -124,12 +133,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the position of the pivot (after gear ratio) using the motor's encoder
+     * Gets the position of the pivot (after gear ratio) using the motor's encoder (not absolute value)
      * 
      * @return position in degrees
      */
     public double getPivotPosition() {
-        // return Units.rotationsToDegrees(pivotEncoder.getAbsolutePosition());
         return Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO);
     }
 

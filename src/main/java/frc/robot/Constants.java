@@ -115,6 +115,9 @@ public final class Constants {
 
         /** Lower [0] and upper [1] limits in degrees for the pivot */
         public static final double[] PIVOT_ANGLE_LIMITS = new double[]{25, 70};
+
+        /** The position in rotations of the pivot motors when the pivot is perfectly vertical. [0] is left and [1] is right */
+        public static final double[] PIVOT_VERTICAL_ANGLES = new double[]{0, 0};
     }
 
     /** Values used for running autonomous code */
