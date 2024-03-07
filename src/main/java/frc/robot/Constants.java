@@ -30,8 +30,8 @@ public final class Constants {
     public static final class IntakeConstants {
         public static final int LEFT_MOTOR_ID = 20;
         public static final int RIGHT_MOTOR_ID = 21;
-        public static final int TOP_MOTOR_ID = 16;
-        public static final int BOTTOM_MOTOR_ID = 17;
+        public static final int TOP_MOTOR_ID = 13;
+        public static final int BOTTOM_MOTOR_ID = 14;
 
         public static final double INTAKE_SPEED = 0.25;
         public static final double PIVOT_PID_P = 0.02;
@@ -42,8 +42,8 @@ public final class Constants {
         public static final int MOTOR_TO_PIVOT_RATIO = 9;
 
         public enum IntakeState{
-            INTAKING(-90.0),
-            IDLE(0.0);
+            INTAKING(0),
+            IDLE(90);
             /* Angle of the intake in degrees */
             double intakeAngle;
             private IntakeState(double intakeAngle)
@@ -86,12 +86,12 @@ public final class Constants {
 
         // Shooting stuff
         /** Allowed RPM error for the shooter motors */
-        public static final double ALLOWED_RPM_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(10);
+        public static final double ALLOWED_RPM_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(50);
         /** Allowed pivot error for the pivot rotation in degrees */
-        public static final double ALLOWED_PIVOT_ERROR = 1;
+        public static final double ALLOWED_PIVOT_ERROR = 0.5;
 
         // Pivot Stuff
-        public static final double MOTOR_TO_PIVOT_RATIO = 53.33;
+        public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
 
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */
@@ -112,6 +112,9 @@ public final class Constants {
 
         /** Slower [0] and faster [1] speeds for the shooter from -1.0 to 1.0 */
         public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
+
+        /** Lower [0] and upper [1] limits in degrees for the pivot */
+        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{25, 70};
     }
 
     /** Values used for running autonomous code */

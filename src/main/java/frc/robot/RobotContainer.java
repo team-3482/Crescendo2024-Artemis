@@ -20,6 +20,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.auto.PathfindToGoalCommand;
+import frc.robot.intake.IntakeSubsystem;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.ShooterSubsystem;
@@ -93,7 +94,7 @@ public class RobotContainer {
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
-            LEDSubsystem.getInstance().setLightState(LightState.OFF);
+            LEDSubsystem.getInstance().setCommandStopState(false);;
         }));
         
         // Orbit April-Tag
@@ -113,30 +114,25 @@ public class RobotContainer {
         // driveController.a().onTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
         
         // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
+        driveController.rightBumper().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        ));
+        driveController.leftBumper().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        ));
         driveController.a().onTrue(
-            Commands.runOnce(
-                () -> {
-                    ShooterSubsystem.getInstance().setPivotPosition(120);
-                }//,
-                // () -> {
-                //     System.out.println(ShooterSubsystem.getInstance().getPivotPosition());
-                //     ShooterSubsystem.getInstance().TESTING_SET_PIVOT(0);
-                // }
-        )).onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotPosition(0)));
+            Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotPosition(45)))
+                    .onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotPosition(0)));
         driveController.y().onTrue(
-            Commands.runOnce(() -> System.out.println(ShooterSubsystem.getInstance().getPivotPosition()))
+            Commands.runOnce(() -> System.out.println("leader " + ShooterSubsystem.getInstance().getPivotPosition()))
         );
+
         driveController.start().onTrue(
             Commands.runOnce(() -> ShooterSubsystem.getInstance().TESTING_RESET_PIVOT_POSITION())
         );
-        driveController.leftBumper().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(0.2),
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(0)
-        ));
-        driveController.rightBumper().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(-0.2),
-            () -> ShooterSubsystem.getInstance().TESTING_SET_PIVOT_SPEED(0)
-        ));
+
         // driveController.x().whileTrue(
         //     Commands.runEnd(
         //         () -> {
@@ -166,6 +162,15 @@ public class RobotContainer {
         // Line up to AMP
         // operatorController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));
+        // Move the pivot manually (last resort, not recommended)
+        driveController.povUp().whileTrue(Commands.runEnd(
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.2),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
+        ));
+        driveController.povDown().whileTrue(Commands.runEnd(
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.2),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
+        ));
     }
 
     /**
