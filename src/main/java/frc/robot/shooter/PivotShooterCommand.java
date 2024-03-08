@@ -18,6 +18,7 @@ import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.JSONManager;
 
 /** An example command that uses an example subsystem. */
 public class PivotShooterCommand extends Command {
@@ -90,12 +91,14 @@ public class PivotShooterCommand extends Command {
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setPivotSpeed(0);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
+        JSONManager.getInstance().savePivotPositions(positions[0], positions[1]);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(ShooterSubsystem.getInstance().getPivotPosition() - this.shootingAngle)
+        return Math.abs(ShooterSubsystem.getInstance().getPivotPositions()[1] - this.shootingAngle)
             <= ShooterConstants.ALLOWED_PIVOT_ERROR;
     }
 }

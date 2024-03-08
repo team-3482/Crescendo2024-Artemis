@@ -35,7 +35,7 @@ public class JSONManager {
         // Creates file in case it does not exist
         try {
             if (DATAFILE.createNewFile()) {
-                savePivotPositions(0, 0);
+                savePivotPositions(Double.valueOf(0), Double.valueOf(0));
             }
         }
         catch (IOException e) {
@@ -45,6 +45,7 @@ public class JSONManager {
 
     /**
      * Writes the pivot's positions to the JSON file
+     * 
      * @param leftMotorPosition
      * @param rightMotorPosition
      */ 
@@ -65,6 +66,15 @@ public class JSONManager {
     }
 
     /**
+     * Writes the pivot's position to the JSON file (overloaded)
+     * 
+     * @param motorPosition
+     */ 
+    public void savePivotPositions(double motorPosition) {
+        savePivotPositions(motorPosition, motorPosition);
+    }
+
+    /**
      * Get the pivot positions from the JSON file
      * @return an array with the left [0] and right [1] positions
      */
@@ -77,7 +87,10 @@ public class JSONManager {
             positions[1] = (Double) json.get(RIGHT_PIVOT_INDEX);
             file.close();
         }
-        catch (IOException | ParseException e) {
+        /* ClassCastException only happens when casting from Long to Double during json.get()
+        because JSONObject turns 0 (default value when creating file) into a Long.
+        `positions` has default values of 0, so it will return [0,0] anyways */ 
+        catch (IOException | ParseException | ClassCastException e) {
             e.printStackTrace();
         }
         return positions;
