@@ -126,8 +126,8 @@ public class RobotContainer {
         //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         // ));
         driveController.a().onTrue(
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().pivotGoToPosition(45)))
-                    .onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().pivotGoToPosition(0)));
+            Commands.runOnce(() -> ShooterSubsystem.getInstance().pivotGoToPosition(45))
+        ).onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotSpeed(0)));
         driveController.y().onTrue(
             Commands.runOnce(() -> System.out.println("leader " + ShooterSubsystem.getInstance().getPivotPosition()))
         );
