@@ -109,10 +109,13 @@ public class ShooterSubsystem extends SubsystemBase {
      * Set the pivot speeds (last resort) between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        if (speed > 0 && getPivotPosition() >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) return;
-        if (speed < 0 && getPivotPosition() <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) return;
-        rightPivotMotor.set(speed);
-        leftPivotMotor.set(speed);
+        // if (speed > 0 && getPivotPosition() >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) return;
+        // if (speed < 0 && getPivotPosition() <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) return;
+        if(speed > 0 && getPivotPosition() < ShooterConstants.PIVOT_ANGLE_LIMITS[1] || 
+        speed < 0 && getPivotPosition() > ShooterConstants.PIVOT_ANGLE_LIMITS[0]) {
+          rightPivotMotor.set(speed);
+          leftPivotMotor.set(speed);
+        }
     }
 
     /**
