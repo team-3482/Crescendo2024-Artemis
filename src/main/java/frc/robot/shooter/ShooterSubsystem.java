@@ -111,11 +111,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setPivotSpeed(double speed) {
         // if (speed > 0 && getPivotPosition() >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) return;
         // if (speed < 0 && getPivotPosition() <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) return;
-        if(speed > 0 && getPivotPosition() < ShooterConstants.PIVOT_ANGLE_LIMITS[1] || 
-        speed < 0 && getPivotPosition() > ShooterConstants.PIVOT_ANGLE_LIMITS[0]) {
+        // if(speed > 0 && getPivotPosition() < ShooterConstants.PIVOT_ANGLE_LIMITS[1] || 
+        // speed < 0 && getPivotPosition() > ShooterConstants.PIVOT_ANGLE_LIMITS[0]) {
           rightPivotMotor.set(speed);
           leftPivotMotor.set(speed);
-        }
+        //}
     }
 
     /**

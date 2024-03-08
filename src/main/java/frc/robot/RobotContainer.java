@@ -119,14 +119,14 @@ public class RobotContainer {
         
         // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
         
-        // driveController.rightBumper().whileTrue(Commands.runEnd(
-        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
-        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
-        // ));
-        // driveController.leftBumper().whileTrue(Commands.runEnd(
-        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
-        //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
-        // ));
+        driveController.rightBumper().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        ));
+        driveController.leftBumper().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        ));
         driveController.a().onTrue(new PivotShooterCommand(ShooterState.INTAKE));
         driveController.y().onTrue(
             Commands.runOnce(() -> System.out.println("leader " + ShooterSubsystem.getInstance().getPivotPosition()))
@@ -179,7 +179,7 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs */
     private void initializeSubsystems() {
         // SwerveSubsystem.getInstance();
-        // IntakeSubsystem.getInstance();
+        IntakeSubsystem.getInstance();
         // SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
         // LEDSubsystem.getInstance();
