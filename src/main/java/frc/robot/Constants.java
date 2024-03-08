@@ -62,7 +62,7 @@ public final class Constants {
         public static final int NEO_MOTOR_ID = 10;
         public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
-        public static final double FEEDING_SPEED = 1;
+        public static final double FEEDING_SPEED = 0.75;
         /**
          * The laser value when a note is at the furthest point from the laser in the
          * sterilizer in millimeters
@@ -98,7 +98,7 @@ public final class Constants {
             public static final double kS = 0.24;
             /** Volts added for a target velocity */
             public static final double kV = 0.12; // Target velocity of 100 rps
-            public static final double kP = 4.8;
+            public static final double kP = 0.2;
             public static final double kI = 0;
             public static final double kD = 0.1;
         }
@@ -114,10 +114,11 @@ public final class Constants {
         public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
 
         /** Lower [0] and upper [1] limits in degrees for the pivot */
-        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{30, 75};
+        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{32.5, 90};
 
         public enum ShooterState{
             INTAKE(false, 45),
+            VERTICAL(false, 90),
             AMP(false, 45),
             SPEAKER_ALIGN(true);
 
@@ -345,7 +346,7 @@ public final class Constants {
         public static final int XBOX_BURGER = 9;
         public static final int XBOX_SQUARES = 10;
         /** Whether or not to accept directional pad input for movement */
-        public static final boolean DPAD_DRIVE_INPUT = true;
+        public static final boolean DPAD_DRIVE_INPUT = false;
     }
 
     /** Constants used with the LEDSubsystem */

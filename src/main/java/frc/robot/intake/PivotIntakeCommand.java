@@ -12,16 +12,16 @@ import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
-public class IntakePivotCommand extends Command {
+public class PivotIntakeCommand extends Command {
     private PIDController pivotPIDController;
     private IntakeState state;
 
     /**
-     * Initializes a new IntakeCommand
+     * Initializes a new PivotIntakeCommand
      * 
-     * @param state state of the intake
+     * @param state of the intake
      */
-    public IntakePivotCommand(IntakeState state) {
+    public PivotIntakeCommand(IntakeState state) {
         this.pivotPIDController = new PIDController(IntakeConstants.PIVOT_PID_P, 0, 0);
         this.pivotPIDController.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
 

@@ -7,7 +7,7 @@ import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.auto.CenterNoteCommand;
 import frc.robot.auto.DriveToNoteCommand;
-import frc.robot.intake.IntakePivotCommand;
+import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
 
@@ -20,11 +20,11 @@ public class SequencedCommands{
     public static Command intakeCommand(){
         return Commands.sequence(
             Commands.parallel(
-            new IntakePivotCommand(IntakeState.INTAKING), new PivotShooterCommand(ShooterState.INTAKE)), 
+            new PivotIntakeCommand(IntakeState.INTAKING), new PivotShooterCommand(ShooterState.INTAKE)), 
             new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, 2.0)
             
         ).andThen(
-            new IntakePivotCommand(IntakeState.IDLE)
+            new PivotIntakeCommand(IntakeState.IDLE)
         );
     }
     /**
@@ -34,13 +34,13 @@ public class SequencedCommands{
     public static Command collectNote(){
         return Commands.sequence(
             new CenterNoteCommand(), 
-            new IntakePivotCommand(IntakeState.INTAKING), 
+            new PivotIntakeCommand(IntakeState.INTAKING), 
             Commands.parallel(
                 new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 
                 new DriveToNoteCommand()
             )
         ).andThen(
-            new IntakePivotCommand(IntakeState.IDLE)
+            new PivotIntakeCommand(IntakeState.IDLE)
         );
     }
 }

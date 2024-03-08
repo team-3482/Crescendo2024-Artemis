@@ -119,21 +119,12 @@ public class RobotContainer {
         
         // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
         
-        driveController.rightBumper().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
-        ));
-        driveController.leftBumper().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
-        ));
-        driveController.a().onTrue(new PivotShooterCommand(ShooterState.INTAKE));
-        driveController.y().onTrue(
-            Commands.runOnce(() -> System.out.println("leader " + ShooterSubsystem.getInstance().getPivotPosition()))
-        );
+        driveController.a()
+            .onTrue(new PivotShooterCommand(ShooterState.INTAKE))
+            .onFalse(new PivotShooterCommand(ShooterState.VERTICAL));
 
         driveController.start().onTrue(
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().TESTING_RESET_PIVOT_POSITION())
+            Commands.runOnce(() -> ShooterSubsystem.getInstance().zeroPivotPositionsVertical())
         );
 
         // driveController.x().whileTrue(
@@ -147,17 +138,17 @@ public class RobotContainer {
         //             SterilizerSubsystem.getInstance().moveStop();
         //         }
         // ));
-        // driveController.y().whileTrue(
-        //     Commands.runEnd(
-        //         () -> {
-        //             ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
-        //             SterilizerSubsystem.getInstance().moveForward();
-        //         },
-        //         () -> {
-        //             ShooterSubsystem.getInstance().setShootingVelocities();
-        //             SterilizerSubsystem.getInstance().moveStop();
-        //         }
-        // ));
+        driveController.y().whileTrue(
+            Commands.runEnd(
+                () -> {
+                    ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
+                    SterilizerSubsystem.getInstance().moveForward();
+                },
+                () -> {
+                    ShooterSubsystem.getInstance().setShootingVelocities();
+                    SterilizerSubsystem.getInstance().moveStop();
+                }
+        ));
 
         // Operator controller
         // Line up to SPEAKER
@@ -165,6 +156,7 @@ public class RobotContainer {
         // Line up to AMP
         // operatorController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));
+
         // Move the pivot manually (last resort, not recommended)
         driveController.povUp().whileTrue(Commands.runEnd(
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0.1),
@@ -173,6 +165,15 @@ public class RobotContainer {
         driveController.povDown().whileTrue(Commands.runEnd(
             () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.1),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
+        ));
+        // Move the intake manually (last resort, not recommended)
+        driveController.povRight().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.05),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
+        ));
+        driveController.povLeft().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.05),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
     }
 

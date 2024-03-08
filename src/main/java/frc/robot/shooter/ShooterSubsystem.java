@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -35,8 +36,8 @@ public class ShooterSubsystem extends SubsystemBase {
     /** This is used after a pivot command to be sure the robot can chain a shooting command */
     public boolean canShoot = false;
 
-    // private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
-    // private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
     
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
@@ -47,9 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // leftShooter.setInverted(true);
         
         configureMotionMagic();
-        // Reset absolute position (ONLY DO THIS WITH THE PIVOT VERTICAL)
-        // leftPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
-        // rightPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
+        // Reset position (ONLY DO THIS WITH THE PIVOT VERTICAL)
+        // zeroPivotPositionsVertical();
     }
 
     /**
@@ -66,6 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
         motorOutputConfigs.DutyCycleNeutralDeadband = 0.001;
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Right motor not inverted
+        motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         
         // Not sure what these do, but we shouldn't need to change the update frequencies. If needed, the way to do it is detailed here
         this.rightPivotMotor.getPosition().setUpdateFrequency(50); // 50 hz or 20 ms update time, same as robot loop
@@ -86,8 +87,17 @@ public class ShooterSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicJerk = ShooterConstants.MOTION_MAGIC_JERK;
         
         this.rightPivotMotor.getConfigurator().apply(configuration);
+        
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Left motor inverted
         this.leftPivotMotor.getConfigurator().apply(configuration);
+    }
+
+    /**
+     * Set each motor's position to 90 degrees (pivot)
+     */
+    public void zeroPivotPositionsVertical() {
+        leftPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
+        rightPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
     }
     
     /**
@@ -109,25 +119,19 @@ public class ShooterSubsystem extends SubsystemBase {
      * Set the pivot speeds (last resort) between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        // if (speed > 0 && getPivotPosition() >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) return;
-        // if (speed < 0 && getPivotPosition() <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) return;
-        // if(speed > 0 && getPivotPosition() < ShooterConstants.PIVOT_ANGLE_LIMITS[1] || 
-        // speed < 0 && getPivotPosition() > ShooterConstants.PIVOT_ANGLE_LIMITS[0]) {
-          rightPivotMotor.set(speed);
-          leftPivotMotor.set(speed);
-        //}
+        if ((speed < 0 && getPivotPosition() <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+            (speed > 0 && getPivotPosition() >= ShooterConstants.PIVOT_ANGLE_LIMITS[1])) {
+            rightPivotMotor.set(0);
+            leftPivotMotor.set(0);
+        }
+        else {
+            rightPivotMotor.set(speed);
+            leftPivotMotor.set(speed);
+        }
     }
 
     /**
-     * Testing method to be removed later
-     */
-    public void TESTING_RESET_PIVOT_POSITION() {
-        rightPivotMotor.setPosition(0);
-        leftPivotMotor.setPosition(0);
-    }
-
-    /**
-     * Gets the position of the pivot (after gear ratio) using the motor's encoder (not absolute value)
+     * Gets the position of the pivot (after gear ratio) using the motor's rotor
      * 
      * @return position in degrees
      */
@@ -141,11 +145,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return velocities in rad/s
      */
     public double[] getShootingVelocities() {
-        // return new double[]{
-        //     Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
-        //     Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
-        // };
-        return new double[2];
+        return new double[]{
+            Units.rotationsPerMinuteToRadiansPerSecond(leftShooter.getEncoder().getVelocity()),
+            Units.rotationsPerMinuteToRadiansPerSecond(rightShooter.getEncoder().getVelocity())
+        };
     }
 
     /**
@@ -154,8 +157,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocities between -1.0 and 1.0
      */
     public void setShootingVelocities(double[] velocities) {
-        // leftShooter.set(velocities[0]);
-        // rightShooter.set(velocities[1]);
+        leftShooter.set(velocities[0]);
+        rightShooter.set(velocities[1]);
     }
 
     /**
@@ -166,5 +169,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+        // System.out.println(Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO) + " " + getPivotPosition());
+    }
 }
