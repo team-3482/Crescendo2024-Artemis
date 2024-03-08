@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
@@ -21,45 +22,53 @@ import frc.robot.swerve.SwerveSubsystem;
 /** An example command that uses an example subsystem. */
 public class PivotShooterCommand extends Command {
     private double shootingAngle;
+    private ShooterState state;
 
     /**
     * Creates a new PivotShooterCommand.
     */
-    public PivotShooterCommand() {
+    public PivotShooterCommand(ShooterState state) {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance());
+        this.state = state;
     }
     
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        // Double so it can be null if the ID cannot be orbited
-        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) {
-            ShooterSubsystem.getInstance().canShoot = false;
-            end(true);
-            return;
-        }
-        ShooterSubsystem.getInstance().canShoot = true;
+        if(this.state.calculateAngle()){
+            // Double so it can be null if the ID cannot be orbited
+            Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+            if (!alliance.isPresent()) {
+                ShooterSubsystem.getInstance().canShoot = false;
+                end(true);
+                return;
+            }
+            ShooterSubsystem.getInstance().canShoot = true;
 
-        Translation3d point = OrbitConstants.ORBIT_POINT.get(DriverStation.getAlliance().get());
-        Pose2d botpose = SwerveSubsystem.getInstance().getPose();
-        
-        double dist = Math.sqrt(
-            Math.pow(point.getX() - botpose.getX(), 2) + 
-            Math.pow(point.getY() - botpose.getY(), 2)
-        );
-        this.shootingAngle = Math.atan((point.getZ() - PhysicalConstants.SHOOTER_PIVOT_HEIGHT) / dist);
-        
-        double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
-        if (this.shootingAngle != clamped) {
-            ShooterSubsystem.getInstance().canShoot = false;
-            end(true);
-            return;
-        }
+            Translation3d point = OrbitConstants.ORBIT_POINT.get(DriverStation.getAlliance().get());
+            Pose2d botpose = SwerveSubsystem.getInstance().getPose();
+            
+            double dist = Math.sqrt(
+                Math.pow(point.getX() - botpose.getX(), 2) + 
+                Math.pow(point.getY() - botpose.getY(), 2)
+            );
+            this.shootingAngle = Math.atan((point.getZ() - PhysicalConstants.SHOOTER_PIVOT_HEIGHT) / dist);
+            
+            double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
+            if (this.shootingAngle != clamped) {
+                ShooterSubsystem.getInstance().canShoot = false;
+                end(true);
+                return;
+            }
 
-        ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
+            ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
+        }
+        else
+        {
+            ShooterSubsystem.getInstance().pivotGoToPosition(this.state.getAngle());
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.

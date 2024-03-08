@@ -115,6 +115,33 @@ public final class Constants {
 
         /** Lower [0] and upper [1] limits in degrees for the pivot */
         public static final double[] PIVOT_ANGLE_LIMITS = new double[]{30, 75};
+
+        public enum ShooterState{
+            INTAKE(false, 45),
+            AMP(false, 45),
+            SPEAKER_ALIGN(true);
+
+            boolean calculateAngle;
+            double positionAngle;
+            private ShooterState (boolean calculateAngle, double angle)
+            {
+                this.calculateAngle = calculateAngle;
+                this.positionAngle = angle;
+            }
+            private ShooterState(boolean calculateAngle)
+            {
+                this(calculateAngle,0);
+            }
+            public boolean calculateAngle()
+            {
+                return this.calculateAngle;
+            }
+            public double getAngle()
+            {
+                return this.positionAngle;
+            }
+            
+        }
     }
 
     /** Values used for running autonomous code */

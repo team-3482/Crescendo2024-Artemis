@@ -19,11 +19,13 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
+import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
+import frc.robot.shooter.PivotShooterCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
@@ -125,9 +127,7 @@ public class RobotContainer {
         //     () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
         //     () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         // ));
-        driveController.a().onTrue(
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().pivotGoToPosition(45))
-        ).onFalse(Commands.runOnce(() -> ShooterSubsystem.getInstance().setPivotSpeed(0)));
+        driveController.a().onTrue(new PivotShooterCommand(ShooterState.INTAKE));
         driveController.y().onTrue(
             Commands.runOnce(() -> System.out.println("leader " + ShooterSubsystem.getInstance().getPivotPosition()))
         );
