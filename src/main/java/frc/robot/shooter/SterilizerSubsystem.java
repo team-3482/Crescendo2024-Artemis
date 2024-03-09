@@ -43,7 +43,7 @@ public class SterilizerSubsystem extends SubsystemBase {
         // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
         //     return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
         // }
-        return Optional.empty();
+        return Optional.empty(); // Will not have LaserCAN at first comp
     }
     
     /**
@@ -54,7 +54,7 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
     
     /**
-     * Moves the note backwards to the intake
+     * Moves the note backwards to the intake. Do not run for too long, otherwise the note will get stuck above the PDH.
      */
     public void moveBackward() {
         feederMotor.set(-SterilizerConstants.FEEDING_SPEED);
