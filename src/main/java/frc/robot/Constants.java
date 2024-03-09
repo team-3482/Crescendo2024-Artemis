@@ -34,9 +34,10 @@ public final class Constants {
         public static final int BOTTOM_MOTOR_ID = 14;
 
         public static final double INTAKE_SPEED = 0.25;
-        public static final double PIVOT_PID_P = 0.02;
+        public static final double PIVOT_PID_P_UP = 0.1;
+        public static final double PIVOT_PID_P_DOWN = 0.02;
         /** Tolerance for the pivot in degrees */
-        public static final double PIVOT_TOLERANCE = 2.5;
+        public static final double PIVOT_TOLERANCE = 1;
 
         /** Position for the intake opened in degrees */
         public static final int MOTOR_TO_PIVOT_RATIO = 9;
@@ -62,7 +63,7 @@ public final class Constants {
         public static final int NEO_MOTOR_ID = 10;
         public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
-        public static final double FEEDING_SPEED = 0.75;
+        public static final double FEEDING_SPEED = 0.40;
         /**
          * The laser value when a note is at the furthest point from the laser in the
          * sterilizer in millimeters
@@ -98,7 +99,7 @@ public final class Constants {
             public static final double kS = 0.24;
             /** Volts added for a target velocity */
             public static final double kV = 0.12; // Target velocity of 100 rps
-            public static final double kP = 0.2;
+            public static final double kP = 0.025;
             public static final double kI = 0;
             public static final double kD = 0.1;
         }

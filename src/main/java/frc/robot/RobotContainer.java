@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -16,12 +17,14 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
@@ -120,36 +123,36 @@ public class RobotContainer {
         
         // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
         
-        driveController.a()
-            .onTrue(new PivotShooterCommand(ShooterState.INTAKE))
-            .onFalse(new PivotShooterCommand(ShooterState.VERTICAL));
+        driveController.a().whileTrue(new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED));
+        driveController.x().whileTrue(new SpinIntakeCommand(-IntakeConstants.INTAKE_SPEED));
+        // driveController.a()
+        //     .onTrue(new PivotShooterCommand(ShooterState.INTAKE))
+        //     .onFalse(new PivotShooterCommand(ShooterState.VERTICAL));
 
-        driveController.start().onTrue(
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().zeroPivotPositionsVertical())
-        );
-
-        // driveController.x().whileTrue(
-        //     Commands.runEnd(
-        //         () -> {
-        //             SterilizerSubsystem.getInstance().moveBackward();
-        //             ShooterSubsystem.getInstance().setShootingVelocities(new double[]{-0.1, -0.1});
-        //         },
-        //         () -> {
-        //             ShooterSubsystem.getInstance().setShootingVelocities();
-        //             SterilizerSubsystem.getInstance().moveStop();
-        //         }
-        // ));
         driveController.y().whileTrue(
             Commands.runEnd(
                 () -> {
-                    ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
+                    // ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
                     SterilizerSubsystem.getInstance().moveForward();
                 },
                 () -> {
-                    ShooterSubsystem.getInstance().setShootingVelocities();
+                    // ShooterSubsystem.getInstance().setShootingVelocities();
+                    SterilizerSubsystem.getInstance().moveBackward();
+                    Timer.delay(0.1);
                     SterilizerSubsystem.getInstance().moveStop();
                 }
         ));
+        // driveController.x().whileTrue(
+        //     Commands.runEnd(
+        //         () -> {
+        //             ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
+        //             // SterilizerSubsystem.getInstance().moveForward();
+        //         },
+        //         () -> {
+        //             ShooterSubsystem.getInstance().setShootingVelocities();
+        //             // SterilizerSubsystem.getInstance().moveStop();
+        //         }
+        // ));
 
         // Operator controller
         // Line up to SPEAKER
@@ -173,7 +176,7 @@ public class RobotContainer {
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
         driveController.povLeft().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.05),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
     }
@@ -182,7 +185,7 @@ public class RobotContainer {
     private void initializeSubsystems() {
         JSONManager.getInstance();
         // SwerveSubsystem.getInstance();
-        IntakeSubsystem.getInstance();
+        // IntakeSubsystem.getInstance();
         // SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
         // LEDSubsystem.getInstance();
