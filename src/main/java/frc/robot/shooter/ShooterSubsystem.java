@@ -22,6 +22,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.utilities.JSONManager;
 
 public class ShooterSubsystem extends SubsystemBase {    
     // Singleton Design Pattern
@@ -43,13 +44,16 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     
-    /** Creates a new ShooterSubsystem and configures Motion Magic for the pivot */
+    /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
         // leftShooter.setInverted(true);
         
         configureMotionMagic();
         // Reset position (ONLY DO THIS WITH THE PIVOT VERTICAL)
-        zeroPivotPositionsVertical();
+        // zeroPivotPositionsVertical();
+        double[] positions = JSONManager.getInstance().getPivotPositions();
+        leftPivotMotor.setPosition(positions[0]);
+        rightPivotMotor.setPosition(positions[1]);
     }
 
     /**
@@ -96,8 +100,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * Set each motor's position to 90 degrees (pivot)
      */
     public void zeroPivotPositionsVertical() {
-        leftPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
-        rightPivotMotor.setPosition(0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
+        double position = 0.25 * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
+        leftPivotMotor.setPosition(position);
+        rightPivotMotor.setPosition(position);
+        JSONManager.getInstance().savePivotPositions(position);
     }
     
     /**
@@ -119,8 +125,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * Set the pivot speeds (last resort) between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        if ((speed < 0 && getPivotPosition() <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (speed > 0 && getPivotPosition() >= ShooterConstants.PIVOT_ANGLE_LIMITS[1])) {
+        if ((speed < 0 && getPivotPositions()[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+            (speed > 0 && getPivotPositions()[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1])) {
             rightPivotMotor.set(0);
             leftPivotMotor.set(0);
         }
@@ -131,12 +137,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the position of the pivot (after gear ratio) using the motor's rotor
+     * Gets the positions of the pivots (after gear ratio) using the motor's rotor.
+     * <p> Left [0] and right [1] </p>
+     * <p> Note : it is recommended to follow only the right [1] motor for pivot positioning </p>
      * 
-     * @return position in degrees
+     * @return positions in degrees
      */
-    public double getPivotPosition() {
-        return Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO);
+    public double[] getPivotPositions() {
+        return new double[]{
+            Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO),
+            Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO)
+        };
     }
 
     /**

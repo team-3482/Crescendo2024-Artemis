@@ -32,6 +32,7 @@ import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.JSONManager;
 import frc.robot.utilities.SequencedCommands;
 
 public class RobotContainer {
@@ -179,6 +180,7 @@ public class RobotContainer {
 
     /** Creates instances of each subsystem so periodic runs */
     private void initializeSubsystems() {
+        JSONManager.getInstance();
         // SwerveSubsystem.getInstance();
         IntakeSubsystem.getInstance();
         // SterilizerSubsystem.getInstance();
