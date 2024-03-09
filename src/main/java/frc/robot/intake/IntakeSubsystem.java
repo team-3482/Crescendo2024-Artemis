@@ -31,24 +31,17 @@ public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
 
     public IntakeSubsystem() {
-        leftPivotMotor.follow(rightPivotMotor, true);
-
+        rightPivotMotor.follow(leftPivotMotor, true);
         bottomIntakeMotor.follow(topIntakeMotor, true);
     }
 
     /**
      * Moves the note forward through the intake
+     * 
      * @param intakeSpeed the speed of the intake motors
      */
     public void setIntakeSpeed(double intakeSpeed) {
         topIntakeMotor.set(intakeSpeed);
-    }
-
-    /**
-     * Stops the intake motor
-     */
-    public void stopIntake() {
-        topIntakeMotor.set(0);
     }
 
     /**
@@ -57,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        rightPivotMotor.set(speed);
+        leftPivotMotor.set(speed);
     }
 
     /**

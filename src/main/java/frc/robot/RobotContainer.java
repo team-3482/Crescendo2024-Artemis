@@ -160,11 +160,11 @@ public class RobotContainer {
         ));
         // Move the intake manually (last resort, not recommended)
         driveController.povRight().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.05),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
         driveController.povLeft().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.05),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
     }
