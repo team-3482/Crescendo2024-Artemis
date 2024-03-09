@@ -40,23 +40,32 @@ public class SpinIntakeCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        this.timer.start();
+        this.timer.restart();
     }
 
     @Override
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-        IntakeSubsystem.getInstance().setIntakeSpeed(speed);
+        IntakeSubsystem.getInstance().setIntakeSpeed(this.speed);
+        if (this.speed > 0) {
+            SterilizerSubsystem.getInstance().moveForward();
+        }
+        else if (this.speed < 0) {
+            SterilizerSubsystem.getInstance().moveBackward();
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
         IntakeSubsystem.getInstance().stopIntake();
+        SterilizerSubsystem.getInstance().moveBackward();
+        Timer.delay(0.1);
+        SterilizerSubsystem.getInstance().moveStop();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     @Override
     public boolean isFinished() {
-        return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout) || SterilizerSubsystem.getInstance().hasNote().get();
+        return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout);// || SterilizerSubsystem.getInstance().hasNote().get();
     }
 }

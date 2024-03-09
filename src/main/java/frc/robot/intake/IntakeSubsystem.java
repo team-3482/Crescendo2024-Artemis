@@ -31,14 +31,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
 
     public IntakeSubsystem() {
-        // These motors should be zeroed in the app
-        // leftMotor.getEncoder().setPosition(0);
-        // rightMotor.getEncoder().setPosition(0);
-
         leftPivotMotor.follow(rightPivotMotor, true);
-        rightPivotMotor.getEncoder().setPositionConversionFactor(IntakeConstants.MOTOR_TO_PIVOT_RATIO);
 
-        bottomIntakeMotor.follow(topIntakeMotor, false);
+        bottomIntakeMotor.follow(topIntakeMotor, true);
     }
 
     /**
@@ -68,9 +63,14 @@ public class IntakeSubsystem extends SubsystemBase {
     /**
      * Gets the position of the encoder
      * 
-     * @return position of the intake in degrees
+     * @return position of the intake in degrees. 0 is at hardware stop when extended.
      */
-    public double getPivotPositionDegrees() {
-        return Units.rotationsToDegrees(this.rightPivotMotor.getEncoder().getPosition());
+    public double getPivotPosition() {
+        return Units.rotationsToDegrees(this.rightPivotMotor.getEncoder().getPosition() * IntakeConstants.MOTOR_TO_PIVOT_RATIO);
+    }
+
+    @Override
+    public void periodic() {
+        // System.out.println(getPivotPosition());
     }
 }
