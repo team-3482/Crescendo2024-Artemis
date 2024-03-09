@@ -44,4 +44,14 @@ public class Color {
     public int getBlue() {
         return this.blue;
     }
+    /**
+     * Gets the hexadecimal value of che color
+     * @return hexadecimal value
+     */
+    public String getHexadecimal() {
+        return String.format("#%02x%02x%02x", red, green, blue);  
+    }
+    public boolean equals(Color other) {
+        return red == other.red && blue == other.blue && green == other.green;
+    }
 }

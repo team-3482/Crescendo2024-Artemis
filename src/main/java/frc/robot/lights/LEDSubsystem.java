@@ -6,8 +6,15 @@ package frc.robot.lights;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.Constants.ShuffleboardTabConstants;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class LEDSubsystem extends SubsystemBase {
     // Singleton Design Pattern
@@ -24,6 +31,15 @@ public class LEDSubsystem extends SubsystemBase {
     private double lastLedUpdate = 0.0;
     private LightState state;
     private LightState defaultState;
+
+    private SimpleWidget SB_D_LED_WIDGET = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        .add("LED Status", false);
+    private GenericEntry SB_D_LED_ENTRY = SB_D_LED_WIDGET
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withProperties(Map.of("colorWhenFalse", "black"))
+        // .withPosition(6, 0)
+        .withSize(3, 3)
+        .getEntry();
     
     /**
      * Creates and initializes a new LEDSubsystem
@@ -40,7 +56,7 @@ public class LEDSubsystem extends SubsystemBase {
         // Updates the color effect and gets the chosen color
         if(this.state.interval != Double.POSITIVE_INFINITY) {
             double timestamp = Timer.getFPGATimestamp();
-            if(timestamp - this.lastLedUpdate >= this.state.interval) {
+            if (timestamp - this.lastLedUpdate >= this.state.interval) {
                 this.state.cycleColors();
                 this.lastLedUpdate = timestamp;
             }
@@ -48,18 +64,46 @@ public class LEDSubsystem extends SubsystemBase {
         Color color = this.state.getColor();
       
         underGlowStrip.setColor(color);
+
+        if (color.equals(Color.off())) {
+            SB_D_LED_ENTRY.setBoolean(false);
+        }
+        else {
+            SB_D_LED_WIDGET.withProperties(Map.of("colorWhenTrue", color.getHexadecimal()));
+            SB_D_LED_ENTRY.setBoolean(true);
+        }
     };
 
     /**
-     * Sets the state of the lights on the bot
-     * @param state - Desired LightState
+     * Sets the state of the lights on the bot.
+     * 
+     * @param state Desired {@link LightState}
      */
     public void setLightState(LightState state) {
         this.state = state;
     }
-    public void setDefaultLightState(LightState state)
-    {
+
+    /**
+     * Sets the default state of the lights on the bot
+     * 
+     * @param state Desired {@link LightState}
+     */
+    public void setDefaultLightState(LightState state) {
         this.defaultState = state;
+    }
+
+    /**
+     * Reset the lights to the default {@link LightState}.
+     * 
+     * @param commandInterrupted set warning lights instead if true
+     */
+    public void setCommandStopState(boolean commandInterrupted) {
+        if (commandInterrupted) {
+            this.setLightState(LightState.WARNING);
+        }
+        else {
+            this.setLightState(this.defaultState);
+        }
     }
     
     public enum LightState { 
@@ -70,7 +114,7 @@ public class LEDSubsystem extends SubsystemBase {
         CMD_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
         /** Command is considered autonoumous if the human driver does not have control over the robot movement during the command */
         AUTO_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
-        /** For when the command is initializing (if see this color, there is an issue) */
+        /** For when the command is initializing (if you see this color, there is an issue) */
         CMD_INIT(Double.POSITIVE_INFINITY, new Color(255, 255, 0)),
         
         HOLDING_NOTE(0.2, new Color(255, 127, 0), Color.off())
@@ -81,7 +125,6 @@ public class LEDSubsystem extends SubsystemBase {
         int currentColorIndex;        
         /**
          * @param interval
-         * @param blendMode
          * @param colors
          */
         private LightState(double interval, Color... colors) {
@@ -104,16 +147,6 @@ public class LEDSubsystem extends SubsystemBase {
                 this.currentColorIndex = -1; // set to -1 to ensure doesnt skip first color
             }
             this.currentColorIndex++;
-        }
-    }
-
-    public void setCommandStopState(boolean commandInterrupted)
-    {
-        if (commandInterrupted) {
-            this.setLightState(LightState.WARNING);
-        }
-        else {
-            this.setLightState(this.defaultState);
         }
     }
 }
