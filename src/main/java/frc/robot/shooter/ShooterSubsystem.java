@@ -49,7 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
         
         configureMotionMagic();
         // Reset position (ONLY DO THIS WITH THE PIVOT VERTICAL)
-        // zeroPivotPositionsVertical();
+        zeroPivotPositionsVertical();
     }
 
     /**

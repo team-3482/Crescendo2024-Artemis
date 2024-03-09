@@ -6,7 +6,7 @@ package frc.robot.shooter;
 
 import java.util.Optional;
 
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 
 import au.grapplerobotics.LaserCan;
 
@@ -27,7 +27,7 @@ public class SterilizerSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private CANSparkMax feederMotor = new CANSparkMax(SterilizerConstants.NEO_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkFlex feederMotor = new CANSparkFlex(SterilizerConstants.NEO_MOTOR_ID, MotorType.kBrushless);
     // private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
 
     /** Creates a new SterilizerSubsystem. LaserCAN is configured in the GrappleHook app */
