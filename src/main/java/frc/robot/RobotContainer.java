@@ -32,7 +32,6 @@ import frc.robot.shooter.PivotShooterCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
-import frc.robot.swerve.SwerveOrbitCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.JSONManager;
@@ -105,23 +104,12 @@ public class RobotContainer {
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
         
-        // Orbit April-Tag
-        // driveController.leftBumper().toggleOnTrue(new SwerveOrbitCommand(
-        //     () -> -driveController.getLeftY(),
-        //     () -> -driveController.getLeftX(),
-        //     () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
-        //     () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
-        //     // D-Pad / POV Movement
-        //     ControllerConstants.DPAD_DRIVE_INPUT,
-        //     (Integer angle) -> driveController.pov(angle).getAsBoolean()
-        // ));
-        
         // driveController.rightBumper().onTrue(SequencedCommands.collectNote());
         // driveController.y().onTrue(SequencedCommands.intakeCommand());
         // driveController.x().onTrue(new PathfindToGoalCommand(PathfindingPosition.AMP));
         // driveController.a().onTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
         
-        // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this and Orbit
+        // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this
         
         driveController.a().whileTrue(new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED));
         driveController.x().whileTrue(new SpinIntakeCommand(-IntakeConstants.INTAKE_SPEED));
