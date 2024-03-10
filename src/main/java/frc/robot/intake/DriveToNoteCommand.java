@@ -28,11 +28,7 @@ public class DriveToNoteCommand extends Command {
     private final SlewRateLimiter turningLimiter;
     private PIDController pidController;
 
-    /**
-    * Creates a new CenterNoteCommand.
-    *
-    * @param subsystem The subsystem used by this command.
-    */
+    /** Creates a new CenterNoteCommand. */
     public DriveToNoteCommand() {
         setName("DriveToNoteCommand");
         this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);

@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.intake.IntakeSubsystem;
-import frc.robot.intake.SpinIntakeCommand;
+import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.PivotShooterCommand;
@@ -99,17 +99,18 @@ public class RobotContainer {
         }));
         // Zeroing functions
         // Double rectangle
-        driveController.back()
-            .onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
+        driveController.back().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
         // Burger
         driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         
         
-        // driveController.rightBumper().onTrue(SequencedCommands.collectNote());
-        driveController.rightBumper().whileTrue(Commands.sequence(
-            new PivotShooterCommand(ShooterState.INTAKE),
-            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)));
-        // driveController.y().onTrue(SequencedCommands.intakeCommand());    
+        driveController.rightBumper()
+            .onTrue(SequencedCommands.getIntakeCommand())
+            .onFalse(new PivotIntakeCommand(IntakeState.IDLE));    
+        // driveController.rightBumper().whileTrue(Commands.sequence(
+            //     new PivotShooterCommand(ShooterState.INTAKE),
+            //     new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)));
+        driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
 
         // Line up to SPEAKER
         // driveController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
