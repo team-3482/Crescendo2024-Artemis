@@ -48,6 +48,7 @@ public class PivotShooterCommand extends Command {
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         if(!this.state.calculateAngle()) {
+            this.shootingAngle = this.state.getAngle();
             ShooterSubsystem.getInstance().pivotGoToPosition(this.state.getAngle());
             return;
         }

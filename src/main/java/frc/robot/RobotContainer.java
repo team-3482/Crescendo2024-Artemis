@@ -29,6 +29,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.ShootCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
@@ -48,7 +49,7 @@ public class RobotContainer {
         return instance;
     }
 
-    // private final SendableChooser<Command> autoChooser;
+    private final SendableChooser<Command> autoChooser;
 
     // Instance of the controllers used to drive the robot
     private CommandXboxController driveController;
@@ -60,110 +61,96 @@ public class RobotContainer {
     public RobotContainer() {
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         this.operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_ID);
+        
+        initializeSubsystems();
 
         // Register named commands for pathplanner (do this after subsystem
         // initialization)
         NamedCommands.registerCommand("Pathfind AMP",
             new PathfindToGoalCommand(PathfindingPosition.AMP));
-        NamedCommands.registerCommand("Pathfind SPEAKER",
+            NamedCommands.registerCommand("Pathfind SPEAKER",
             new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
-
+            
         // Sets the default command to driving swerve
-        // SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
-        //     () -> -driveController.getLeftY(),
-        //     () -> -driveController.getLeftX(),
-        //     () -> -driveController.getRightX(),
-        //     () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
-        //     () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
-        //     // D-Pad / POV movement
-        //     ControllerConstants.DPAD_DRIVE_INPUT,
-        //     (Integer angle) -> driveController.pov(angle).getAsBoolean()
-        // ));
-        configureBindings();
-        initializeSubsystems();
+        SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
+            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
+            // D-Pad / POV movement
+            ControllerConstants.DPAD_DRIVE_INPUT,
+            (Integer angle) -> driveController.pov(angle).getAsBoolean()
+        ));
 
-        // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
-        // Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        //     .add("Auto Chooser", autoChooser)
-        //     .withWidget(BuiltInWidgets.kComboBoxChooser)
-        //     .withPosition(0, 3)
-        //     .withSize(3, 2);
+        configureBindings();
+
+        autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
+        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+            .add("Auto Chooser", autoChooser)
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(0, 3)
+            .withSize(3, 2);
     }
 
     /** Configures the button bindings of the controllers */
     private void configureBindings() {
         // Driver controller
-        // Zeroing functions
-        // driveController.back()
-            // .onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
-        // driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
-        
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
+        // Zeroing functions
+        // Double rectangle
+        driveController.back()
+            .onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
+        // Burger
+        driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
+        
         
         // driveController.rightBumper().onTrue(SequencedCommands.collectNote());
-        // driveController.y().onTrue(SequencedCommands.intakeCommand());
-        // driveController.x().onTrue(new PathfindToGoalCommand(PathfindingPosition.AMP));
-        // driveController.a().onTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
-        
-        // driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this
-        
-        driveController.a().whileTrue(new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED));
-        driveController.x().whileTrue(new SpinIntakeCommand(-IntakeConstants.INTAKE_SPEED));
-        // driveController.a()
-        //     .onTrue(new PivotShooterCommand(ShooterState.INTAKE))
-        //     .onFalse(new PivotShooterCommand(ShooterState.VERTICAL));
+        driveController.rightBumper().whileTrue(Commands.sequence(
+            new PivotShooterCommand(ShooterState.INTAKE),
+            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)));
+        // driveController.y().onTrue(SequencedCommands.intakeCommand());    
 
-        driveController.y().whileTrue(
-            Commands.runEnd(
-                () -> {
-                    // ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
-                    SterilizerSubsystem.getInstance().moveForward();
-                },
-                () -> {
-                    // ShooterSubsystem.getInstance().setShootingVelocities();
-                    SterilizerSubsystem.getInstance().moveBackward();
-                    Timer.delay(0.1);
-                    SterilizerSubsystem.getInstance().moveStop();
-                }
-        ));
-        // driveController.x().whileTrue(
-        //     Commands.runEnd(
-        //         () -> {
-        //             ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0.5, 0.5});
-        //             // SterilizerSubsystem.getInstance().moveForward();
-        //         },
-        //         () -> {
-        //             ShooterSubsystem.getInstance().setShootingVelocities();
-        //             // SterilizerSubsystem.getInstance().moveStop();
-        //         }
-        // ));
-
-        // Operator controller
         // Line up to SPEAKER
-        // operatorController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
+        // driveController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
         // Line up to AMP
-        // operatorController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
+        // driveController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));
+        
+        driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this
+        
+        // Operator controller
+        // Cancel all scheduled commands and turn off LEDs
+        operatorController.b().onTrue(Commands.runOnce(() -> {
+            CommandScheduler.getInstance().cancelAll();
+            LEDSubsystem.getInstance().setCommandStopState(false);
+        }));
 
+        operatorController.rightBumper()
+            .onTrue(new PivotShooterCommand(ShooterState.INTAKE));
+        operatorController.leftBumper()
+            .onTrue(new PivotShooterCommand(ShooterState.AMP));
+        operatorController.a().whileTrue(new ShootCommand(true));
+        
         // Move the pivot manually (last resort, not recommended)
-        driveController.povUp().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.1),
+        operatorController.povUp().whileTrue(Commands.runEnd(
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.15),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
-        driveController.povDown().whileTrue(Commands.runEnd(
+        operatorController.povDown().whileTrue(Commands.runEnd(
             () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.1),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
         // Move the intake manually (last resort, not recommended)
-        driveController.povRight().whileTrue(Commands.runEnd(
+        operatorController.povRight().whileTrue(Commands.runEnd(
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
-        driveController.povLeft().whileTrue(Commands.runEnd(
+        operatorController.povLeft().whileTrue(Commands.runEnd(
             () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.05),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
@@ -172,12 +159,12 @@ public class RobotContainer {
     /** Creates instances of each subsystem so periodic runs */
     private void initializeSubsystems() {
         JSONManager.getInstance();
-        // SwerveSubsystem.getInstance();
-        // IntakeSubsystem.getInstance();
-        // SterilizerSubsystem.getInstance();
+        LEDSubsystem.getInstance();
+        LimelightSubsystem.getInstance();
+        SwerveSubsystem.getInstance();
+        IntakeSubsystem.getInstance();
+        SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
-        // LEDSubsystem.getInstance();
-        // LimelightSubsystem.getInstance();
     }
 
     /**
@@ -186,7 +173,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // return autoChooser.getSelected();
-        return null;
+        return autoChooser.getSelected();
     }
 }

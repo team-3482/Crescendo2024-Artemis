@@ -28,7 +28,7 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
 
     private CANSparkFlex feederMotor = new CANSparkFlex(SterilizerConstants.NEO_MOTOR_ID, MotorType.kBrushless);
-    // private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
+    private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
 
     /** Creates a new SterilizerSubsystem. LaserCAN is configured in the GrappleHook app */
     public SterilizerSubsystem() {}
@@ -39,11 +39,11 @@ public class SterilizerSubsystem extends SubsystemBase {
      * @return contains a note, empty optional if invalid measurements
      */
     public Optional<Boolean> hasNote() {
-        // LaserCan.Measurement measurement = laser.getMeasurement();
-        // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-        //     return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
-        // }
-        return Optional.empty(); // Will not have LaserCAN at first comp
+        LaserCan.Measurement measurement = laser.getMeasurement();
+        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+            return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
+        }
+        return Optional.empty();
     }
     
     /**

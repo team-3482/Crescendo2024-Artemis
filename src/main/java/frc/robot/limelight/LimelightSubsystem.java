@@ -60,24 +60,24 @@ public class LimelightSubsystem extends SubsystemBase {
         .withSize(3, 3)
         .getEntry();
 
-    private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        .add("T-ID", 0)
-        .withWidget(BuiltInWidgets.kTextView)
-        .withPosition(14, 4)
-        .withSize(2, 1)
-        .getEntry();
-    private GenericEntry SB_F_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        .add("TAG-SEE", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(14, 0)
-        .withSize(2, 2)
-        .getEntry();
-    private GenericEntry SB_F_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        .add("ADD-VISION", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(14, 2)
-        .withSize(2, 2)
-        .getEntry();
+    // private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+    //     .add("T-ID", 0)
+    //     .withWidget(BuiltInWidgets.kTextView)
+    //     .withPosition(14, 4)
+    //     .withSize(2, 1)
+    //     .getEntry();
+    // private GenericEntry SB_F_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+    //     .add("TAG-SEE", false)
+    //     .withWidget(BuiltInWidgets.kBooleanBox)
+    //     .withPosition(14, 0)
+    //     .withSize(2, 2)
+    //     .getEntry();
+    // private GenericEntry SB_F_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+    //     .add("ADD-VISION", false)
+    //     .withWidget(BuiltInWidgets.kBooleanBox)
+    //     .withPosition(14, 2)
+    //     .withSize(2, 2)
+    //     .getEntry();
 
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
@@ -105,11 +105,11 @@ public class LimelightSubsystem extends SubsystemBase {
             .withSize(6, 3)
             .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
 
-        Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-            .add("Field (limelight)", limelight_field)
-            .withWidget(BuiltInWidgets.kField)
-            .withPosition(7, 0)
-            .withSize(7, 4);
+        // Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
+        //     .add("Field (limelight)", limelight_field)
+        //     .withWidget(BuiltInWidgets.kField)
+        //     .withPosition(7, 0)
+        //     .withSize(7, 4);
     }
 
     /**
@@ -195,7 +195,7 @@ public class LimelightSubsystem extends SubsystemBase {
      */
     public void updateAddVisionEntry(boolean bool) {
         SB_D_TUPDATE.setBoolean(bool);
-        SB_F_TUPDATE.setBoolean(bool);
+        // SB_F_TUPDATE.setBoolean(bool);
     }
 
     @Override
@@ -210,8 +210,8 @@ public class LimelightSubsystem extends SubsystemBase {
         SB_D_TSEE.setBoolean(tSee);
         SB_D_NSEE.setBoolean(nSee);
 
-        // Field Shuffleboard
-        SB_F_TID.setInteger(tid);
-        SB_F_TSEE.setBoolean(tSee);
+        // Field Shuffleboard (disabled for competition)
+        // SB_F_TID.setInteger(tid);
+        // SB_F_TSEE.setBoolean(tSee);
     }
 }

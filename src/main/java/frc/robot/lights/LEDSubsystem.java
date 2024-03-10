@@ -27,6 +27,8 @@ public class LEDSubsystem extends SubsystemBase {
     }
     
     private LEDStrip underGlowStrip;
+    // private LEDStrip leftElevatorStrip;
+    // private LEDStrip rightElevatorStrip;
 
     private double lastLedUpdate = 0.0;
     private LightState state;
@@ -45,10 +47,13 @@ public class LEDSubsystem extends SubsystemBase {
      * Creates and initializes a new LEDSubsystem
      */
     private LEDSubsystem() {
-        underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT,LEDConstants.UNDERGLOW_LED_COUNT);
+        this.underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT, LEDConstants.UNDERGLOW_LED_COUNT);
+        // this.leftElevatorStrip = new LEDStrip(LEDConstants.LEFT_ELEVATOR_LED_PORT, LEDConstants.ELEVATOR_LED_COUNT);
+        // this.rightElevatorStrip = new LEDStrip(LEDConstants.RIGHT_ELEVATOR_LED_PORT, LEDConstants.ELEVATOR_LED_COUNT);
         this.lastLedUpdate = Timer.getFPGATimestamp();
-        this.state = LightState.OFF;
+
         this.defaultState = LightState.OFF;
+        this.state = this.defaultState;
     }
 
     @Override
@@ -64,6 +69,8 @@ public class LEDSubsystem extends SubsystemBase {
         Color color = this.state.getColor();
       
         underGlowStrip.setColor(color);
+        // leftElevatorStrip.setColor(color);
+        // rightElevatorStrip.setColor(color);
 
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
@@ -90,6 +97,7 @@ public class LEDSubsystem extends SubsystemBase {
      */
     public void setDefaultLightState(LightState state) {
         this.defaultState = state;
+        this.setCommandStopState(false);
     }
 
     /**
@@ -117,7 +125,7 @@ public class LEDSubsystem extends SubsystemBase {
         /** For when the command is initializing (if you see this color, there is an issue) */
         CMD_INIT(Double.POSITIVE_INFINITY, new Color(255, 255, 0)),
         
-        HOLDING_NOTE(0.2, new Color(255, 127, 0), Color.off())
+        HOLDING_NOTE(Double.POSITIVE_INFINITY, new Color(255, 127, 0))
         ;
         
         Color[] colors;

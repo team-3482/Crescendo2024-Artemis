@@ -4,6 +4,8 @@
 
 package frc.robot.intake;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.lights.LEDSubsystem;
@@ -58,14 +60,16 @@ public class SpinIntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         IntakeSubsystem.getInstance().setIntakeSpeed(0);
-        SterilizerSubsystem.getInstance().moveBackward();
-        Timer.delay(0.1);
+        // SterilizerSubsystem.getInstance().moveBackward();
+        // Timer.delay(0.1);
         SterilizerSubsystem.getInstance().moveStop();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     @Override
     public boolean isFinished() {
-        return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout);// || SterilizerSubsystem.getInstance().hasNote().get();
+        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
+        return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout)
+            || (hasNote.isPresent() && hasNote.get());
     }
 }

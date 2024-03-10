@@ -24,14 +24,14 @@ public final class Constants {
     /** Tab names in Shuffleboard */
     public static final class ShuffleboardTabConstants {
         public static final String DEFAULT = "Default";
-        public static final String FIELDS = "Field";
+        // public static final String FIELDS = "Field"; // Disabled for competition
     }
 
     public static final class IntakeConstants {
         public static final int LEFT_MOTOR_ID = 20;
         public static final int RIGHT_MOTOR_ID = 21;
-        public static final int TOP_MOTOR_ID = 13;
-        public static final int BOTTOM_MOTOR_ID = 14;
+        public static final int TOP_MOTOR_ID = 14;
+        public static final int BOTTOM_MOTOR_ID = 13;
 
         public static final double INTAKE_SPEED = 0.25;
         public static final double PIVOT_PID_P_UP = 0.1;
@@ -63,12 +63,12 @@ public final class Constants {
         public static final int NEO_MOTOR_ID = 10;
         public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
-        public static final double FEEDING_SPEED = 0.40;
+        public static final double FEEDING_SPEED = 0.6;
         /**
          * The laser value when a note is at the furthest point from the laser in the
          * sterilizer in millimeters
          */
-        public static final double NOTE_DISTANCE_LASER = 20;
+        public static final double NOTE_DISTANCE_LASER = 150;
         /** The angle in degrees at which the shooter is idle */
         public static final double IDLE_PIVOT_ANGLE = 0;
     }
@@ -86,40 +86,40 @@ public final class Constants {
         public static final int HEX_PIVOT_ENCODER_ID = 30;
 
         // Shooting stuff
-        /** Allowed RPM error for the shooter motors */
-        public static final double ALLOWED_RPM_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(50);
+        /** Allowed error for the shooter motors between -1.0 and 1.0 */
+        public static final double ALLOWED_SPEED_ERROR = 0.025;
         /** Allowed pivot error for the pivot rotation in degrees */
-        public static final double ALLOWED_PIVOT_ERROR = 0.5;
+        public static final double ALLOWED_PIVOT_ERROR = 0.50;
 
         // Pivot Stuff
         public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
 
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */
-            public static final double kS = 0.24;
+            public static final double kS = 0.12;
             /** Volts added for a target velocity */
-            public static final double kV = 0.12; // Target velocity of 100 rps
-            public static final double kP = 0.025;
+            public static final double kV = 0.06; // Target velocity of 100 rps at 0.12 kV
+            public static final double kP = 1.2;
             public static final double kI = 0;
             public static final double kD = 0.1;
         }
 
         /** Cruise velocity in rps */
-        public static final int CRUISE_SPEED = 80;
+        public static final int CRUISE_SPEED = 40;
         /** Acceleration in rps/s */
-        public static final int CRUISE_ACCELERATION = 160;
+        public static final int CRUISE_ACCELERATION = 80;
         /** Jerk in rps/s^2 (0.1 seconds) */
         public static final int MOTION_MAGIC_JERK = 1600;
 
         /** Slower [0] and faster [1] speeds for the shooter from -1.0 to 1.0 */
         public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
 
-        /** Lower [0] and upper [1] limits in degrees for the pivot */
-        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{32.5, 90};
+        /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
+        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{40, 67.5};
 
         public enum ShooterState{
-            INTAKE(false, 45),
             VERTICAL(false, 90),
+            INTAKE(false, 32.5),
             AMP(false, 45),
             SPEAKER_ALIGN(true);
 
@@ -343,19 +343,22 @@ public final class Constants {
         public static final int OPERATOR_CONTROLLER_ID = 1;
         /** Removes input around the joystick's center (eliminates stick drift) */
         public static final double DEADBAND = 0.075;
-
-        public static final int XBOX_BURGER = 9;
-        public static final int XBOX_SQUARES = 10;
         /** Whether or not to accept directional pad input for movement */
-        public static final boolean DPAD_DRIVE_INPUT = false;
+        public static final boolean DPAD_DRIVE_INPUT = true;
     }
 
     /** Constants used with the LEDSubsystem */
     public static final class LEDConstants {
         /** Port that the LED strip is plugged into */
-        public static final int UNDERGLOW_LED_PORT = 9;
+        public static final int UNDERGLOW_LED_PORT = 7;
+        /** Port that the LED strip is plugged into */
+        public static final int LEFT_ELEVATOR_LED_PORT = 4;
+        /** Port that the LED strip is plugged into */
+        public static final int RIGHT_ELEVATOR_LED_PORT = 9;
         /** Number of LEDs to iterate through */
         public static final int UNDERGLOW_LED_COUNT = 150;
+        /** Number of LEDs to iterate through */
+        public static final int ELEVATOR_LED_COUNT = 18;
     }
 
     /** Constants for the swerve modules */

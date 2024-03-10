@@ -19,6 +19,7 @@ public class ShootCommand extends Command {
     private double[] shootingSpeed;
     private boolean finished;
     private boolean manual;
+    private Timer timer;
 
     /**
     * Creates a new ShootCommand.
@@ -27,21 +28,32 @@ public class ShootCommand extends Command {
     */
     public ShootCommand(boolean manual) {
         this.manual = manual;
+        this.timer = new Timer();
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance());
+    }
+
+    /**
+    * Creates a new ShootCommand. Non-manual (overloaded)
+    */
+    public ShootCommand() {
+        this(false);
     }
     
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        if (!ShooterSubsystem.getInstance().canShoot) {
+        if (!this.manual && !ShooterSubsystem.getInstance().canShoot) {
             end(true);
         }
         this.finished = false;
 
         double[] speeds = ShooterConstants.SHOOTER_MOTOR_SPEEDS;
-        if (SwerveSubsystem.getInstance().getHeading() < 180) {
+        if (this.manual) {
+            this.shootingSpeed = new double[]{speeds[0], speeds[1]};
+        }
+        else if (SwerveSubsystem.getInstance().getHeading() < 180) {
             this.shootingSpeed = speeds; 
         }
         else {
@@ -51,6 +63,8 @@ public class ShootCommand extends Command {
         ShooterSubsystem.getInstance().setShootingVelocities(new double[]{
             shootingSpeed[0], shootingSpeed[1]
         });
+
+        this.timer.restart();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -58,10 +72,11 @@ public class ShootCommand extends Command {
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         
-        double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
-        if (Units.radiansPerSecondToRotationsPerMinute(this.shootingSpeed[0] - velocities[0]) > ShooterConstants.ALLOWED_RPM_ERROR
-            || Units.radiansPerSecondToRotationsPerMinute(this.shootingSpeed[1] - velocities[1]) > ShooterConstants.ALLOWED_RPM_ERROR
-        ) return;
+        // double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
+        // if (Math.abs(this.shootingSpeed[0] - velocities[0]) > ShooterConstants.ALLOWED_SPEED_ERROR
+        //     || Math.abs(this.shootingSpeed[1] - velocities[1]) > ShooterConstants.ALLOWED_SPEED_ERROR
+        // ) return;
+        if (this.timer.get() < 1.5) return;
 
         Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
         SterilizerSubsystem.getInstance().moveForward();

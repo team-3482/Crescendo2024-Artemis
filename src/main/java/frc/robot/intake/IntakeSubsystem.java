@@ -32,6 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         rightPivotMotor.follow(leftPivotMotor, true);
+        topIntakeMotor.setInverted(true);
         bottomIntakeMotor.follow(topIntakeMotor, true);
     }
 
