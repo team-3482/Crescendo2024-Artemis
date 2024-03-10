@@ -254,6 +254,8 @@ public final class Constants {
 
     /** Constants for limelight-related data */
     public static final class LimelightConstants {
+        /** Spams "Bad LL 2D/3D Pose Data" when no data is coming from the NetworkTableInstance for LL */
+        public static final boolean SPAM_BAD_DATA = false;
         /** Name of the front-facing limelight (shooter / AprilTags) */
         public static final String SHOOTER_LLIGHT = "limelight-three";
         /** Name of the back-facing limelight (Intake / Note Detection) */

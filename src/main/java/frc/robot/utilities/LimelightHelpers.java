@@ -5,6 +5,7 @@ package frc.robot.utilities;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Constants.LimelightConstants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -385,7 +386,10 @@ public class LimelightHelpers {
     private static Pose3d toPose3D(double[] inData){
         if(inData.length < 6)
         {
-            System.err.println("Bad LL 3D Pose Data!");
+            // Added so that we can actually read the console when LL isn't plugged in
+            if (LimelightConstants.SPAM_BAD_DATA) {
+                System.err.println("Bad LL 3D Pose Data!");
+            }
             return new Pose3d();
         }
         return new Pose3d(
@@ -397,7 +401,10 @@ public class LimelightHelpers {
     private static Pose2d toPose2D(double[] inData){
         if(inData.length < 6)
         {
-            System.err.println("Bad LL 2D Pose Data!");
+            // Added so that we can actually read the console when LL isn't plugged in
+            if (LimelightConstants.SPAM_BAD_DATA) {
+                System.err.println("Bad LL 2D Pose Data!");
+            }
             return new Pose2d();
         }
         Translation2d tran2d = new Translation2d(inData[0], inData[1]);
