@@ -13,7 +13,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 
-/** An example command that uses an example subsystem. */
+/** A command that spins the large wheels of the shooter at the desired speed. */
 public class ShootCommand extends Command {
     private double[] shootingSpeed;
     private boolean finished;
@@ -26,6 +26,7 @@ public class ShootCommand extends Command {
     * @param manual the command does not end automatically
     */
     public ShootCommand(boolean manual) {
+        setName("ShootCommand");
         this.manual = manual;
         this.timer = new Timer();
         // Use addRequirements() here to declare subsystem dependencies.

@@ -47,6 +47,7 @@ public class LEDSubsystem extends SubsystemBase {
      * Creates and initializes a new LEDSubsystem
      */
     private LEDSubsystem() {
+        super("LEDSubsystem");
         this.underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT, LEDConstants.UNDERGLOW_LED_COUNT);
         // this.leftElevatorStrip = new LEDStrip(LEDConstants.LEFT_ELEVATOR_LED_PORT, LEDConstants.ELEVATOR_LED_COUNT);
         // this.rightElevatorStrip = new LEDStrip(LEDConstants.RIGHT_ELEVATOR_LED_PORT, LEDConstants.ELEVATOR_LED_COUNT);

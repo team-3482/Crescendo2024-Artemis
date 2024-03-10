@@ -107,6 +107,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * and zeros the heading after a delay to allow the pigeon to turn on and load
     */
     private SwerveSubsystem() {
+        super("SwerveSubsystem");
         this.logger = new LoggerCommand();
 
         AutoBuilder.configureHolonomic(

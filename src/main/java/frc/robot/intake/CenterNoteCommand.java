@@ -18,7 +18,7 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
-/** An example command that uses an example subsystem. */
+/** An command to turn the bot until the note it sees is centered in front of the intake. */
 public class CenterNoteCommand extends Command {
     private final String LIMELIGHT = LimelightConstants.INTAKE_LLIGHT;
 
@@ -28,10 +28,9 @@ public class CenterNoteCommand extends Command {
 
     /**
     * Creates a new CenterNoteCommand.
-    *
-    * @param subsystem The subsystem used by this command.
     */
     public CenterNoteCommand() {
+        setName("CenterNoteCommand");
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
         this.pidController = new PIDController(
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,

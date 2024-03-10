@@ -17,7 +17,7 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
-/** An example command that uses an example subsystem. */
+/** A command that drives the bot forward until there is a note in the sterilizer or it times out. */
 public class DriveToNoteCommand extends Command {
     private final String LIMELIGHT = LimelightConstants.INTAKE_LLIGHT;
 
@@ -31,6 +31,7 @@ public class DriveToNoteCommand extends Command {
     * @param subsystem The subsystem used by this command.
     */
     public DriveToNoteCommand() {
+        setName("DriveToNoteCommand");
         this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
 
@@ -88,7 +89,7 @@ public class DriveToNoteCommand extends Command {
     @Override
     public boolean isFinished() {
         return LimelightSubsystem.getInstance().getTargetArea() >= 30
-        || !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT); 
+        || !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT);
         // Simulate intakeSubsystem.getLaser() or something
     }
 }

@@ -31,7 +31,9 @@ public class SterilizerSubsystem extends SubsystemBase {
     private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
 
     /** Creates a new SterilizerSubsystem. LaserCAN is configured in the GrappleHook app */
-    public SterilizerSubsystem() {}
+    public SterilizerSubsystem() {
+        super("SterilizerSubsystem");
+    }
     
     /**
      * Returns whether or not there is a note in the subsystem (laser broken)

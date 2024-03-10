@@ -23,7 +23,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 
-/** A pathfinding command that uses limelight and swerve subsystems. */
+/** A pathfinding command that uses PathPlanner to create bezier paths. */
 public class BezierToGoalCommand extends Command {
     private final PathConstraints CONSTRAINTS = new PathConstraints(
         AutonConstants.MAX_LINEAR_VELOCITY,
@@ -41,6 +41,7 @@ public class BezierToGoalCommand extends Command {
     * @param goal The location to line up at
     */
     public BezierToGoalCommand(PathfindingPosition targetPosition) {
+        setName("BezierToGoalCommand");
         this.targetPosition = targetPosition;
 
         // Use addRequirements() here to declare subsystem dependencies.

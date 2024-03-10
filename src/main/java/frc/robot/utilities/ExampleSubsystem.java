@@ -17,7 +17,9 @@ public class ExampleSubsystem extends SubsystemBase {
     }
 
     /** Creates a new ExampleSubsystem. */
-    public ExampleSubsystem() {}
+    public ExampleSubsystem() {
+        super("ExampleSubsystem");
+    }
 
     @Override
     public void periodic() {

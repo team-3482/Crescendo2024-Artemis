@@ -20,7 +20,7 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.JSONManager;
 
-/** An example command that uses an example subsystem. */
+/** A command that moves the shooter pivot to a desired position. */
 public class PivotShooterCommand extends Command {
     private double shootingAngle;
     private ShooterState state;
@@ -28,9 +28,10 @@ public class PivotShooterCommand extends Command {
     /**
     * Creates a new PivotShooterCommand.
     * 
-    * @param state of the Shooter
+    * @param state of the shooter to reach
     */
     public PivotShooterCommand(ShooterState state) {
+        setName("PivotShooterCommand");
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance());
         this.state = state;

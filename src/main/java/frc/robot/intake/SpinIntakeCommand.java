@@ -12,6 +12,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.SterilizerSubsystem;
 
+/** A command to spin the rollers in the intake at the desired speed. */
 public class SpinIntakeCommand extends Command {
 
     private double speed;
@@ -25,6 +26,7 @@ public class SpinIntakeCommand extends Command {
      * @param timeout the amount of seconds before the command should auto stop
      */
     public SpinIntakeCommand(double speed, double timeout) {
+        setName("SpinIntakeCommand");
         this.speed = speed;
         this.timeout = timeout;
         this.timer = new Timer();

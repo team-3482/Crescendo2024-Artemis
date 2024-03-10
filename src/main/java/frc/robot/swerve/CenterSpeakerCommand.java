@@ -21,6 +21,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 
+/** An command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
 public class CenterSpeakerCommand extends Command {
     // Instances of Rate Limiters to ensure that the robot moves smoothly
     private final SlewRateLimiter turningLimiter;
@@ -28,6 +29,7 @@ public class CenterSpeakerCommand extends Command {
     private boolean finished;
 
     public CenterSpeakerCommand() {
+        setName("CenterSpeakerCommand");
         this.turningLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_TURNING_SLEW_RATE_LIMIT);
         this.rotationPidController = new PIDController(
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP,

@@ -66,6 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
+        super("ShooterSubsystem");
         // leftShooter.setInverted(true);
         
         configureMotionMagic();

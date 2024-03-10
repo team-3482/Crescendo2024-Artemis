@@ -31,6 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
 
     public IntakeSubsystem() {
+        super("IntakeSubsystem");
         rightPivotMotor.follow(leftPivotMotor, true);
         topIntakeMotor.setInverted(true);
         bottomIntakeMotor.follow(topIntakeMotor, true);

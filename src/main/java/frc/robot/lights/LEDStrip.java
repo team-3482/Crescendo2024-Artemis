@@ -25,5 +25,4 @@ public class LEDStrip {
 
         this.led.setData(this.ledBuffer);
     }
-
 }

@@ -81,6 +81,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
+        super("LimelightSubsystem");
         HttpCamera limelightBackFeed = new HttpCamera(
             LimelightConstants.INTAKE_LLIGHT,
             "http://" + LimelightConstants.INTAKE_LLIGHT + ".local:5800/stream.mjpg",

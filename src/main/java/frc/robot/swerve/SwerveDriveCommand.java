@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.SwerveKinematics;
 
+/** A command used to take input from the driver and move the robot */
 public class SwerveDriveCommand extends Command {
 
     // Instances of suppliers that will gather the inputs from the controller
@@ -46,6 +47,7 @@ public class SwerveDriveCommand extends Command {
         Supplier<Double> ySpeedFunction, Supplier<Double> turningSpeedFunction,
         Supplier<Boolean> fieldOrientedFunction, Supplier<Boolean> fineControlFunction, 
         boolean enableDPadInput, Function<Integer, Boolean> povFunction) {
+        setName("SwerveDriveCommand");
 
         this.xSpeedFunction = xSpeedFunction;
         this.ySpeedFunction = ySpeedFunction;

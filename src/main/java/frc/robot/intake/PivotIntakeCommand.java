@@ -12,6 +12,7 @@ import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
+/** A command to move the intake to a specific position. */
 public class PivotIntakeCommand extends Command {
     private PIDController pid;
     private IntakeState state;
@@ -22,6 +23,7 @@ public class PivotIntakeCommand extends Command {
      * @param state of the intake
      */
     public PivotIntakeCommand(IntakeState state) {
+        setName("PivotIntakeCommand");
         this.state = state;
 
         this.pid = new PIDController(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0 ?

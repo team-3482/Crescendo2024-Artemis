@@ -17,7 +17,7 @@ import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
-/** A pathfinding command that uses limelight and swerve subsystems. */
+/** A pathfinding command that uses PathPlanner Pathfinder to create paths. */
 public class PathfindToGoalCommand extends Command {
     private final PathConstraints CONSTRAINTS = new PathConstraints(
         AutonConstants.MAX_LINEAR_VELOCITY,
@@ -35,6 +35,7 @@ public class PathfindToGoalCommand extends Command {
     * @param targetPosition The selected location to line up with
     */
     public PathfindToGoalCommand(PathfindingPosition targetPosition) {
+        setName("PathfindToGoalCommand");
         this.targetPosition = targetPosition;
 
         // Use addRequirements() here to declare subsystem dependencies.
