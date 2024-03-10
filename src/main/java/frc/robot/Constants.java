@@ -79,16 +79,27 @@ public final class Constants {
         public static final int LEFT_SHOOTER_MOTOR_ID = 11;
         public static final int RIGHT_SHOOTER_MOTOR_ID = 12;
         public static final int HEX_PIVOT_ENCODER_ID = 30;
-
-        // Shooting stuff
-        /** Allowed error for the shooter motors between -1.0 and 1.0 */
-        public static final double ALLOWED_SPEED_ERROR = 0.025;
-        /** Allowed pivot error for the pivot rotation in degrees */
-        public static final double ALLOWED_PIVOT_ERROR = 0.50;
-
+        
         // Pivot Stuff
         public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
+        /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
+        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{40, 67.5};
+        /** Allowed pivot error for the pivot rotation in degrees */
+        public static final double ALLOWED_PIVOT_ERROR = 0.50;
+        
+        // Shooting stuff
+        /** Slower [0] and faster [1] speeds for the shooter from -1.0 to 1.0 */
+        public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
+        /**
+         * Consistent RPM when using the values from {@link ShooterConstants#SHOOTER_MOTOR_SPEEDS}.
+         * Slower [1] and faster [1] RPMs 
+         */
+        public static final double[] SHOOTER_MOTOR_RPM = new double[]{0, 0};
+        /** Allowed error for the shooter motors in RPM */
+        public static final double ALLOWED_SPEED_ERROR = 50;
+        
 
+        // Motion Magic
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */
             public static final double kS = 0.12;
@@ -106,11 +117,6 @@ public final class Constants {
         /** Jerk in rps/s^2 (0.1 seconds) */
         public static final int MOTION_MAGIC_JERK = 1600;
 
-        /** Slower [0] and faster [1] speeds for the shooter from -1.0 to 1.0 */
-        public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
-
-        /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
-        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{40, 67.5};
 
         public enum ShooterState{
             VERTICAL(false, 90),

@@ -208,12 +208,12 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Gets the velocities of the shooter motors. Left is [0] and right is [1]
      * 
-     * @return velocities between -1.0 and 1.0
+     * @return velocities in RPM
      */
     public double[] getShootingVelocities() {
         return new double[]{
-            leftShooter.get(),
-            rightShooter.get()
+            leftShooter.getEncoder().getVelocity(),
+            rightShooter.getEncoder().getVelocity()
         };
     }
 
@@ -238,5 +238,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         double[] pos = getPivotPositions();
         this.SB_D_PIVOT_POSITION.setString("Left    " + this.DF.format(pos[0]) + "    ||    " + this.DF.format(pos[1]) + "    Right");
+
+        double[] vel = getShootingVelocities();
+        System.out.println("left vel : " + vel[0] + " right vel : " + vel[1]);
     }
 }

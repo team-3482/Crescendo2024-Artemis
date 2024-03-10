@@ -15,7 +15,7 @@ import frc.robot.swerve.SwerveSubsystem;
 
 /** A command that spins the large wheels of the shooter at the desired speed. */
 public class ShootCommand extends Command {
-    private double[] shootingSpeed;
+    private double[] shootingRPM;
     private boolean finished;
     private boolean manual;
     private Timer timer;
@@ -49,19 +49,24 @@ public class ShootCommand extends Command {
         }
         this.finished = false;
 
+        double[] rpm = ShooterConstants.SHOOTER_MOTOR_RPM;
         double[] speeds = ShooterConstants.SHOOTER_MOTOR_SPEEDS;
+        double[] speedsToSet;
         if (this.manual) {
-            this.shootingSpeed = new double[]{speeds[0], speeds[1]};
+            speedsToSet = new double[]{speeds[0], speeds[1]};
+            this.shootingRPM = new double[]{rpm[0], rpm[1]};
         }
         else if (SwerveSubsystem.getInstance().getHeading() < 180) {
-            this.shootingSpeed = speeds; 
+            speedsToSet = speeds; 
+            this.shootingRPM = new double[]{rpm[0], rpm[1]};
         }
         else {
-            this.shootingSpeed = new double[]{speeds[1], speeds[0]};
+            speedsToSet = new double[]{speeds[1], speeds[0]};
+            this.shootingRPM = new double[]{rpm[1], rpm[0]};
         }
 
         ShooterSubsystem.getInstance().setShootingVelocities(new double[]{
-            shootingSpeed[0], shootingSpeed[1]
+            speedsToSet[0], speedsToSet[1]
         });
 
         this.timer.restart();
@@ -73,10 +78,10 @@ public class ShootCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         
         // double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
-        // if (Math.abs(this.shootingSpeed[0] - velocities[0]) > ShooterConstants.ALLOWED_SPEED_ERROR
-        //     || Math.abs(this.shootingSpeed[1] - velocities[1]) > ShooterConstants.ALLOWED_SPEED_ERROR
+        // if (Math.abs(this.shootingRPM[0] - velocities[0]) > ShooterConstants.ALLOWED_SPEED_ERROR
+        //     || Math.abs(this.shootingRPM[1] - velocities[1]) > ShooterConstants.ALLOWED_SPEED_ERROR
         // ) return;
-        if (this.timer.get() < 1.5) return;
+        if (this.timer.get() < 5) return; // Testing to see the highest RPM that they reach
 
         Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
         SterilizerSubsystem.getInstance().moveForward();
