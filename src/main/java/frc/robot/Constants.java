@@ -16,9 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * Constants used throughout the code.
- * Remember : BACK of bot is shooter/battery, use that as reference for
- * directions.
- * Remember : BACK of the bot is 0 degrees in heading
+ * @implNote BACK of bot is shooter/battery/180 deg, use that as reference for directions
  */
 public final class Constants {
     /** Tab names in Shuffleboard */
@@ -65,10 +63,7 @@ public final class Constants {
         public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
         public static final double FEEDING_SPEED = 0.6;
-        /**
-         * The laser value when a note is at the furthest point from the laser in the
-         * sterilizer in millimeters
-         */
+        /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
         public static final double NOTE_DISTANCE_LASER = 150;
         /** The angle in degrees at which the shooter is idle */
         public static final double IDLE_PIVOT_ANGLE = 0;
@@ -76,8 +71,7 @@ public final class Constants {
 
     /**
      * Constants relating to Shooter code.
-     * Remember : LEFT/RIGHT for motors is based on the Note's POV as it travels
-     * through the shooter
+     * @implNote LEFT/RIGHT for motors is based on the Note's POV as it travels through the shooter
      */
     public static final class ShooterConstants {
         public static final int LEFT_PIVOT_MOTOR_ID = 20;
@@ -160,9 +154,7 @@ public final class Constants {
             AMP,
         }
 
-        /**
-         * Position the robot will line up to in front of each AprilTag, blue-alliance relative
-         */
+        /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
@@ -172,9 +164,7 @@ public final class Constants {
                 Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))))
         );
 
-        /**
-         * Initial bot positions used for initializing odometry, blue-alliance relative
-         */
+        /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
@@ -190,10 +180,7 @@ public final class Constants {
 
     /** Constants used by the Swerve Orbit Command */
     public static final class OrbitConstants {
-        /**
-         * Multipies by the chasis speeds to slow down the bot for more control when
-         * orbitting
-         */
+        /** Multipies by the chasis speeds to slow down the bot for more control when orbitting */
         public static final double ORBIT_SPEED_COEFFIECENT = 0.25;
         /**
          * Multipies by the chasis speeds to slow down the bot for more control when
@@ -201,9 +188,7 @@ public final class Constants {
          */
         public static final double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = 0.125;
 
-        /**
-         * The rate of change limit (units per second) for turning limiter in orbit mode
-         */
+        /** The rate of change limit (units per second) for turning limiter in orbit mode */
         public static final double ORBIT_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
         /** The rate limit in units per second for driving in orbit mode (x and y) */
         public static final double ORBIT_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
@@ -228,15 +213,11 @@ public final class Constants {
 
     /** Constants for autos that use the intake limelight */
     public static final class NoteConstants {
-        /**
-         * The rate of change limit (units per second) for turning limiter in orbit mode
-         */
+        /** The rate of change limit (units per second) for turning limiter in orbit mode */
         public static final double NOTE_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
         /** The rate limit in units per second for driving in orbit mode (x and y) */
         public static final double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
-        /**
-         * The input speed the bot should have when driving to a note (between 0 and 1)
-         */
+        /** The input speed the bot should have when driving to a note (between 0 and 1) */
         public static final double NOTE_DRIVE_INPUT_SPEED = 0.25;
 
         /** Time limit for the centering command in seconds */
@@ -284,19 +265,17 @@ public final class Constants {
 
         /**
          * The max speed a module can reach while driving ; essentially how fast it can
-         * rotate while driving full speed, in meters per second
+         * rotate while driving full speed, in meters per second.
+         * <p> This value should be greater than {@code DRIVE_SPEED_COEFFICIENT}. </p>
          */
-        public static final double PHYSICAL_MAX_MODULE_SPEED = 5; // This value should be greater than
-                                                                  // DRIVE_SPEED_COEFFICENT
+        public static final double PHYSICAL_MAX_MODULE_SPEED = 5;
         /**
          * Multiplied by the value given by the slew rate limiter for driving ;
-         * basically the top speed reachable
+         * basically the top speed reachable.
+         * <p> This value should be lower than {@code PHYSICAL_MAX_MODULE_SPEED}. </p>
          */
-        public static final double DRIVE_SPEED_COEFFICENT = 4; // This value should be lower than
-                                                               // PHYSICAL_MAX_MODULE_SPEED
-        /**
-         * The rate of change limit in units per second for driving limiters (x and y)
-         */
+        public static final double DRIVE_SPEED_COEFFICENT = 4;
+        /** The rate of change limit in units per second for driving limiters (x and y) */
         public static final double DRIVE_SLEW_RATE_LIMIT = 1;
 
         /** Multiplies joystick and turning input by the specified coefficient */
@@ -305,9 +284,7 @@ public final class Constants {
         /** x and y speed set by the directional pad in meters per second */
         public static final double D_PAD_SPEED = 0.25; // Previously 1
 
-        /**
-         * PID constants used for controlling the turning position of the swerve modules
-         */
+        /** PID constants used for controlling the turning position of the swerve modules */
         public static final class TURNING_PID_CONTROLLER {
             public static final double KP = 0.325;
             public static final double KI = 0;
@@ -317,13 +294,9 @@ public final class Constants {
 
     /** Constants of physical attributes of the robot */
     public static final class PhysicalConstants {
-        /**
-         * Y (not sure if left-right or front-back) distance between wheels in meters
-         */
+        /** Y (not sure if left-right or front-back) distance between wheels in meters */
         public static final double TRACK_WIDTH = Units.inchesToMeters(21.5);
-        /**
-         * X (not sure if left-right or front-back) distance between wheels in meters
-         */
+        /** X (not sure if left-right or front-back) distance between wheels in meters */
         public static final double WHEEL_BASE = Units.inchesToMeters(21.5);
 
         /** Diameter of the wheels in meters */

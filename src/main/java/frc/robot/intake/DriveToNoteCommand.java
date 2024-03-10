@@ -2,7 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.auto;
+package frc.robot.intake;
+
+import java.util.Optional;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -15,6 +17,7 @@ import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
+import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
 /** A command that drives the bot forward until there is a note in the sterilizer or it times out. */
@@ -88,8 +91,8 @@ public class DriveToNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return LimelightSubsystem.getInstance().getTargetArea() >= 30
-        || !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT);
-        // Simulate intakeSubsystem.getLaser() or something
+        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
+        return !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)
+            || (hasNote.isPresent() && hasNote.get());
     }
 }
