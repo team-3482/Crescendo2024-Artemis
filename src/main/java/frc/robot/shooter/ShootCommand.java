@@ -6,7 +6,6 @@ package frc.robot.shooter;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;

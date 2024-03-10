@@ -7,7 +7,6 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -23,7 +22,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
@@ -31,7 +29,7 @@ import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.limelight.LimelightSubsystem;
-import frc.robot.utilities.Logger;
+import frc.robot.utilities.LoggerCommand;
 import frc.robot.utilities.SwerveUtilities;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -101,7 +99,7 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(3, 3)
         .getEntry();
     
-    private Logger logger;
+    private LoggerCommand logger = new LoggerCommand();
     private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
     
     /**
@@ -109,7 +107,7 @@ public class SwerveSubsystem extends SubsystemBase {
     * and zeros the heading after a delay to allow the pigeon to turn on and load
     */
     private SwerveSubsystem() {
-        this.logger = new Logger();
+        this.logger = new LoggerCommand();
 
         AutoBuilder.configureHolonomic(
             this::getPose,
@@ -261,8 +259,11 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     @Override
     public void periodic() {
+        if (!logger.isScheduled()) {
+            logger.schedule();
+        }
+        
         this.odometer.update(getRotation2d(), getModulePositions());
-        this.logger.execute();
         
         boolean updated = this.updateOdometryUsingVision();
         LimelightSubsystem.getInstance().updateAddVisionEntry(updated);

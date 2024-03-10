@@ -5,6 +5,7 @@
 package frc.robot.shooter;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
@@ -22,16 +23,19 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.utilities.JSONManager;
+import frc.robot.utilities.RunOnceDisabled;
 
 public class ShooterSubsystem extends SubsystemBase {    
     // Singleton Design Pattern
@@ -75,24 +79,34 @@ public class ShooterSubsystem extends SubsystemBase {
         // Shuffleboard layout to store Shooter commands
         ShuffleboardLayout pivotList = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
             .getLayout("Pivot", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "TOP"))
             .withPosition(0, 0)
             .withSize(3, 6);
         // Force save positions of the pivot
         pivotList.add("Force Save Position",
-            Commands.runOnce(() -> {
+            (Command) new RunOnceDisabled(() -> {
                 double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
                 JSONManager.getInstance().savePivotPositions(pos[0], pos[1]);
-            }))
+            }).withName("Save Data"))
+            .withPosition(0, 0)
             .withWidget(BuiltInWidgets.kCommand);
         // Reset the pivot's position
-        pivotList.add("Reset Pivot " + ShooterConstants.PIVOT_ANGLE_LIMITS[0] + " deg",
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0])))
+        pivotList.add("Reset Position Lower Limit",
+            (Command) new RunOnceDisabled(() -> {
+                ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0]);
+            }).withName(ShooterConstants.PIVOT_ANGLE_LIMITS[0] + " deg"))
+            .withPosition(0, 1)
             .withWidget(BuiltInWidgets.kCommand);
-        pivotList.add("Reset Pivot " + ShooterConstants.PIVOT_ANGLE_LIMITS[1] + " deg",
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0])))
+        pivotList.add("Reset Position Higher Limit",
+            (Command) new RunOnceDisabled(() -> {
+                ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0]);
+            }).withName(ShooterConstants.PIVOT_ANGLE_LIMITS[1] + " deg"))
+            .withPosition(0, 2)
             .withWidget(BuiltInWidgets.kCommand);
-        pivotList.add("Reset Pivot " + 90 + " deg",
-            Commands.runOnce(() -> ShooterSubsystem.getInstance().resetPivotPosition(90)))
+        pivotList.add("Reset Position Vertical",
+            (Command) new RunOnceDisabled(() -> {
+                ShooterSubsystem.getInstance().resetPivotPosition(90);
+            }).withName(90 + " deg"))
             .withWidget(BuiltInWidgets.kCommand);
     }
 

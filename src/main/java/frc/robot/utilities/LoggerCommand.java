@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.swerve.SwerveSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class Logger extends Command {
+public class LoggerCommand extends Command {
     
     //Publishers
     private StructArrayPublisher<SwerveModuleState> swervePublisher = NetworkTableInstance.getDefault()
@@ -34,7 +34,7 @@ public class Logger extends Command {
     /*
      * Creates and initializes a new logger object
      */
-    public Logger() {}
+    public LoggerCommand() {}
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
@@ -43,5 +43,17 @@ public class Logger extends Command {
         swervePublisher.set(SwerveSubsystem.getInstance().getModuleStates());
         swervePosePublisher.set(SwerveSubsystem.getInstance().getPose());
         swerveDesiredStatesPublisher.set(SwerveSubsystem.getInstance().getDesiredStates());
+    }
+
+    // Never ends so that it's always publishing data
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+    // True because it's only publishing data
+    @Override
+    public boolean runsWhenDisabled() {
+        return true;
     }
 }
