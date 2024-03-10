@@ -97,6 +97,7 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
+        rotationPidController.close();
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
         }

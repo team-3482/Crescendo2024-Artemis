@@ -75,6 +75,7 @@ public class DriveToNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
+        pidController.close();
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
         }

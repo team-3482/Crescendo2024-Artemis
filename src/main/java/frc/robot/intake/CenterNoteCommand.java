@@ -75,6 +75,7 @@ public class CenterNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
+        pidController.close();
         this.timer.stop();
         if (interrupted) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);

@@ -13,8 +13,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
 public class PivotIntakeCommand extends Command {
-    private PIDController upPID;
-    private PIDController downPID;
+    private PIDController pid;
     private IntakeState state;
 
     /**
@@ -23,28 +22,25 @@ public class PivotIntakeCommand extends Command {
      * @param state of the intake
      */
     public PivotIntakeCommand(IntakeState state) {
-        this.upPID = new PIDController(IntakeConstants.PIVOT_PID_P_UP, 0, 0);
-        this.downPID = new PIDController(IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
-        this.upPID.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
-        this.downPID.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
-
         this.state = state;
+
+        this.pid = new PIDController(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0 ?
+            IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
+        this.pid.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
+
         this.addRequirements(IntakeSubsystem.getInstance());
     }
 
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        this.upPID.reset();
-        this.downPID.reset();
+        this.pid.reset();
     }
 
     @Override
     public void execute() {
-        PIDController pid = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0 ?
-            this.upPID : this.downPID;
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-        double speed = pid.calculate(
+        double speed = this.pid.calculate(
             Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
             Units.degreesToRadians(this.state.getAngle()));
         IntakeSubsystem.getInstance().setPivotSpeed(speed);
@@ -53,11 +49,12 @@ public class PivotIntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         IntakeSubsystem.getInstance().setPivotSpeed(0);
+        this.pid.close();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     @Override
     public boolean isFinished() {
-        return Math.abs(IntakeSubsystem.getInstance().getPivotPosition() - this.state.getAngle()) <= IntakeConstants.PIVOT_TOLERANCE;
+        return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() ) <= IntakeConstants.PIVOT_TOLERANCE;
     }
 }
