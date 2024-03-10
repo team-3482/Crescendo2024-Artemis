@@ -23,7 +23,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 public final class Constants {
     /** Tab names in Shuffleboard */
     public static final class ShuffleboardTabConstants {
-        public static final String DEFAULT = "Default";
+        public static final String DEFAULT = "Competition";
+        public static final String PITTING = "Utilities";
         // public static final String FIELDS = "Field"; // Disabled for competition
     }
 

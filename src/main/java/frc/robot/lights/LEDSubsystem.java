@@ -39,8 +39,8 @@ public class LEDSubsystem extends SubsystemBase {
     private GenericEntry SB_D_LED_ENTRY = SB_D_LED_WIDGET
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenFalse", "black"))
-        // .withPosition(6, 0)
-        .withSize(3, 3)
+        .withPosition(9, 0)
+        .withSize(6, 3)
         .getEntry();
     
     /**
@@ -68,10 +68,6 @@ public class LEDSubsystem extends SubsystemBase {
         }
         Color color = this.state.getColor();
       
-        underGlowStrip.setColor(color);
-        // leftElevatorStrip.setColor(color);
-        // rightElevatorStrip.setColor(color);
-
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
         }
@@ -79,6 +75,11 @@ public class LEDSubsystem extends SubsystemBase {
             SB_D_LED_WIDGET.withProperties(Map.of("colorWhenTrue", color.getHexadecimal()));
             SB_D_LED_ENTRY.setBoolean(true);
         }
+
+        underGlowStrip.setColor(color);
+        // leftElevatorStrip.setColor(color);
+        // rightElevatorStrip.setColor(color);
+
     };
 
     /**
