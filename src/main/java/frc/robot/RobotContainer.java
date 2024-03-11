@@ -85,8 +85,8 @@ public class RobotContainer {
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
             .add("Auto Chooser", autoChooser)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
-            .withPosition(0, 3)
-            .withSize(3, 2);
+            .withPosition(11, 0)
+            .withSize(4, 1);
     }
 
     /** Configures the button bindings of the controllers */
@@ -103,13 +103,10 @@ public class RobotContainer {
         // Burger
         driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         
-        
+        driveController.leftBumper().onTrue(new CenterSpeakerCommand());
         driveController.rightBumper()
             .onTrue(SequencedCommands.getIntakeCommand())
-            .onFalse(new PivotIntakeCommand(IntakeState.IDLE));    
-        // driveController.rightBumper().whileTrue(Commands.sequence(
-            //     new PivotShooterCommand(ShooterState.INTAKE),
-            //     new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)));
+            .onFalse(new PivotIntakeCommand(IntakeState.IDLE));
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
 
         // Line up to SPEAKER
@@ -118,7 +115,6 @@ public class RobotContainer {
         // driveController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
         // AutonConstants.AMP));
         
-        driveController.a().onTrue(new CenterSpeakerCommand()); // Need to test this
         
         // Operator controller
         // Cancel all scheduled commands and turn off LEDs
@@ -127,15 +123,19 @@ public class RobotContainer {
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
 
-        operatorController.rightBumper()
-            .onTrue(new PivotShooterCommand(ShooterState.INTAKE));
-        operatorController.leftBumper()
-            .onTrue(new PivotShooterCommand(ShooterState.AMP));
-        operatorController.a().whileTrue(new ShootCommand(true));
+        operatorController.rightBumper().whileTrue(Commands.sequence(
+            new PivotShooterCommand(ShooterState.SPEAKER),
+            new ShootCommand(ShooterState.SPEAKER)
+        ));
+        operatorController.leftBumper().whileTrue(Commands.sequence(
+            new PivotShooterCommand(ShooterState.AMP),
+            new ShootCommand(ShooterState.AMP)
+        ));
+        operatorController.y().whileTrue(new ShootCommand(ShooterState.MANUAL));
         
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.15),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.1),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
         operatorController.povDown().whileTrue(Commands.runEnd(
@@ -144,7 +144,7 @@ public class RobotContainer {
         ));
         // Move the intake manually (last resort, not recommended)
         operatorController.povRight().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.15),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
         operatorController.povLeft().whileTrue(Commands.runEnd(

@@ -67,24 +67,26 @@ public class CenterSpeakerCommand extends Command {
         
         // Orbit calculations
         double angleGoalRad;
-        if (LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
+        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT); 
+        if (hasTarget && LimelightSubsystem.getInstance().getTargetID() == 4) {
             double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT);
             angleGoalRad = Units.degreesToRadians(errorDegrees);
-            System.out.println("goal limelight " + errorDegrees);
+            System.out.println("LL " + errorDegrees);
         }
         else { // Position
             Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
             // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
-            angleGoalRad = Math.PI - Math.atan2(difference.getY(), difference.getX());
-            System.out.println("goal odometry " + Units.radiansToDegrees(angleGoalRad));
+            angleGoalRad = Math.atan2(difference.getY(), difference.getX());
+            System.out.println("Od " + Units.radiansToDegrees(angleGoalRad));
         }
 
-        this.finished = Math.abs(angleGoalRad) <= OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
+        this.finished = Math.abs(SwerveSubsystem.getInstance().getHeading() - angleGoalRad) <= OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
         
         double turningSpeed = rotationPidController
             .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
         
-        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT
+            * (hasTarget ? -1 : 1);
         
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
         

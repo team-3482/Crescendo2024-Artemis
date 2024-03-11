@@ -88,7 +88,7 @@ public class DriveToNoteCommand extends Command {
     @Override
     public boolean isFinished() {
         Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
-        return !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)
-            || (hasNote.isPresent() && hasNote.get());
+        return (hasNote.isPresent() && hasNote.get());
+            // || !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT);
     }
 }

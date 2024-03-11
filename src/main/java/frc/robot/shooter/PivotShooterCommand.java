@@ -36,13 +36,6 @@ public class PivotShooterCommand extends Command {
         addRequirements(ShooterSubsystem.getInstance());
         this.state = state;
     }
-
-    /**
-    * Creates a new PivotShooterCommand that calculates the angle (overloaded)
-    */
-    public PivotShooterCommand() {
-        this(ShooterState.SPEAKER_ALIGN);
-    }
     
     // Called when the command is initially scheduled.
     @Override
@@ -94,7 +87,7 @@ public class PivotShooterCommand extends Command {
         ShooterSubsystem.getInstance().setPivotSpeed(0);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
         double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
-        JSONManager.getInstance().savePivotPositions(positions[0], positions[1]);
+        JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
     }
 
     // Returns true when the command should end.

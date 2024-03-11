@@ -35,16 +35,15 @@ public class SequencedCommands{
      */
     public static Command getCollectNoteCommand() {
         return Commands.sequence(
-            new CenterNoteCommand(),
             Commands.parallel(
-                new PivotShooterCommand(ShooterState.INTAKE),
-                new PivotIntakeCommand(IntakeState.INTAKING)
+                new PivotIntakeCommand(IntakeState.INTAKING),
+                new PivotShooterCommand(ShooterState.INTAKE)
             ),
-            // Will end early if DriveToNoteCommand() no longer sees the note
-            // If there is a note in the sterilizer, both would end anyways
+            new CenterNoteCommand(),
+            // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
                 new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 
-                new DriveToNoteCommand()
+                new DriveToNoteCommand().withTimeout(5)
             ),
             new PivotIntakeCommand(IntakeState.IDLE)
         );

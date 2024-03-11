@@ -39,8 +39,8 @@ public class LEDSubsystem extends SubsystemBase {
     private GenericEntry SB_D_LED_ENTRY = SB_D_LED_WIDGET
         .withWidget(BuiltInWidgets.kBooleanBox)
         .withProperties(Map.of("colorWhenFalse", "black"))
-        .withPosition(9, 0)
-        .withSize(6, 3)
+        .withPosition(0, 3)
+        .withSize(3, 2)
         .getEntry();
     
     /**

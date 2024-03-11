@@ -4,7 +4,6 @@
 
 package frc.robot.shooter;
 
-import java.text.DecimalFormat;
 import java.util.Map;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -29,6 +28,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveModuleConstants;
@@ -55,7 +55,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     
     // Shuffleboard
-    private final DecimalFormat DF = new DecimalFormat("#.##");
     private GenericEntry SB_D_PIVOT_POSITION = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("Shooter Pivot", "")
         .withWidget(BuiltInWidgets.kTextView)
@@ -70,9 +69,10 @@ public class ShooterSubsystem extends SubsystemBase {
         
         configureMotionMagic();
         
-        double[] positions = JSONManager.getInstance().getPivotPositions();
+        double[] positions = JSONManager.getInstance().getShooterPivotPositions();
         leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
         rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
+        JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
 
         // Shuffleboard layout to store Shooter commands
         ShuffleboardLayout pivotList = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
@@ -84,7 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
         pivotList.add("Force Save Position",
             Commands.runOnce(() -> {
                 double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
-                JSONManager.getInstance().savePivotPositions(pos[0], pos[1]);
+                JSONManager.getInstance().saveShooterPivotPositions(pos[0], pos[1]);
             }).ignoringDisable(true).withName("Save Data"))
             .withPosition(0, 0)
             .withWidget(BuiltInWidgets.kCommand);
@@ -153,7 +153,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
         leftPivotMotor.setPosition(position);
         rightPivotMotor.setPosition(position);
-        JSONManager.getInstance().savePivotPositions(position);
+        JSONManager.getInstance().saveShooterPivotPositions(position);
     }
     
     /**
@@ -187,7 +187,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         if ((int) (speed * 100) == 0) {
             double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
-            JSONManager.getInstance().savePivotPositions(positions[0], positions[1]);
+            JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
         }
     }
 
@@ -237,9 +237,15 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         double[] pos = getPivotPositions();
-        this.SB_D_PIVOT_POSITION.setString("Left    " + this.DF.format(pos[0]) + "    ||    " + this.DF.format(pos[1]) + "    Right");
+        this.SB_D_PIVOT_POSITION.setString(
+            "Left    " + PhysicalConstants.DEC_FORMAT.format(pos[0]) + "    ||    "
+            + PhysicalConstants.DEC_FORMAT.format(pos[1]) + "    Right"
+        );
 
-        double[] vel = getShootingVelocities();
-        System.out.println("left vel : " + vel[0] + " right vel : " + vel[1]);
+        // double[] vel = getShootingVelocities();
+        // System.out.println(
+        //     "left vel : " + PhysicalConstants.DEC_FORMAT.format(vel[0]) + " right vel : "
+        //     + PhysicalConstants.DEC_FORMAT.format(vel[1])
+        // );
     }
 }

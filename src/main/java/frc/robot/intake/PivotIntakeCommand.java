@@ -25,9 +25,10 @@ public class PivotIntakeCommand extends Command {
     public PivotIntakeCommand(IntakeState state) {
         setName("PivotIntakeCommand");
         this.state = state;
-
-        this.pid = new PIDController(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0 ?
-            IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
+        
+        this.pid = new PIDController(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0
+                ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN, 
+            0, 0);
         this.pid.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
 
         this.addRequirements(IntakeSubsystem.getInstance());

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -33,17 +34,17 @@ public final class Constants {
         public static final int BOTTOM_MOTOR_ID = 13;
 
         public static final double INTAKE_SPEED = 0.25;
-        public static final double PIVOT_PID_P_UP = 0.1;
-        public static final double PIVOT_PID_P_DOWN = 0.02;
+        public static final double PIVOT_PID_P_UP = 0.181;
+        public static final double PIVOT_PID_P_DOWN = 0.05;
         /** Tolerance for the pivot in degrees */
-        public static final double PIVOT_TOLERANCE = 1;
+        public static final double PIVOT_TOLERANCE = 1.5;
 
-        /** Position for the intake opened in degrees */
-        public static final int MOTOR_TO_PIVOT_RATIO = 9;
+        // /** Position for the intake opened in degrees */
+        // public static final int MOTOR_TO_PIVOT_RATIO = 9;
 
         public enum IntakeState{
             INTAKING(0),
-            IDLE(90);
+            IDLE(138);
             /* Angle of the intake in degrees */
             double intakeAngle;
             private IntakeState(double intakeAngle)
@@ -62,7 +63,7 @@ public final class Constants {
         public static final int NEO_MOTOR_ID = 10;
         public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
-        public static final double FEEDING_SPEED = 0.6;
+        public static final double FEEDING_SPEED = 0.5;
         /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
         public static final double NOTE_DISTANCE_LASER = 150;
         /** The angle in degrees at which the shooter is idle */
@@ -83,21 +84,9 @@ public final class Constants {
         // Pivot Stuff
         public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
         /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
-        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{40, 67.5};
+        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{35, 65};
         /** Allowed pivot error for the pivot rotation in degrees */
         public static final double ALLOWED_PIVOT_ERROR = 0.50;
-        
-        // Shooting stuff
-        /** Slower [0] and faster [1] speeds for the shooter from -1.0 to 1.0 */
-        public static final double[] SHOOTER_MOTOR_SPEEDS = new double[]{0.66 * 2/3, 0.66};
-        /**
-         * Consistent RPM when using the values from {@link ShooterConstants#SHOOTER_MOTOR_SPEEDS}.
-         * Slower [1] and faster [1] RPMs 
-         */
-        public static final double[] SHOOTER_MOTOR_RPM = new double[]{0, 0};
-        /** Allowed error for the shooter motors in RPM */
-        public static final double ALLOWED_SPEED_ERROR = 50;
-        
 
         // Motion Magic
         public static final class SLOT_0_CONFIGS {
@@ -117,33 +106,49 @@ public final class Constants {
         /** Jerk in rps/s^2 (0.1 seconds) */
         public static final int MOTION_MAGIC_JERK = 1600;
 
-
+        /** Stores all shooter configuration related data */
         public enum ShooterState{
-            VERTICAL(false, 90),
-            INTAKE(false, 32.5),
-            AMP(false, 45),
-            SPEAKER_ALIGN(true);
+            INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
+            AMP(false, 65.0, 0.18, 675.0, 25.0),
+            SPEAKER(false, 65.0, 0.6, 2200.0, 100.0),
+            SPEAKER_ALIGN(true, null, 0.4, 1800.0, 100.0),
+            MANUAL(false, null, SPEAKER_ALIGN.getSpeeds(false)[1], SPEAKER_ALIGN.getRPMs(false)[1], 100.0)
+            ;
 
             boolean calculateAngle;
-            double positionAngle;
-            private ShooterState (boolean calculateAngle, double angle)
-            {
+            Double positionAngle;
+            Double highSpeed;
+            Double highRPM;
+            Double allowedError;
+
+            private ShooterState(boolean calculateAngle, Double angle, Double highSpeed, Double highRPM, Double allowedError) {
                 this.calculateAngle = calculateAngle;
                 this.positionAngle = angle;
+                this.highSpeed = highSpeed;
+                this.highRPM = highRPM;
+                this.allowedError = allowedError;
             }
-            private ShooterState(boolean calculateAngle)
-            {
-                this(calculateAngle,0);
-            }
-            public boolean calculateAngle()
-            {
+            public boolean calculateAngle() {
                 return this.calculateAngle;
             }
-            public double getAngle()
-            {
+            public double getAngle() {
                 return this.positionAngle;
             }
-            
+            public double[] getSpeeds(boolean invert) {
+                return new double[]{
+                    this.highSpeed * (this.calculateAngle || invert ? 1 : (double) 2 / 3),
+                    this.highSpeed * (!this.calculateAngle || invert ? (double) 2 / 3 : 1)
+                };
+            }
+            public double[] getRPMs(boolean invert) {
+                return new double[]{
+                    this.highRPM * (this.calculateAngle || invert ? 1 : (double) 2 / 3),
+                    this.highRPM * (!this.calculateAngle || invert ? (double) 2 / 3 : 1)
+                };
+            }
+            public double getAllowedError() {
+                return this.allowedError;
+            }
         }
     }
 
@@ -203,7 +208,7 @@ public final class Constants {
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 0.5;
-            public static final double KP = 0.55;
+            public static final double KP = 0.1;
             public static final double KI = 0;
             public static final double KD = 0;
         }
@@ -252,7 +257,7 @@ public final class Constants {
          * Only accept limelight values that differ by these x and y values in meters at
          * most from the internal odometer
          */
-        public static final double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[] { 1, 1 };
+        public static final double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[] {1, 1};
     }
 
     /** Constants for the kinematics and driving of the swerve system */
@@ -315,6 +320,9 @@ public final class Constants {
 
         /** Height of the pivot shaft above the floor */
         public static final double SHOOTER_PIVOT_HEIGHT = 0;
+
+        /** What to round decimal values to on Shuffleboard */
+        public static final DecimalFormat DEC_FORMAT = new DecimalFormat("#.##");
     }
 
     /** Constants for the controller and any controller related assignments */

@@ -36,9 +36,9 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // Shuffleboard
     private GenericEntry SB_D_TID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("T-ID", 0)
+        .add("T ID", 0)
         .withWidget(BuiltInWidgets.kTextView)
-        .withPosition(6, 2)
+        .withPosition(3, 0)
         .withSize(1, 1)
         .getEntry();
     // private GenericEntry SB_D_NSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
@@ -54,10 +54,10 @@ public class LimelightSubsystem extends SubsystemBase {
     //     .withSize(3, 3)
     //     .getEntry();
     private GenericEntry SB_D_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("ADD-VISION", false)
+        .add("Vision Odometry", false)
         .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(3, 0)
-        .withSize(3, 3)
+        .withPosition(4, 0)
+        .withSize(2, 1)
         .getEntry();
 
     // private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
@@ -90,7 +90,7 @@ public class LimelightSubsystem extends SubsystemBase {
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
             .add("Back Limelight", limelightBackFeed)
             .withWidget(BuiltInWidgets.kCameraStream)
-            .withPosition(9, 3)
+            .withPosition(9, 1)
             .withSize(6, 3)
             .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
         
@@ -102,7 +102,7 @@ public class LimelightSubsystem extends SubsystemBase {
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
             .add("Front Limelight", limelightFrontFeed)
             .withWidget(BuiltInWidgets.kCameraStream)
-            .withPosition(3, 3)
+            .withPosition(3, 1)
             .withSize(6, 3)
             .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
 
@@ -156,7 +156,7 @@ public class LimelightSubsystem extends SubsystemBase {
      *
      * @return ID
      */
-    public int getID() {
+    public int getTargetID() {
         return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.SHOOTER_LLIGHT)
             .getEntry("tid").getInteger(0);
     }
@@ -202,7 +202,7 @@ public class LimelightSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         limelight_field.setRobotPose(this.getBotpose());
-        int tid = this.getID();
+        int tid = this.getTargetID();
         // boolean tSee = this.hasTarget(LimelightConstants.SHOOTER_LLIGHT);
         // boolean nSee = this.hasTarget(LimelightConstants.INTAKE_LLIGHT);
 

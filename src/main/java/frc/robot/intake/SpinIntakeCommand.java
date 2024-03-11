@@ -63,6 +63,7 @@ public class SpinIntakeCommand extends Command {
     public void end(boolean interrupted) {
         IntakeSubsystem.getInstance().setIntakeSpeed(0);
         SterilizerSubsystem.getInstance().moveStop();
+        this.timer.stop();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
