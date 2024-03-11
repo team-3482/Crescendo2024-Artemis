@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
-import frc.robot.utilities.LimelightHelpers;
 
 public class LimelightSubsystem extends SubsystemBase {
 

@@ -10,6 +10,8 @@ import frc.robot.intake.DriveToNoteCommand;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.ShootCommand;
+import frc.robot.swerve.CenterSpeakerCommand;
 
 /** A class that stores command chains for use elsewhere */
 public class SequencedCommands{
@@ -46,6 +48,19 @@ public class SequencedCommands{
                 new DriveToNoteCommand().withTimeout(5)
             ),
             new PivotIntakeCommand(IntakeState.IDLE)
+        );
+    }
+
+    /**
+     * Creates a command that shoots a note into the speaker automatically from the current position.
+     * 
+     * @return the command
+     */
+    public static Command getAutoShootNoteCommand() {
+        return Commands.sequence(
+            new CenterSpeakerCommand(),
+            new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE),
+            new ShootCommand(ShooterState.SPEAKER_CALCULATE)
         );
     }
 }

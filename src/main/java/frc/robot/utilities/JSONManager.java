@@ -22,25 +22,19 @@ public class JSONManager {
         return instance;
     }
 
-    private final File DIRECTORY = Filesystem.getDeployDirectory();
     private final File SHOOTER_DATAFILE;
-    private final File INTAKE_DATAFILE;
     private final String LEFT_PIVOT_INDEX = "LEFT_PIVOT_MOTOR_POSITION";
     private final String RIGHT_PIVOT_INDEX = "RIGHT_PIVOT_MOTOR_POSITION";
-    private final String INTAKE_ENCODER_INDEX = "INTAKE_MOTOR_POSITION";
 
     /** Creates a new JSON Manager object */
     public JSONManager() {
-        SHOOTER_DATAFILE = new File(DIRECTORY, "shooter.json");
-        INTAKE_DATAFILE = new File(DIRECTORY, "intake.json");
+        File deployDirectory = Filesystem.getDeployDirectory();
+        SHOOTER_DATAFILE = new File(deployDirectory, "shooter.json");
 
-        // Creates file in case it does not exist
+        // Creates file with default values in case it does not exist
         try {
             if (SHOOTER_DATAFILE.createNewFile()) {
                 saveShooterPivotPositions(Double.valueOf(ShooterConstants.PIVOT_ANGLE_LIMITS[1]));
-            }
-            if (INTAKE_DATAFILE.createNewFile()) {
-                saveIntakePivotPosition(Double.valueOf(0));
             }
         }
         catch (IOException e) {
@@ -54,9 +48,9 @@ public class JSONManager {
      * @param leftMotorPosition
      * @param rightMotorPosition
      */ 
+    @SuppressWarnings("unchecked")
     public void saveShooterPivotPositions(double leftMotorPosition, double rightMotorPosition) {
         JSONObject json = getJSONObject(SHOOTER_DATAFILE);
-
         if (json.replace(LEFT_PIVOT_INDEX, leftMotorPosition) == null) {
             json.put(LEFT_PIVOT_INDEX, leftMotorPosition);
         }
@@ -77,20 +71,6 @@ public class JSONManager {
     }
 
     /**
-     * Writes the intake pivot's position to the JSON file
-     * 
-     * @param encoderPosition
-     */ 
-    public void saveIntakePivotPosition(double encoderPosition) {
-        JSONObject json = getJSONObject(INTAKE_DATAFILE);
-        // json.remove(LEFT_PIVOT_INDEX, RIGHT_PIVOT_INDEX);
-        if (json.replace(INTAKE_ENCODER_INDEX, encoderPosition) == null) {
-            json.put(INTAKE_ENCODER_INDEX, encoderPosition);
-        }
-        setJSONObject(INTAKE_DATAFILE, json);
-    }
-
-    /**
      * Get the pivot positions for the shooter from the JSON file
      * @return an array with the left [0] and right [1] positions
      */
@@ -108,25 +88,6 @@ public class JSONManager {
             e.printStackTrace();
         }
         return positions;
-    }
-
-    /**
-     * Get the intake pivot position from the JSON file
-     * @return a double with the intake position
-     */
-    public double getIntakePivotPosition() {
-        double position = 0;
-        try {
-            JSONObject json = getJSONObject(INTAKE_DATAFILE);
-            position = (Double) json.get(INTAKE_ENCODER_INDEX);    
-        }
-        /* ClassCastException only happens when casting from Long to Double during json.get()
-        because JSONObject turns 0 (default value when creating file) into a Long.
-        {@code positions} has default values of 0, so it will return [0,0] anyways */ 
-        catch (ClassCastException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        return position;
     }
 
     /**

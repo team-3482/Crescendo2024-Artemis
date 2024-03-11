@@ -72,11 +72,10 @@ public class ShooterSubsystem extends SubsystemBase {
         double[] positions = JSONManager.getInstance().getShooterPivotPositions();
         leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
         rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
-        JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
 
         // Shuffleboard layout to store Shooter commands
         ShuffleboardLayout pivotList = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
-            .getLayout("Pivot", BuiltInLayouts.kList)
+            .getLayout("Shooter Pivot", BuiltInLayouts.kList)
             .withProperties(Map.of("Label position", "TOP"))
             .withPosition(0, 0)
             .withSize(3, 6);
@@ -153,7 +152,6 @@ public class ShooterSubsystem extends SubsystemBase {
         double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
         leftPivotMotor.setPosition(position);
         rightPivotMotor.setPosition(position);
-        JSONManager.getInstance().saveShooterPivotPositions(position);
     }
     
     /**
@@ -184,11 +182,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         rightPivotMotor.set(rightSpeed);
         leftPivotMotor.set(leftSpeed);
-
-        if ((int) (speed * 100) == 0) {
-            double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
-            JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
-        }
     }
 
     /**

@@ -33,27 +33,33 @@ public final class Constants {
         public static final int TOP_MOTOR_ID = 14;
         public static final int BOTTOM_MOTOR_ID = 13;
 
+        /** Speed at which to run the intake motors */
         public static final double INTAKE_SPEED = 0.25;
-        public static final double PIVOT_PID_P_UP = 0.181;
+        /** PID Proportional to use when moving the intake down */
         public static final double PIVOT_PID_P_DOWN = 0.05;
-        /** Tolerance for the pivot in degrees */
-        public static final double PIVOT_TOLERANCE = 1.5;
+        /** Constant speed to use to retract the intake from -1.0 to 1.0*/
+        public static final double PIVOT_UP_SPEED = 0.2;
 
         // /** Position for the intake opened in degrees */
         // public static final int MOTOR_TO_PIVOT_RATIO = 9;
 
         public enum IntakeState{
-            INTAKING(0),
-            IDLE(138);
+            INTAKING(0, 1.5),
+            /** The hardware stop angle for the intake when it is idle in degrees*/
+            IDLE(150, 10);
             /* Angle of the intake in degrees */
             double intakeAngle;
-            private IntakeState(double intakeAngle)
-            {
+            double tolerance;
+
+            private IntakeState(double intakeAngle, double tolerance) {
                 this.intakeAngle = intakeAngle;
+                this.tolerance = tolerance;
             }
-            public double getAngle()
-            {
+            public double getAngle() {
                 return this.intakeAngle;
+            }
+            public double getTolerance() {
+                return this.tolerance;
             }
         }
     }
@@ -111,8 +117,8 @@ public final class Constants {
             INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
             AMP(false, 65.0, 0.18, 675.0, 25.0),
             SPEAKER(false, 65.0, 0.6, 2200.0, 100.0),
-            SPEAKER_ALIGN(true, null, 0.4, 1800.0, 100.0),
-            MANUAL(false, null, SPEAKER_ALIGN.getSpeeds(false)[1], SPEAKER_ALIGN.getRPMs(false)[1], 100.0)
+            SPEAKER_CALCULATE(true, null, 0.4, 1800.0, 100.0),
+            MANUAL(false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
             ;
 
             boolean calculateAngle;
@@ -219,7 +225,13 @@ public final class Constants {
                 new Translation3d(16.5, 5.55, 2.47)),
             Map.entry(DriverStation.Alliance.Blue,
                 new Translation3d(0, 5.55, 2.47))
-            );
+        );
+
+        /** The AprilTags to center on at each SPEAKER */
+        public static final Map<DriverStation.Alliance, Integer> ORBIT_TAG = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Red, 4),
+            Map.entry(DriverStation.Alliance.Blue, 7)
+        );
     }
 
     /** Constants for autos that use the intake limelight */

@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.utilities.JSONManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,8 +25,7 @@ public class Robot extends TimedRobot {
     private Command auton;
     /**
     * This function is run when the robot is first started up and should be used
-    * for any
-    * initialization code.
+    * for any initialization code.
     */
     @Override
     public void robotInit() {
@@ -56,7 +57,11 @@ public class Robot extends TimedRobot {
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        // Save shooter pivot positions
+        double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
+        JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
+    }
 
     @Override
     public void disabledPeriodic() {}
@@ -77,7 +82,7 @@ public class Robot extends TimedRobot {
             }
         }
         else {
-            System.out.println("No auton command found");
+            System.err.println("No auton command found");
         }
     }
 

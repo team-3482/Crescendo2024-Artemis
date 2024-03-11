@@ -36,7 +36,7 @@ public class ShootCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        if (!this.state.calculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
+        if (this.state.calculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
             end(true);
         }
         this.finished = false;

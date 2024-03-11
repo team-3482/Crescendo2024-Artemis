@@ -14,8 +14,9 @@ import frc.robot.lights.LEDSubsystem.LightState;
 
 /** A command to move the intake to a specific position. */
 public class PivotIntakeCommand extends Command {
-    private PIDController pid;
     private IntakeState state;
+    private PIDController pid;
+    private boolean up;
 
     /**
      * Initializes a new PivotIntakeCommand
@@ -26,10 +27,10 @@ public class PivotIntakeCommand extends Command {
         setName("PivotIntakeCommand");
         this.state = state;
         
-        this.pid = new PIDController(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0
-                ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN, 
-            0, 0);
-        this.pid.setTolerance(IntakeConstants.PIVOT_TOLERANCE);
+        this.up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
+        
+        this.pid = new PIDController(IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
+        this.pid.setTolerance(this.state.getTolerance());
 
         this.addRequirements(IntakeSubsystem.getInstance());
     }
@@ -43,9 +44,15 @@ public class PivotIntakeCommand extends Command {
     @Override
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-        double speed = this.pid.calculate(
-            Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
-            Units.degreesToRadians(this.state.getAngle()));
+        double speed;
+        if (this.up) {
+            speed = IntakeConstants.PIVOT_UP_SPEED;
+        }
+        else {
+            speed = this.pid.calculate(
+                Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
+                Units.degreesToRadians(this.state.getAngle()));
+        }
         IntakeSubsystem.getInstance().setPivotSpeed(speed);
     }
 
@@ -58,6 +65,6 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() ) <= IntakeConstants.PIVOT_TOLERANCE;
+        return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() ) <= this.state.getTolerance();
     }
 }

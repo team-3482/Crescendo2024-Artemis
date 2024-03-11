@@ -67,8 +67,8 @@ public class CenterSpeakerCommand extends Command {
         
         // Orbit calculations
         double angleGoalRad;
-        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT); 
-        if (hasTarget && LimelightSubsystem.getInstance().getTargetID() == 4) {
+        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT);
+        if (hasTarget && LimelightSubsystem.getInstance().getTargetID() == OrbitConstants.ORBIT_TAG.get(alliance.get())) {
             double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT);
             angleGoalRad = Units.degreesToRadians(errorDegrees);
             System.out.println("LL " + errorDegrees);

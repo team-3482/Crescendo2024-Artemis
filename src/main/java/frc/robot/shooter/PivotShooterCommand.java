@@ -18,7 +18,6 @@ import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
-import frc.robot.utilities.JSONManager;
 
 /** A command that moves the shooter pivot to a desired position. */
 public class PivotShooterCommand extends Command {
@@ -41,20 +40,17 @@ public class PivotShooterCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
+        ShooterSubsystem.getInstance().canShoot = true;
         if(!this.state.calculateAngle()) {
-            this.shootingAngle = this.state.getAngle();
             ShooterSubsystem.getInstance().pivotGoToPosition(this.state.getAngle());
             return;
         }
         
-        // Double so it can be null if the ID cannot be orbited
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent()) {
-            ShooterSubsystem.getInstance().canShoot = false;
             end(true);
             return;
         }
-        ShooterSubsystem.getInstance().canShoot = true;
 
         Translation3d point = OrbitConstants.ORBIT_POINT.get(DriverStation.getAlliance().get());
         Pose2d botpose = SwerveSubsystem.getInstance().getPose();
@@ -67,7 +63,6 @@ public class PivotShooterCommand extends Command {
         
         double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
         if (this.shootingAngle != clamped) {
-            ShooterSubsystem.getInstance().canShoot = false;
             end(true);
             return;
         }
@@ -84,10 +79,11 @@ public class PivotShooterCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        if (interrupted) {
+            ShooterSubsystem.getInstance().canShoot = false;
+        }
         ShooterSubsystem.getInstance().setPivotSpeed(0);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
-        JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
     }
 
     // Returns true when the command should end.
