@@ -47,7 +47,33 @@ public class SequencedCommands{
                 new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 
                 new DriveToNoteCommand().withTimeout(5)
             ),
-            new PivotIntakeCommand(IntakeState.IDLE)
+            Commands.parallel(
+                new PivotIntakeCommand(IntakeState.IDLE),
+                new PivotShooterCommand(ShooterState.SPEAKER)
+            )
+        );
+    }
+    
+    /**
+     * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
+     * until it has a note in the sterilizer or the limelight does not see the note anymore.
+     * @return the command
+     */
+    public static Command getCollectNoteCommandNoCenter() {
+        return Commands.sequence(
+            Commands.parallel(
+                new PivotIntakeCommand(IntakeState.INTAKING),
+                new PivotShooterCommand(ShooterState.INTAKE)
+            ),
+            // Will end as soon as there is a note in the SpinIntakeCommand
+            Commands.race(
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 
+                new DriveToNoteCommand().withTimeout(5)
+            ),
+            Commands.parallel(
+                new PivotIntakeCommand(IntakeState.IDLE),
+                new PivotShooterCommand(ShooterState.SPEAKER)
+            )
         );
     }
 

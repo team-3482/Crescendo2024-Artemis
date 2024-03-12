@@ -44,9 +44,9 @@ public final class Constants {
         // public static final int MOTOR_TO_PIVOT_RATIO = 9;
 
         public enum IntakeState{
-            INTAKING(0, 1.5),
+            INTAKING(0, 7.5),
             /** The hardware stop angle for the intake when it is idle in degrees*/
-            IDLE(150, 10);
+            IDLE(160, 25);
             /* Angle of the intake in degrees */
             double intakeAngle;
             double tolerance;
@@ -72,8 +72,8 @@ public final class Constants {
         public static final double FEEDING_SPEED = 0.5;
         /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
         public static final double NOTE_DISTANCE_LASER = 150;
-        /** The angle in degrees at which the shooter is idle */
-        public static final double IDLE_PIVOT_ANGLE = 0;
+        /** The multiplier for centering the note */
+        public static final double NOTE_CALIBRATION_MUL = 0.1;
     }
 
     /**
@@ -106,7 +106,7 @@ public final class Constants {
         }
 
         /** Cruise velocity in rps */
-        public static final int CRUISE_SPEED = 40;
+        public static final int CRUISE_SPEED = 80;
         /** Acceleration in rps/s */
         public static final int CRUISE_ACCELERATION = 80;
         /** Jerk in rps/s^2 (0.1 seconds) */
@@ -116,7 +116,7 @@ public final class Constants {
         public enum ShooterState{
             INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
             AMP(false, 65.0, 0.18, 675.0, 25.0),
-            SPEAKER(false, 65.0, 0.6, 2200.0, 100.0),
+            SPEAKER(false, 65.0, 0.6, 2100.0, 50.0),
             SPEAKER_CALCULATE(true, null, 0.4, 1800.0, 100.0),
             MANUAL(false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
             ;
@@ -174,8 +174,8 @@ public final class Constants {
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
+                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
+                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
                 Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))))
@@ -185,11 +185,11 @@ public final class Constants {
         public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
-                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
                 Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(120))))),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
                 Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(120))),
-                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(0))),
+                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
                 Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(-120)))))
         );
 
@@ -249,7 +249,7 @@ public final class Constants {
         /** PID constants for controlling the turning speed during centering */
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static final double TOLERANCE = 2;
+            public static final double TOLERANCE = 4;
             public static final double KP = 0.65;
             public static final double KI = 0;
             public static final double KD = 0;

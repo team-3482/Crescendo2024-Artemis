@@ -174,11 +174,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
      */
     public void setPivotSpeed(double speed) {
+        double[] positions = getPivotPositions();
         double leftSpeed = speed, rightSpeed = speed;
-        leftSpeed = (speed < 0 && getPivotPositions()[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (speed > 0 && getPivotPositions()[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
-        rightSpeed = (speed < 0 && getPivotPositions()[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (speed > 0 && getPivotPositions()[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
+        leftSpeed = (speed < 0 && positions[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+            (speed > 0 && positions[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
+        rightSpeed = (speed < 0 && positions[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+            (speed > 0 && positions[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
 
         rightPivotMotor.set(rightSpeed);
         leftPivotMotor.set(leftSpeed);

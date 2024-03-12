@@ -6,6 +6,50 @@
     "data": {
       "commands": [
         {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot SPEAKER"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Collect Note NOCENTER"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pathfind SPEAKER"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FixNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot SPEAKER"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Ring 2 - Outside Community"

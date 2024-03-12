@@ -58,6 +58,20 @@ public class PathfindToGoalCommand extends Command {
         this.path.schedule();
     }
 
+    public static Command getPathfindCmd(PathfindingPosition pos) {
+        final PathConstraints CONSTRAINTS = new PathConstraints(
+            AutonConstants.MAX_LINEAR_VELOCITY,
+            AutonConstants.MAX_LINEAR_ACCELERATION,
+            AutonConstants.MAX_ANGULAR_VELOCITY,
+            AutonConstants.MAX_ANGULAR_ACCELERATION);
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
+        
+        Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(pos);
+        
+        return AutoBuilder.pathfindToPose(targetPose, CONSTRAINTS, 0, 0.1);
+    }
+
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
@@ -67,12 +81,10 @@ public class PathfindToGoalCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+        if (this.path != null && !this.path.isFinished()) {
+            this.path.end(true);
         }
-        else {
-            LEDSubsystem.getInstance().setLightState(LightState.OFF);
-        }
+        LEDSubsystem.getInstance().setCommandStopState(interrupted);
         this.path = null;
     }
 

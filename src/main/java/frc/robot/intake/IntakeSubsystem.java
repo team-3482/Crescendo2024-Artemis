@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 
 public class IntakeSubsystem extends SubsystemBase {
     // Singleton Design Pattern
@@ -60,7 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
         bottomIntakeMotor.follow(topIntakeMotor, true);
         pivotEncoder.setInverted(true);
 
-        this.pivotEncoder.setPosition(Units.degreesToRotations(IntakeConstants.IntakeState.IDLE.getAngle()));
+        resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
 
         // Shuffleboard layout to store Intake commands
         ShuffleboardLayout pivotList = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
@@ -102,6 +103,21 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /**
+     * Set pivot motors to a specific speed but stops near extremities
+     * 
+     * @param speed between -1.0 and 1.0
+     */
+    public void setPivotSpeedSafe(double speed) {
+        double position = getPivotPosition();
+        speed = 
+            (speed < 0 && Math.abs(IntakeState.INTAKING.getAngle() - position) <= IntakeState.INTAKING.getTolerance()) ||
+            (speed > 0 && Math.abs(IntakeState.IDLE.getAngle() - position) <= IntakeState.IDLE.getTolerance())
+                ? 0 : speed;
+
+        leftPivotMotor.set(speed);
+    }
+
+    /**
      * Gets the position of the through bore encoder
      * 
      * @return position of the intake in degrees. 0 is at hard stop when extended.
@@ -122,5 +138,10 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         this.SB_D_PIVOT_POSITION.setString(PhysicalConstants.DEC_FORMAT.format(getPivotPosition()));
+
+        int position = (int) getPivotPosition();
+        if (this.pivotEncoder.getVelocity() == 0 && position <= 10) {
+            resetPivotPosition(0);
+        }
     }
 }

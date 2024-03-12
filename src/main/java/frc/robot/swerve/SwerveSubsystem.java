@@ -94,7 +94,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private GenericEntry SB_GYRO = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("Robot Heading", 0)
         .withWidget(BuiltInWidgets.kGyro)
-        .withProperties(Map.of("Starting angle", 0))
+        .withProperties(Map.of("Starting angle", 180, "Counter Clockwise", true))
         .withPosition(0, 0)
         .withSize(3, 3)
         .getEntry();
@@ -279,11 +279,13 @@ public class SwerveSubsystem extends SubsystemBase {
      * @return whether or not it updated
      */
     private boolean updateOdometryUsingVision() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
+        if (true || !LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
 
-        Pose2d botpose = LimelightSubsystem.getInstance().getBotpose();
+        Pose2d botpose = new Pose2d(
+            LimelightSubsystem.getInstance().getBotpose().getTranslation(),
+            Rotation2d.fromDegrees(getHeading())
+        );
         Pose2d relative = botpose.relativeTo(getPose());
-
         if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
             && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
             this.odometer.addVisionMeasurement(

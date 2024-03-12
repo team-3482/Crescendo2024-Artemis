@@ -51,11 +51,12 @@ public class SpinIntakeCommand extends Command {
     public void execute() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         IntakeSubsystem.getInstance().setIntakeSpeed(this.speed);
+        
         if (this.speed > 0) {
-            SterilizerSubsystem.getInstance().moveForward();
+            SterilizerSubsystem.getInstance().moveForward(false);
         }
         else if (this.speed < 0) {
-            SterilizerSubsystem.getInstance().moveBackward();
+            SterilizerSubsystem.getInstance().moveBackward(true);
         }
     }
 
@@ -69,7 +70,7 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
+        Optional<Boolean> hasNote= SterilizerSubsystem.getInstance().hasNote();
         return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout)
             || (hasNote.isPresent() && hasNote.get());
     }

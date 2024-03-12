@@ -64,8 +64,15 @@ public class RobotContainer {
         // initialization)
         NamedCommands.registerCommand("Pathfind AMP",
             new PathfindToGoalCommand(PathfindingPosition.AMP));
-            NamedCommands.registerCommand("Pathfind SPEAKER",
-            new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
+        NamedCommands.registerCommand("Pathfind SPEAKER",
+            PathfindToGoalCommand.getPathfindCmd(PathfindingPosition.SPEAKER));
+        NamedCommands.registerCommand("Collect Note NOCENTER",
+            SequencedCommands.getCollectNoteCommandNoCenter());
+        NamedCommands.registerCommand("Shoot SPEAKER",
+            new ShootCommand(ShooterState.SPEAKER));
+        NamedCommands.registerCommand("FixNote", Commands.run(
+            () -> SterilizerSubsystem.getInstance().moveBackward(true))
+            .withTimeout(0.5));
             
         // Sets the default command to driving swerve
         SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
@@ -106,8 +113,13 @@ public class RobotContainer {
         driveController.leftBumper().onTrue(new CenterSpeakerCommand());
         driveController.rightBumper()
             .onTrue(SequencedCommands.getIntakeCommand())
-            .onFalse(new PivotIntakeCommand(IntakeState.IDLE));
+            .onFalse(Commands.parallel(
+                new PivotIntakeCommand(IntakeState.IDLE),
+                new PivotShooterCommand(ShooterState.SPEAKER))
+        );
+                
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
+        driveController.x().whileTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
 
         // Line up to SPEAKER
         // driveController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
@@ -132,23 +144,27 @@ public class RobotContainer {
             new ShootCommand(ShooterState.AMP)
         ));
         operatorController.y().whileTrue(new ShootCommand(ShooterState.MANUAL));
+        operatorController.a().whileTrue(Commands.runEnd(
+            () -> SterilizerSubsystem.getInstance().moveBackward(true),
+            () -> SterilizerSubsystem.getInstance().moveStop()
+        ));
         
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.1),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.2),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
         operatorController.povDown().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.1),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.2),
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
         ));
         // Move the intake manually (last resort, not recommended)
         operatorController.povRight().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.15),
+            () -> IntakeSubsystem.getInstance().setPivotSpeedSafe(0.2),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
         operatorController.povLeft().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.05),
+            () -> IntakeSubsystem.getInstance().setPivotSpeedSafe(-0.1),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
     }

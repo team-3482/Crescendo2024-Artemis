@@ -50,16 +50,20 @@ public class SterilizerSubsystem extends SubsystemBase {
     
     /**
      * Moves the note forwards to the shooter
+     * 
+     * @param calibrate lower speed for centering the note
      */
-    public void moveForward() {
-        feederMotor.set(SterilizerConstants.FEEDING_SPEED);
+    public void moveForward(boolean calibrate) {
+        feederMotor.set(SterilizerConstants.FEEDING_SPEED * (calibrate ? SterilizerConstants.NOTE_CALIBRATION_MUL : 1));
     }
     
     /**
      * Moves the note backwards to the intake. Do not run for too long, otherwise the note will get stuck above the PDH.
+     * 
+     * @param calibrate lower speed for centering the note
      */
-    public void moveBackward() {
-        feederMotor.set(-SterilizerConstants.FEEDING_SPEED);
+    public void moveBackward(boolean calibrate) {
+        feederMotor.set(-SterilizerConstants.FEEDING_SPEED * (calibrate ? SterilizerConstants.NOTE_CALIBRATION_MUL : 1));
     }
     
     /**

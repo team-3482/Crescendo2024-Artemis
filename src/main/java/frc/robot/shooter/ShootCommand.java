@@ -63,7 +63,7 @@ public class ShootCommand extends Command {
         this.reachedRPM = true;
 
         Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
-        SterilizerSubsystem.getInstance().moveForward();
+        SterilizerSubsystem.getInstance().moveForward(false);
         if (this.state == ShooterState.MANUAL) return;
         if (!hasNote.isPresent()) {
             Timer.delay(2.5);
