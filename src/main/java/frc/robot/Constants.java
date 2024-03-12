@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import java.text.DecimalFormat;
 import java.util.Map;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -309,9 +308,6 @@ public final class Constants {
 
         /** Height of the pivot shaft above the floor */
         public static final double SHOOTER_PIVOT_HEIGHT = 0;
-
-        /** What to round decimal values to on Shuffleboard */
-        public static final DecimalFormat DEC_FORMAT = new DecimalFormat("#.##");
 
         /** The loop time in seconds for telemetry */
         public static final double TELEMETRY_LOOP_TIME = 0.25;

@@ -1,7 +1,5 @@
 package frc.robot.swerve;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -17,15 +15,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
-import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.limelight.LimelightSubsystem;
@@ -88,17 +82,11 @@ public class SwerveSubsystem extends SubsystemBase {
     
     // Initialize a field to track of robot position in SmartDashboard
     // private Field2d swerve_field = new Field2d();
-
-    // Shuffleboard
-    private GenericEntry SB_GYRO = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("Robot Heading", 0)
-        .withWidget(BuiltInWidgets.kGyro)
-        .withProperties(Map.of("Starting angle", 180, "Counter Clockwise", true))
-        .withPosition(0, 0)
-        .withSize(3, 3)
-        .getEntry();
     
+    /** Keep track of desiredStates for Telemetry */
     private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
+    /** Save whether or not currently using LL Odometry */
+    private boolean usingLimelightOdometry = false;
     
     /**
     * Initializes a new SwerveSubsystem object, configures PathPlannerLib AutoBuilder,
@@ -251,6 +239,15 @@ public class SwerveSubsystem extends SubsystemBase {
             Rotation2d.fromDegrees(getHeading()))
         );
     }
+
+    /**
+     * Get whether or not the odometry has recently updated using vision
+     * 
+     * @return vision odometry
+     */
+    public boolean usingLimelightOdometry() {
+        return this.usingLimelightOdometry;
+    }
   
     /**
     * Update the odometer and push ShuffleBoard data
@@ -259,11 +256,9 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         this.odometer.update(getRotation2d(), getModulePositions());
         
-        boolean updated = this.updateOdometryUsingVision();
-        LimelightSubsystem.getInstance().updateAddVisionEntry(updated);
+        this.usingLimelightOdometry = updateOdometryUsingVision();
 
         // this.swerve_field.setRobotPose(getPose());
-        this.SB_GYRO.setDouble(getHeading());
     }
 
     /**
@@ -271,8 +266,8 @@ public class SwerveSubsystem extends SubsystemBase {
      * 
      * @return whether or not it updated
      */
-    @SuppressWarnings("unused") // TODO use LL vision with lower trust
     private boolean updateOdometryUsingVision() {
+        // TODO use LL vision with lower trust
         if (true || !LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
 
         Pose2d botpose = new Pose2d(

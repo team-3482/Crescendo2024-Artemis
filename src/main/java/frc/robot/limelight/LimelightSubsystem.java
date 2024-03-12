@@ -4,20 +4,10 @@
 
 package frc.robot.limelight;
 
-import java.util.Map;
-
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.ShuffleboardTabConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
 
@@ -31,15 +21,9 @@ public class LimelightSubsystem extends SubsystemBase {
         return instance;
     }
 
-    Field2d limelight_field = new Field2d();
+    // Field2d limelight_field = new Field2d();
 
-    // Shuffleboard
-    private GenericEntry SB_D_TID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("T ID", 0)
-        .withWidget(BuiltInWidgets.kTextView)
-        .withPosition(3, 0)
-        .withSize(1, 1)
-        .getEntry();
+    
     // private GenericEntry SB_D_NSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
     //     .add("NOTE-SEE", false)
     //     .withWidget(BuiltInWidgets.kBooleanBox)
@@ -52,12 +36,6 @@ public class LimelightSubsystem extends SubsystemBase {
     //     .withPosition(6, 0)
     //     .withSize(3, 3)
     //     .getEntry();
-    private GenericEntry SB_D_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("Vision Odometry", false)
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(4, 0)
-        .withSize(2, 1)
-        .getEntry();
 
     // private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
     //     .add("T-ID", 0)
@@ -81,29 +59,7 @@ public class LimelightSubsystem extends SubsystemBase {
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
         super("LimelightSubsystem");
-        HttpCamera limelightBackFeed = new HttpCamera(
-            LimelightConstants.INTAKE_LLIGHT,
-            "http://" + LimelightConstants.INTAKE_LLIGHT + ".local:5800/stream.mjpg",
-            HttpCameraKind.kMJPGStreamer);
-        CameraServer.addCamera(limelightBackFeed);
-        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-            .add("Back Limelight", limelightBackFeed)
-            .withWidget(BuiltInWidgets.kCameraStream)
-            .withPosition(9, 1)
-            .withSize(6, 3)
-            .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
         
-        HttpCamera limelightFrontFeed = new HttpCamera(
-            LimelightConstants.SHOOTER_LLIGHT,
-            "http://" + LimelightConstants.SHOOTER_LLIGHT + ".local:5800/stream.mjpg",
-            HttpCameraKind.kMJPGStreamer);
-        CameraServer.addCamera(limelightBackFeed);
-        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-            .add("Front Limelight", limelightFrontFeed)
-            .withWidget(BuiltInWidgets.kCameraStream)
-            .withPosition(3, 1)
-            .withSize(6, 3)
-            .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
 
         // Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
         //     .add("Field (limelight)", limelight_field)
@@ -181,33 +137,14 @@ public class LimelightSubsystem extends SubsystemBase {
                 - LimelightHelpers.getLatency_Capture(limelight) / 1000;
     }
 
-    // /**
-    // * Gets the position of an object being targeted
-    // * (uses LimelightConstants.BACK_LIMELIGHT)
-    // *
-    // * @return the translation from the bot
-    // */
-    // public Optional<Translation2d>
-
-    /**
-     * Update the ADD-VISION Shuffleboard entries
-     * 
-     * @param bool whether or not it is updating odometry using vision
-     */
-    public void updateAddVisionEntry(boolean bool) {
-        SB_D_TUPDATE.setBoolean(bool);
-        // SB_F_TUPDATE.setBoolean(bool);
-    }
-
     @Override
     public void periodic() {
-        limelight_field.setRobotPose(this.getBotpose());
-        int tid = this.getTargetID();
+        // limelight_field.setRobotPose(this.getBotpose());
+        // int tid = this.getTargetID();
         // boolean tSee = this.hasTarget(LimelightConstants.SHOOTER_LLIGHT);
         // boolean nSee = this.hasTarget(LimelightConstants.INTAKE_LLIGHT);
 
         // Default Shuffleboard
-        SB_D_TID.setInteger(tid);
         // SB_D_TSEE.setBoolean(tSee);
         // SB_D_NSEE.setBoolean(nSee);
 

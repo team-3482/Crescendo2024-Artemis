@@ -4,8 +4,6 @@
 
 package frc.robot.shooter;
 
-import java.util.Map;
-
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -21,16 +19,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.utilities.JSONManager;
 
@@ -53,14 +43,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    
-    // Shuffleboard
-    private GenericEntry SB_D_PIVOT_POSITION = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-        .add("Shooter Pivot", "")
-        .withWidget(BuiltInWidgets.kTextView)
-        .withPosition(6, 0)
-        .withSize(3, 1)
-        .getEntry();
 
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
@@ -72,39 +54,6 @@ public class ShooterSubsystem extends SubsystemBase {
         double[] positions = JSONManager.getInstance().getShooterPivotPositions();
         leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
         rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
-
-        // Shuffleboard layout to store Shooter commands
-        ShuffleboardLayout pivotList = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
-            .getLayout("Shooter Pivot", BuiltInLayouts.kList)
-            .withProperties(Map.of("Label position", "TOP"))
-            .withPosition(0, 0)
-            .withSize(3, 6);
-        // Force save positions of the pivot
-        pivotList.add("Force Save Position",
-            Commands.runOnce(() -> {
-                double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
-                JSONManager.getInstance().saveShooterPivotPositions(pos[0], pos[1]);
-            }).ignoringDisable(true).withName("Save Data"))
-            .withPosition(0, 0)
-            .withWidget(BuiltInWidgets.kCommand);
-        // Reset the pivot's position
-        pivotList.add("Reset Position Lower Limit",
-            Commands.runOnce(() -> {
-                ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0]);
-            }).ignoringDisable(true).withName(ShooterConstants.PIVOT_ANGLE_LIMITS[0] + " deg"))
-            .withPosition(0, 1)
-            .withWidget(BuiltInWidgets.kCommand);
-        pivotList.add("Reset Position Higher Limit",
-            Commands.runOnce(() -> {
-                ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0]);
-            }).ignoringDisable(true).withName(ShooterConstants.PIVOT_ANGLE_LIMITS[1] + " deg"))
-            .withPosition(0, 2)
-            .withWidget(BuiltInWidgets.kCommand);
-        pivotList.add("Reset Position Vertical",
-            Commands.runOnce(() -> {
-                ShooterSubsystem.getInstance().resetPivotPosition(90);
-            }).ignoringDisable(true).withName(90 + " deg"))
-            .withWidget(BuiltInWidgets.kCommand);
     }
 
     /**
@@ -148,7 +97,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @param angle in degrees
      */
-    private void resetPivotPosition(double angle) {
+    public void resetPivotPosition(double angle) {
         double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
         leftPivotMotor.setPosition(position);
         rightPivotMotor.setPosition(position);
@@ -230,12 +179,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        double[] pos = getPivotPositions();
-        this.SB_D_PIVOT_POSITION.setString(
-            "Left    " + PhysicalConstants.DEC_FORMAT.format(pos[0]) + "    ||    "
-            + PhysicalConstants.DEC_FORMAT.format(pos[1]) + "    Right"
-        );
-
         // double[] vel = getShootingVelocities();
         // System.out.println(
         //     "left vel : " + PhysicalConstants.DEC_FORMAT.format(vel[0]) + " right vel : "
