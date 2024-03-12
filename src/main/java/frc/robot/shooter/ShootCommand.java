@@ -47,13 +47,13 @@ public class ShootCommand extends Command {
         ShooterSubsystem.getInstance().setShootingVelocities(this.state.getSpeeds(this.invertSpin));
 
         this.reachedRPM = false;
+
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-        
         double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
         double[] rpmGoals = this.state.getRPMs(this.invertSpin);
         if (!this.reachedRPM

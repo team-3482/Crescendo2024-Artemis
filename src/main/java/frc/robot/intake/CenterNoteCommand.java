@@ -8,10 +8,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.NoteConstants;
+import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
@@ -23,8 +23,9 @@ public class CenterNoteCommand extends Command {
     private final String LIMELIGHT = LimelightConstants.INTAKE_LLIGHT;
 
     private final SlewRateLimiter turningLimiter;
-    private PIDController pidController;
-    private Timer timer;
+    private PIDController pid;
+    /** Used for {@link CenterNoteCommand#isFinished()} */
+    private double errorRadians;
 
     /**
     * Creates a new CenterNoteCommand.
@@ -32,12 +33,11 @@ public class CenterNoteCommand extends Command {
     public CenterNoteCommand() {
         setName("CenterNoteCommand");
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
-        this.pidController = new PIDController(
+        this.pid = new PIDController(
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
-        this.timer = new Timer();
+        this.pid.setTolerance(Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(SwerveSubsystem.getInstance());
@@ -51,18 +51,22 @@ public class CenterNoteCommand extends Command {
             return;
         }
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        pidController.reset();
-        timer.restart();
+        this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
+        this.pid.reset();
+
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
+        // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT)) return;
 
-        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
+        this.errorRadians = Units.degreesToRadians(
+            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT));
 
-        double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
+        double turningSpeed = pid.calculate(this.errorRadians, 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
 
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
@@ -74,21 +78,14 @@ public class CenterNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        pidController.close();
-        this.timer.stop();
-        if (interrupted) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-        }
-        else {
-            LEDSubsystem.getInstance().setLightState(LightState.OFF);
-        }
+        LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        this.pid.close();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT))
-            <= (NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1)
-            || timer.get() >= NoteConstants.CENTERING_TIMEOUT;
+        return this.pid.atSetpoint();
+        // return this.errorRadians <= Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
     }
 }

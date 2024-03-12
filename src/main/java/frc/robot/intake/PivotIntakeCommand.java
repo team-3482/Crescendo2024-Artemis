@@ -39,11 +39,11 @@ public class PivotIntakeCommand extends Command {
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.pid.reset();
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         double speed;
         if (this.up) {
             speed = IntakeConstants.PIVOT_UP_SPEED;

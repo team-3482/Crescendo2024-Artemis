@@ -21,6 +21,7 @@ import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.PathingCommands;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.Constants.ShooterConstants.ShooterState;
+import frc.robot.intake.CenterNoteCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
@@ -173,6 +174,10 @@ public class RobotContainer {
         ));
         // Run SHOOTER automatically
         // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
+        // TODO test CenterNote and CenterSpeaker
+        operatorController.x().onTrue(new CenterNoteCommand());
+        // TODO LL Config Pipeline 1 to see only tags 4 and 7
+        // operatorController.x().onTrue(new CenterSpeakerCommand()); 
         // Reverse sterilizer (0.2 speed)
         operatorController.y().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().moveBackward(true),

@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Robot;
 import frc.robot.Constants.AutonConstants;
 
 public class SwerveUtilities {
@@ -44,11 +45,11 @@ public class SwerveUtilities {
      * Team 254 implementation to fix Swerve Drive skew 
      * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8
      * 
-     * @param originalSpeeds - Original Chasis speeds
+     * @param originalSpeeds Original Chasis speeds
      * @return Corrected chasis speeds
      */
     public static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
-        final double LOOP_TIME_S = 0.02;
+        final double LOOP_TIME_S = Robot.kDefaultPeriod;
         Pose2d futureRobotPose = new Pose2d(
             originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
             originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,

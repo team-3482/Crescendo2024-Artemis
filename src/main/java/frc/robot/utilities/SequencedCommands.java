@@ -3,6 +3,7 @@ package frc.robot.utilities;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.NoteConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.intake.CenterNoteCommand;
@@ -41,7 +42,7 @@ public class SequencedCommands {
                 new PivotIntakeCommand(IntakeState.INTAKING),
                 new PivotShooterCommand(ShooterState.INTAKE)
             ),
-            new CenterNoteCommand(),
+            new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
                 new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 

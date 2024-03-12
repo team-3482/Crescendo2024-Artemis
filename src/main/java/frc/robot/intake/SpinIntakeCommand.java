@@ -45,11 +45,11 @@ public class SpinIntakeCommand extends Command {
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.timer.restart();
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         IntakeSubsystem.getInstance().setIntakeSpeed(this.speed);
         
         if (this.speed > 0) {

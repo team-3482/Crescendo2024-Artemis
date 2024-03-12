@@ -271,6 +271,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * 
      * @return whether or not it updated
      */
+    @SuppressWarnings("unused") // TODO use LL vision with lower trust
     private boolean updateOdometryUsingVision() {
         if (true || !LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
 

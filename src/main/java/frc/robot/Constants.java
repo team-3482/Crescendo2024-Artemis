@@ -10,7 +10,6 @@ import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -195,43 +194,21 @@ public final class Constants {
 
     }
 
-    /** Constants used by the Swerve Orbit Command */
+    /** Constants used for orbiting April Tags */
     public static final class OrbitConstants {
-        /** Multipies by the chasis speeds to slow down the bot for more control when orbitting */
-        public static final double ORBIT_SPEED_COEFFIECENT = 0.25;
-        /**
-         * Multipies by the chasis speeds to slow down the bot for more control when
-         * orbitting and using fine control
-         */
-        public static final double ORBIT_FINE_CONTROL_SPEED_COEFFIECENT = 0.125;
-
-        /** The rate of change limit (units per second) for turning limiter in orbit mode */
-        public static final double ORBIT_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
-        /** The rate limit in units per second for driving in orbit mode (x and y) */
-        public static final double ORBIT_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
-
-        /** PID constants for controlling the turning speed during orbits */
+        /** PID constants for controlling the turning speed during centering */
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static final double TOLERANCE = 0.5;
-            public static final double KP = 0.1;
+            public static final double TOLERANCE = 1;
+            public static final double KP = 0.65;
             public static final double KI = 0;
             public static final double KD = 0;
         }
 
-        /** Position in space to orbit (SPEAKER) */
-        public static final Map<DriverStation.Alliance, Translation3d> ORBIT_POINT = Map.ofEntries(
-            Map.entry(DriverStation.Alliance.Red,
-                new Translation3d(16.5, 5.55, 2.47)),
-            Map.entry(DriverStation.Alliance.Blue,
-                new Translation3d(0, 5.55, 2.47))
-        );
-
-        /** The AprilTags to center on at each SPEAKER */
-        public static final Map<DriverStation.Alliance, Integer> ORBIT_TAG = Map.ofEntries(
-            Map.entry(DriverStation.Alliance.Red, 4),
-            Map.entry(DriverStation.Alliance.Blue, 7)
-        );
+        /** The pipeline that sees all tags */
+        public static final int DEFAULT_PIPELINE = 0;
+        /** The pipeline that filters for SPEAKER tags */
+        public static final int SPEAKER_PIPELINE = 1;
     }
 
     /** Constants for autos that use the intake limelight */
@@ -240,7 +217,7 @@ public final class Constants {
         public static final double NOTE_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
         /** The rate limit in units per second for driving in orbit mode (x and y) */
         public static final double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
-        /** The input speed the bot should have when driving to a note (between 0 and 1) */
+        /** The input speed the bot should have when driving to a note (between 0.0 and 1.0) */
         public static final double NOTE_DRIVE_INPUT_SPEED = 0.25;
 
         /** Time limit for the centering command in seconds */
@@ -249,7 +226,7 @@ public final class Constants {
         /** PID constants for controlling the turning speed during centering */
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static final double TOLERANCE = 4;
+            public static final double TOLERANCE = 5;
             public static final double KP = 0.65;
             public static final double KI = 0;
             public static final double KD = 0;

@@ -4,89 +4,66 @@
 
 package frc.robot.swerve;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.limelight.LimelightHelpers;
 import frc.robot.limelight.LimelightSubsystem;
 
 /** An command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
 public class CenterSpeakerCommand extends Command {
     // Instances of Rate Limiters to ensure that the robot moves smoothly
     private final SlewRateLimiter turningLimiter;
-    private PIDController rotationPidController;
-    private boolean finished;
+    /** Turning {@link PIDController}, uses DEGREES for calculations */
+    private PIDController pid;
+    /** Used for {@link CenterSpeakerCommand#isFinished()} */
+    private double errorRadians;
 
     public CenterSpeakerCommand() {
         setName("CenterSpeakerCommand");
-        this.turningLimiter = new SlewRateLimiter(OrbitConstants.ORBIT_TURNING_SLEW_RATE_LIMIT);
-        this.rotationPidController = new PIDController(
+        
+        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.TURNING_SLEW_RATE_LIMIT);
+        this.pid = new PIDController(
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.rotationPidController.setTolerance(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
-        this.rotationPidController.enableContinuousInput(0, 2 * Math.PI);
+        this.pid.setTolerance(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        this.pid.enableContinuousInput(0, 360);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
         // Do not require limelight subsystem because it is getter functions only
-        this.addRequirements(SwerveSubsystem.getInstance()); 
+        addRequirements(SwerveSubsystem.getInstance()); 
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        this.finished = false;
-        rotationPidController.reset();
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
+        this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
+        this.pid.reset();
+        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, OrbitConstants.SPEAKER_PIPELINE);
+
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     @Override
     public void execute() {
-        // Double so it can be null if the ID cannot be orbited
-        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-            this.finished = true;
-            return;
-        }
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-        Translation3d _point = OrbitConstants.ORBIT_POINT.get(alliance.get());
-        Translation2d point = new Translation2d(_point.getX(), _point.getY());
-        
-        // Orbit calculations
-        double angleGoalRad;
-        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT);
-        if (hasTarget && LimelightSubsystem.getInstance().getTargetID() == OrbitConstants.ORBIT_TAG.get(alliance.get())) {
-            double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT);
-            angleGoalRad = Units.degreesToRadians(errorDegrees);
-            System.out.println("LL " + errorDegrees);
-        }
-        else { // Position
-            Translation2d difference = SwerveSubsystem.getInstance().getPose().getTranslation().minus(point);
-            // double angleGoalRad = Math.atan2(difference.getX(), - difference.getY()) + Math.PI / 2;
-            angleGoalRad = Math.atan2(difference.getY(), difference.getX());
-            System.out.println("Od " + Units.radiansToDegrees(angleGoalRad));
-        }
+        // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return;
 
-        this.finished = Math.abs(SwerveSubsystem.getInstance().getHeading() - angleGoalRad) <= OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE;
+        this.errorRadians = Units.degreesToRadians(
+            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
         
-        double turningSpeed = rotationPidController
-            .calculate(Units.degreesToRadians(SwerveSubsystem.getInstance().getHeading()), angleGoalRad);
-        
-        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT
-            * (hasTarget ? -1 : 1);
+        double turningSpeed = pid.calculate(this.errorRadians, 0);
+        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
         
@@ -101,24 +78,17 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        rotationPidController.close();
-        if (interrupted) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-        }
-        else {
-            LEDSubsystem.getInstance().setLightState(LightState.OFF);
-        }
-        this.finished = false;
+        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, OrbitConstants.DEFAULT_PIPELINE);
+        LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        this.pid.close();
     }
 
     /**
-    * Returns false because this command should run until the user releases the button
-    * 
-    * @return boolean - always false
+    * End logic in {@link CenterSpeakerCommand#execute()} body
     */
     @Override
     public boolean isFinished() {
-        System.out.println(finished);
-        return this.finished;
+        return this.pid.atSetpoint();
+        // return this.errorRadians <= Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
     }
 }
