@@ -41,7 +41,7 @@ public final class Constants {
         // /** Position for the intake opened in degrees */
         // public static final int MOTOR_TO_PIVOT_RATIO = 9;
 
-        public enum IntakeState{
+        public static enum IntakeState{
             INTAKING(0, 7.5),
             /** The hardware stop angle for the intake when it is idle in degrees*/
             IDLE(160, 25);
@@ -111,7 +111,7 @@ public final class Constants {
         public static final int MOTION_MAGIC_JERK = 1600;
 
         /** Stores all shooter configuration related data */
-        public enum ShooterState{
+        public static enum ShooterState{
             INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
             AMP(false, 65.0, 0.18, 675.0, 25.0),
             SPEAKER(false, 65.0, 0.6, 2100.0, 50.0),
@@ -178,6 +178,32 @@ public final class Constants {
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
                 Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))))
         );
+
+        /** Same orientation as PathPlanner field */
+        public static enum StartingPositions {
+            TOP("Top", 3),
+            MIDDLE("Middle", 2),
+            BOTTOM("Bottom", 1),
+            AUTO("Auto", 0)
+            ;
+
+            String name;
+            int location;
+
+            private StartingPositions(String name, int position) {
+                this.name = name;
+                this.location = position;
+            }
+            public String getName() {
+                return this.name;
+            }
+            public int getLocation() {
+                return this.location;
+            }
+            public static StartingPositions[] getStartingPositions() {
+                return new StartingPositions[]{TOP, MIDDLE, BOTTOM, AUTO};
+            }
+        }
 
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(

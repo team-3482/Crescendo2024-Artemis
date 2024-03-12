@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Robot;
 import frc.robot.Constants.AutonConstants;
+import frc.robot.Constants.AutonConstants.StartingPositions;
 
 public class SwerveUtilities {
     
@@ -65,18 +66,27 @@ public class SwerveUtilities {
     /**
      * Grab the starting position of the robot
      * 
+     * @param startingPosition override the alliance position-based starting position
      * @return the starting position
      */
-    public static Pose2d getStartingPosition() {
+    public static Pose2d getStartingPose(StartingPositions startingPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        OptionalInt location = DriverStation.getLocation();
-        Pose2d startingPosition;
-        if (!location.isPresent() || !alliance.isPresent()) {
-            startingPosition = new Pose2d();
+        OptionalInt location = startingPosition.equals(StartingPositions.AUTO)
+            ? DriverStation.getLocation() : OptionalInt.of(startingPosition.getLocation());
+        
+        Pose2d pose;
+        if (!alliance.isPresent()) {
+            pose = new Pose2d();
+        }
+        else if (!startingPosition.equals(StartingPositions.AUTO)) {
+            pose = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(startingPosition.getLocation());
+        }
+        else if (location.isPresent()) {
+            pose = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
         }
         else {
-            startingPosition = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
+            pose = new Pose2d();
         }
-        return startingPosition;
+        return pose;
     }
 }

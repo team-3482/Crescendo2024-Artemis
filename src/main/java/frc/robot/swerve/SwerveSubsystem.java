@@ -24,9 +24,9 @@ import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.utilities.SwerveUtilities;
+import frc.robot.utilities.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
-
     // Singleton Design Pattern
     private static SwerveSubsystem instance;
     public static SwerveSubsystem getInstance() {
@@ -78,7 +78,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Instance of the odometer to track robot position, initialized to starting position
     private SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(
-        SwerveKinematics.DRIVE_KINEMATICS, getRotation2d(), getModulePositions(), SwerveUtilities.getStartingPosition());
+        SwerveKinematics.DRIVE_KINEMATICS, getRotation2d(), getModulePositions(),
+        SwerveUtilities.getStartingPose(Telemetry.getInstance().getSelectedStartingPosition()));
     
     // Initialize a field to track of robot position in SmartDashboard
     // private Field2d swerve_field = new Field2d();
@@ -128,7 +129,8 @@ public class SwerveSubsystem extends SubsystemBase {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                setHeading(SwerveUtilities.getStartingPosition().getRotation().getDegrees());
+                setHeading(SwerveUtilities.getStartingPose(Telemetry.getInstance().getSelectedStartingPosition())
+                    .getRotation().getDegrees());
             }
             catch (Exception error) {
                 error.printStackTrace();
@@ -233,11 +235,9 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     public void resetOdometryLimelight() {
         Translation2d translation = LimelightSubsystem.getInstance().getBotpose().getTranslation();
-        if (translation.equals(new Translation2d())) return;
-        this.setPose(new Pose2d(
-            translation,
-            Rotation2d.fromDegrees(getHeading()))
-        );
+        if (!translation.equals(new Translation2d())) {
+            setPose(new Pose2d(translation, getRotation2d()));
+        }
     }
 
     /**

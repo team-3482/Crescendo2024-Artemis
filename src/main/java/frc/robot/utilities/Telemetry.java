@@ -20,11 +20,13 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.Constants.AutonConstants.StartingPositions;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
@@ -91,6 +93,13 @@ public class Telemetry {
             .publish();
     }
 
+    /**
+     * Getter for retrieving the staring position
+     */
+    public StartingPositions getSelectedStartingPosition() {
+        return ShuffleboardTelemetry.PITTING_STARTING_POSITION.getSelected();
+    }
+
     /** A class used to manage all Shuffleboard telemetry components */
     private class ShuffleboardTelemetry {
         private ShuffleboardTelemetry() {}
@@ -99,9 +108,9 @@ public class Telemetry {
         public static void initialize() {
             // IntakeSubsystem
             ShuffleboardLayout intakeSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
-                .getLayout("Intake Pivot", BuiltInLayouts.kList)
+                .getLayout("Intake Subsystem", BuiltInLayouts.kList)
                 .withProperties(Map.of("Label position", "TOP"))
-                .withPosition(3, 0)
+                .withPosition(0, 0)
                 .withSize(3, 6);
             // Reset the pivot's position
             intakeSubsystemLayout.add("Reset Position Lower Limit",
@@ -119,9 +128,9 @@ public class Telemetry {
             
             // Shooter Subsystem
             ShuffleboardLayout shooterSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
-                .getLayout("Shooter Pivot", BuiltInLayouts.kList)
+                .getLayout("Shooter Subsystem", BuiltInLayouts.kList)
                 .withProperties(Map.of("Label position", "TOP"))
-                .withPosition(0, 0)
+                .withPosition(3, 0)
                 .withSize(3, 6);
             // Force save positions of the pivot
             shooterSubsystemLayout.add("Force Save Position",
@@ -152,6 +161,30 @@ public class Telemetry {
             
             // TODO
             // SwerveSubsystem layout for change starting position
+            ShuffleboardLayout swerveSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
+                .getLayout("Swerve Subsystem", BuiltInLayouts.kList)
+                .withProperties(Map.of("Label position", "TOP"))
+                .withPosition(6, 0)
+                .withSize(3, 6);
+            // Chooser for resetting position
+            PITTING_STARTING_POSITION = new SendableChooser<StartingPositions>();
+            for (StartingPositions position : StartingPositions.getStartingPositions()) {
+                PITTING_STARTING_POSITION.addOption(position.getName(), position);
+                if (position.equals(StartingPositions.AUTO)) {
+                    PITTING_STARTING_POSITION.setDefaultOption(position.getName(), position);
+                }
+            }
+            PITTING_STARTING_POSITION.onChange((StartingPositions position) -> {
+                SwerveSubsystem.getInstance().setPose(SwerveUtilities.getStartingPose(position));
+            });
+            swerveSubsystemLayout.add("Starting Position", PITTING_STARTING_POSITION)
+                .withWidget(BuiltInWidgets.kComboBoxChooser);
+            // Re-set chosen position
+            swerveSubsystemLayout.add("Set Starting Position",
+                Commands.runOnce(() -> {
+                    SwerveSubsystem.getInstance().setPose(SwerveUtilities.getStartingPose(PITTING_STARTING_POSITION.getSelected()));
+                }).ignoringDisable(true).withName("Set Again"))
+                .withWidget(BuiltInWidgets.kCommand);
             
             // LimelightSubsystem
             HttpCamera limelightFrontFeed = new HttpCamera(
@@ -229,6 +262,7 @@ public class Telemetry {
             .withPosition(0, 0)
             .withSize(3, 3)
             .getEntry();
+        public static SendableChooser<StartingPositions> PITTING_STARTING_POSITION;
         
         // LimelightSubsystem
         private static GenericEntry DEFAULT_LIMELIGHT_TARGET_ID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
