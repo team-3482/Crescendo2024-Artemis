@@ -251,7 +251,7 @@ public class SwerveSubsystem extends SubsystemBase {
         if (translation.equals(new Translation2d())) return;
         this.setPose(new Pose2d(
             translation,
-            Rotation2d.fromDegrees(SwerveSubsystem.getInstance().getHeading()))
+            Rotation2d.fromDegrees(getHeading()))
         );
     }
   

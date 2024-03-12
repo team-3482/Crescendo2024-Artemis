@@ -15,11 +15,12 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.auto.PathingCommands;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.Constants.ShooterConstants.ShooterState;
-import frc.robot.auto.PathfindToGoalCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
@@ -51,28 +52,14 @@ public class RobotContainer {
     private CommandXboxController driveController;
     private CommandXboxController operatorController;
 
-    /**
-     * Creates an instance of the robot controller
-     */
+    /** Creates an instance of the robot controller */
     public RobotContainer() {
         this.driveController = new CommandXboxController(ControllerConstants.DRIVE_CONTROLLER_ID);
         this.operatorController = new CommandXboxController(ControllerConstants.OPERATOR_CONTROLLER_ID);
         
         initializeSubsystems();
-
-        // Register named commands for pathplanner (do this after subsystem
-        // initialization)
-        NamedCommands.registerCommand("Pathfind AMP",
-            new PathfindToGoalCommand(PathfindingPosition.AMP));
-        NamedCommands.registerCommand("Pathfind SPEAKER",
-            PathfindToGoalCommand.getPathfindCmd(PathfindingPosition.SPEAKER));
-        NamedCommands.registerCommand("Collect Note NOCENTER",
-            SequencedCommands.getCollectNoteCommandNoCenter());
-        NamedCommands.registerCommand("Shoot SPEAKER",
-            new ShootCommand(ShooterState.SPEAKER));
-        NamedCommands.registerCommand("FixNote", Commands.run(
-            () -> SterilizerSubsystem.getInstance().moveBackward(true))
-            .withTimeout(0.5));
+        // Register named commands for pathplanner (do this after subsystem initialization)
+        registerNamedCommands();
             
         // Sets the default command to driving swerve
         SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
@@ -86,7 +73,8 @@ public class RobotContainer {
             (Integer angle) -> driveController.pov(angle).getAsBoolean()
         ));
 
-        configureBindings();
+        configureDriverBindings();
+        configureOperatorBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
         Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
@@ -96,8 +84,48 @@ public class RobotContainer {
             .withSize(4, 1);
     }
 
-    /** Configures the button bindings of the controllers */
-    private void configureBindings() {
+    /** Creates instances of each subsystem so periodic runs */
+    private void initializeSubsystems() {
+        JSONManager.getInstance();
+        LEDSubsystem.getInstance();
+        LimelightSubsystem.getInstance();
+        SwerveSubsystem.getInstance();
+        IntakeSubsystem.getInstance();
+        SterilizerSubsystem.getInstance();
+        ShooterSubsystem.getInstance();
+    }
+
+    /** Register all NamedCommands for PathPlanner use */
+    private void registerNamedCommands() {
+        // Pathing
+        NamedCommands.registerCommand("Pathfind SPEAKER",
+            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER));
+        NamedCommands.registerCommand("Pathfind AMP",
+            PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
+        // NamedCommands.registerCommand("Bezier SPEAKER",
+        //     PathingCommands.getBezierCommand(PathfindingPosition.SPEAKER));
+        // NamedCommands.registerCommand("Bezier AMP",
+        //     PathingCommands.getBezierCommand(PathfindingPosition.AMP));
+
+        // Intake
+        NamedCommands.registerCommand("FixNote",
+            Commands.run(
+                () -> SterilizerSubsystem.getInstance().moveBackward(true)
+            ).withTimeout(0.5));
+        NamedCommands.registerCommand("Collect Note",
+            SequencedCommands.getCollectNoteCommand());
+        NamedCommands.registerCommand("Collect Note NOCENTER",
+            SequencedCommands.getCollectNoteCommandNoCenter());
+        
+        // Shoot
+        NamedCommands.registerCommand("Shoot SPEAKER",
+            new ShootCommand(ShooterState.SPEAKER));
+        NamedCommands.registerCommand("Shoot AMP",
+            new ShootCommand(ShooterState.AMP));
+    }
+
+    /** Configures the button bindings of the driver controller */
+    private void configureDriverBindings() {
         // Driver controller
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
@@ -119,15 +147,14 @@ public class RobotContainer {
         );
                 
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
-        driveController.x().whileTrue(new PathfindToGoalCommand(PathfindingPosition.SPEAKER));
+        
+        // Line-up / Pathfinding commands
+        driveController.x().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER));
+        driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
+    }
 
-        // Line up to SPEAKER
-        // driveController.x().onTrue(new PathfindToGoalCommand(AutonConstants.SPEAKER));
-        // Line up to AMP
-        // driveController.y().onTrue(new PathfindLineUp(SwerveSubsystem.getInstance(),
-        // AutonConstants.AMP));
-        
-        
+    /** Configures the button bindings of the driver controller */
+    private void configureOperatorBindings() {
         // Operator controller
         // Cancel all scheduled commands and turn off LEDs
         operatorController.b().onTrue(Commands.runOnce(() -> {
@@ -135,18 +162,27 @@ public class RobotContainer {
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
 
+        // Shoot SPEAKER
         operatorController.rightBumper().whileTrue(Commands.sequence(
             new PivotShooterCommand(ShooterState.SPEAKER),
             new ShootCommand(ShooterState.SPEAKER)
         ));
+        // Shoot AMP
         operatorController.leftBumper().whileTrue(Commands.sequence(
             new PivotShooterCommand(ShooterState.AMP),
             new ShootCommand(ShooterState.AMP)
         ));
-        operatorController.y().whileTrue(new ShootCommand(ShooterState.MANUAL));
-        operatorController.a().whileTrue(Commands.runEnd(
+        // Run SHOOTER automatically
+        // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
+        // Reverse sterilizer (0.2 speed)
+        operatorController.y().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().moveBackward(true),
             () -> SterilizerSubsystem.getInstance().moveStop()
+        ));
+        // Reverse intake (0.5 speed)
+        operatorController.a().whileTrue(Commands.runEnd(
+            () -> IntakeSubsystem.getInstance().setIntakeSpeed(-IntakeConstants.INTAKE_SPEED / 2),
+            () -> IntakeSubsystem.getInstance().setIntakeSpeed(0)
         ));
         
         // Move the pivot manually (last resort, not recommended)
@@ -167,17 +203,6 @@ public class RobotContainer {
             () -> IntakeSubsystem.getInstance().setPivotSpeedSafe(-0.1),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
-    }
-
-    /** Creates instances of each subsystem so periodic runs */
-    private void initializeSubsystems() {
-        JSONManager.getInstance();
-        LEDSubsystem.getInstance();
-        LimelightSubsystem.getInstance();
-        SwerveSubsystem.getInstance();
-        IntakeSubsystem.getInstance();
-        SterilizerSubsystem.getInstance();
-        ShooterSubsystem.getInstance();
     }
 
     /**

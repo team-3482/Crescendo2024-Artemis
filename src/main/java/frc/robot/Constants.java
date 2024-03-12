@@ -73,7 +73,7 @@ public final class Constants {
         /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
         public static final double NOTE_DISTANCE_LASER = 150;
         /** The multiplier for centering the note */
-        public static final double NOTE_CALIBRATION_MUL = 0.1;
+        public static final double NOTE_CALIBRATION_MUL = 0.2;
     }
 
     /**

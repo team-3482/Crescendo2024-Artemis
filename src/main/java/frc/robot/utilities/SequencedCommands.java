@@ -14,7 +14,7 @@ import frc.robot.shooter.ShootCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 
 /** A class that stores command chains for use elsewhere */
-public class SequencedCommands{
+public class SequencedCommands {
     /**
      * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
      * infinitely or until it has a note in the sterilizer.
@@ -82,7 +82,7 @@ public class SequencedCommands{
      * 
      * @return the command
      */
-    public static Command getAutoShootNoteCommand() {
+    public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
             new CenterSpeakerCommand(),
             new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE),
