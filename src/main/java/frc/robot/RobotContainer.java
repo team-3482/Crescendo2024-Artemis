@@ -109,9 +109,8 @@ public class RobotContainer {
 
         // Intake
         NamedCommands.registerCommand("FixNote",
-            Commands.run(
-                () -> SterilizerSubsystem.getInstance().moveBackward(true)
-            ).withTimeout(0.5));
+            Commands.run(() -> SterilizerSubsystem.getInstance().moveBackward(true))
+                .withTimeout(0.5));
         NamedCommands.registerCommand("Collect Note",
             SequencedCommands.getCollectNoteCommand());
         NamedCommands.registerCommand("Collect Note NOCENTER",

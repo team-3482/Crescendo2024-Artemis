@@ -335,6 +335,9 @@ public final class Constants {
 
         /** What to round decimal values to on Shuffleboard */
         public static final DecimalFormat DEC_FORMAT = new DecimalFormat("#.##");
+
+        /** The loop time in seconds for telemetry */
+        public static final double TELEMETRY_LOOP_TIME = 0.25;
     }
 
     /** Constants for the controller and any controller related assignments */

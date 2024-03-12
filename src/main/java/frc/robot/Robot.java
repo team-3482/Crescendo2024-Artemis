@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.shooter.ShooterSubsystem;
+import frc.robot.utilities.Telemetry;
 import frc.robot.utilities.JSONManager;
 
 /**
@@ -38,6 +40,10 @@ public class Robot extends TimedRobot {
             PortForwarder.add(port, LimelightConstants.INTAKE_LLIGHT + ".local", port);
             PortForwarder.add(port, LimelightConstants.SHOOTER_LLIGHT + ".local", port);
         }
+
+        // Start telemetry
+        Telemetry.getInstance();
+        addPeriodic(() -> Telemetry.getInstance().publish(), PhysicalConstants.TELEMETRY_LOOP_TIME);
     }
 
     /**

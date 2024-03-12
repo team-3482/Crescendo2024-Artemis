@@ -29,7 +29,6 @@ import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
 import frc.robot.limelight.LimelightSubsystem;
-import frc.robot.utilities.LoggerCommand;
 import frc.robot.utilities.SwerveUtilities;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -99,7 +98,6 @@ public class SwerveSubsystem extends SubsystemBase {
         .withSize(3, 3)
         .getEntry();
     
-    private LoggerCommand logger = new LoggerCommand();
     private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
     
     /**
@@ -108,7 +106,6 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     private SwerveSubsystem() {
         super("SwerveSubsystem");
-        this.logger = new LoggerCommand();
 
         AutoBuilder.configureHolonomic(
             this::getPose,
@@ -260,10 +257,6 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     @Override
     public void periodic() {
-        if (!logger.isScheduled()) {
-            logger.schedule();
-        }
-        
         this.odometer.update(getRotation2d(), getModulePositions());
         
         boolean updated = this.updateOdometryUsingVision();
