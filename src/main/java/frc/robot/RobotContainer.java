@@ -21,7 +21,6 @@ import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.PathingCommands;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.Constants.ShooterConstants.ShooterState;
-import frc.robot.intake.CenterNoteCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
@@ -35,6 +34,7 @@ import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.JSONManager;
 import frc.robot.utilities.SequencedCommands;
+import frc.robot.utilities.Telemetry;
 
 public class RobotContainer {
     // Singleton design pattern
@@ -94,6 +94,7 @@ public class RobotContainer {
         IntakeSubsystem.getInstance();
         SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
+        Telemetry.getInstance();
     }
 
     /** Register all NamedCommands for PathPlanner use */
@@ -151,6 +152,7 @@ public class RobotContainer {
         // Line-up / Pathfinding commands
         driveController.x().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER));
         driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
+        // driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SAFETY_1));
     }
 
     /** Configures the button bindings of the driver controller */
@@ -172,12 +174,15 @@ public class RobotContainer {
             new PivotShooterCommand(ShooterState.AMP),
             new ShootCommand(ShooterState.AMP)
         ));
+        // Shoot SAFETY
+        operatorController.x().whileTrue(Commands.sequence(
+            new PivotShooterCommand(ShooterState.SAFETY_1),
+            new ShootCommand(ShooterState.SAFETY_1)
+        ));
         // Run SHOOTER automatically
         // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
-        // TODO test CenterNote and CenterSpeaker
-        operatorController.x().onTrue(new CenterNoteCommand());
-        // TODO LL Config Pipeline 1 to see only tags 4 and 7
-        // operatorController.x().onTrue(new CenterSpeakerCommand()); 
+        // TODO LL Test CenterSpeakerCommand()
+        // operatorController.x().onTrue(new CenterSpeakerCommand());
         // Reverse sterilizer (0.2 speed)
         operatorController.y().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().moveBackward(true),

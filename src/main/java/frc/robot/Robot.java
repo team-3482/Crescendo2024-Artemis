@@ -6,13 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.shooter.ShooterSubsystem;
-import frc.robot.utilities.Telemetry;
 import frc.robot.utilities.JSONManager;
+import frc.robot.utilities.Telemetry;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +25,7 @@ import frc.robot.utilities.JSONManager;
  * project.
  */
 public class Robot extends TimedRobot {
+    private Timer timer;
     private Command auton;
     /**
     * This function is run when the robot is first started up and should be used
@@ -41,9 +43,9 @@ public class Robot extends TimedRobot {
             PortForwarder.add(port, LimelightConstants.SHOOTER_LLIGHT + ".local", port);
         }
 
-        // Start telemetry
-        Telemetry.getInstance();
-        addPeriodic(() -> Telemetry.getInstance().publish(), PhysicalConstants.TELEMETRY_LOOP_TIME);
+        // Telemetry
+        this.timer = new Timer();
+        this.timer.start();
     }
 
     /**
@@ -59,6 +61,11 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+
+        if (this.timer.hasElapsed(PhysicalConstants.TELEMETRY_LOOP_TIME)) {
+            this.timer.reset();
+            Telemetry.getInstance().publish();
+        }
     }
 
     /** This function is called once each time the robot enters Disabled mode. */

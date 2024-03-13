@@ -67,7 +67,7 @@ public final class Constants {
         public static final int NEO_MOTOR_ID = 10;
         public static final int LASER_ID = 35;
         /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
-        public static final double FEEDING_SPEED = 0.5;
+        public static final double FEEDING_SPEED = 0.65;
         /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
         public static final double NOTE_DISTANCE_LASER = 150;
         /** The multiplier for centering the note */
@@ -113,7 +113,8 @@ public final class Constants {
         /** Stores all shooter configuration related data */
         public static enum ShooterState{
             INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
-            AMP(false, 65.0, 0.18, 675.0, 25.0),
+            SAFETY_1(false, 45.0, 0.6, 2100.0, 50.0),
+            AMP(false, 65.0, 0.18, 630.0, 25.0),
             SPEAKER(false, 65.0, 0.6, 2100.0, 50.0),
             SPEAKER_CALCULATE(true, null, 0.4, 1800.0, 100.0),
             MANUAL(false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
@@ -167,16 +168,20 @@ public final class Constants {
         public static enum PathfindingPosition {
             SPEAKER,
             AMP,
+            SAFETY_1
         }
 
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
-        public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> IDEAL_TAG_POSITIONS = Map.ofEntries(
+        public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> PATHFIND_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90))))),
+                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90)))
+            )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
-                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))))
+                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))
+                // Map.entry(PathfindingPosition.SAFETY_1, new Pose2d(new Translation2d(13.9, 4.2), Rotation2d.fromDegrees(30)))
+            ))
         );
 
         /** Same orientation as PathPlanner field */
@@ -225,15 +230,10 @@ public final class Constants {
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 1;
-            public static final double KP = 0.65;
+            public static final double KP = 0.8;
             public static final double KI = 0;
             public static final double KD = 0;
         }
-
-        /** The pipeline that sees all tags */
-        public static final int DEFAULT_PIPELINE = 0;
-        /** The pipeline that filters for SPEAKER tags */
-        public static final int SPEAKER_PIPELINE = 1;
     }
 
     /** Constants for autos that use the intake limelight */
@@ -252,7 +252,7 @@ public final class Constants {
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 5;
-            public static final double KP = 0.65;
+            public static final double KP = 0.6;
             public static final double KI = 0;
             public static final double KD = 0;
         };
@@ -266,6 +266,11 @@ public final class Constants {
         public static final String SHOOTER_LLIGHT = "limelight-three";
         /** Name of the back-facing limelight (Intake / Note Detection) */
         public static final String INTAKE_LLIGHT = "limelight-two";
+
+        /** The pipeline that sees all tags */
+        public static final int DEFAULT_PIPELINE = 0;
+        /** The pipeline that filters for SPEAKER tags */
+        public static final int SPEAKER_PIPELINE = 1;
 
         /**
          * Only accept limelight values that differ by these x and y values in meters at
@@ -336,7 +341,7 @@ public final class Constants {
         public static final double SHOOTER_PIVOT_HEIGHT = 0;
 
         /** The loop time in seconds for telemetry */
-        public static final double TELEMETRY_LOOP_TIME = 0.25;
+        public static final double TELEMETRY_LOOP_TIME = 0.5;
     }
 
     /** Constants for the controller and any controller related assignments */

@@ -22,11 +22,9 @@ public class SequencedCommands {
      * @return the command
      */
     public static Command getIntakeCommand() {
-        return Commands.sequence(
-            Commands.parallel(
-                new PivotShooterCommand(ShooterState.INTAKE),
-                new PivotIntakeCommand(IntakeState.INTAKING)
-            ),
+        return Commands.parallel(
+            new PivotShooterCommand(ShooterState.INTAKE),
+            new PivotIntakeCommand(IntakeState.INTAKING),
             new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)
         );
     }
@@ -64,13 +62,13 @@ public class SequencedCommands {
         return Commands.sequence(
             Commands.parallel(
                 new PivotIntakeCommand(IntakeState.INTAKING),
-                new PivotShooterCommand(ShooterState.INTAKE)
+                new PivotShooterCommand(ShooterState.INTAKE),
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
-            Commands.race(
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 
-                new DriveToNoteCommand().withTimeout(5)
-            ),
+            // Commands.race(
+            new DriveToNoteCommand().withTimeout(3),
+            // ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeState.IDLE),
                 new PivotShooterCommand(ShooterState.SPEAKER)

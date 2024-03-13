@@ -55,7 +55,7 @@ public final class PathingCommands {
         }
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         
-        Pose2d targetPose = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(targetPosition);
+        Pose2d targetPose = AutonConstants.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
         
         Command path = AutoBuilder.pathfindToPose(targetPose, PathingCommands.CONSTRAINTS, 0, 0.1);
         path.setName("PathfindCommand");
@@ -81,7 +81,7 @@ public final class PathingCommands {
         
         Pose2d botPose = SwerveSubsystem.getInstance().getPose();
         // The rotation component for endPos is used for the GoalEndState rotation
-        Pose2d endPos = AutonConstants.IDEAL_TAG_POSITIONS.get(alliance.get()).get(targetPosition);
+        Pose2d endPos = AutonConstants.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
         // The travelRotation represents the direction of travel
         Rotation2d travelRotation = endPos.getRotation();
         

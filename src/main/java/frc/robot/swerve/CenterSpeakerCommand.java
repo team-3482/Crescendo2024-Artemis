@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
@@ -34,7 +35,7 @@ public class CenterSpeakerCommand extends Command {
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pid.setTolerance(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        this.pid.setTolerance(Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
         this.pid.enableContinuousInput(0, 360);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
@@ -49,7 +50,7 @@ public class CenterSpeakerCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
-        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, OrbitConstants.SPEAKER_PIPELINE);
+        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.SPEAKER_PIPELINE);
 
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
@@ -57,7 +58,7 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void execute() {
         // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return;
+        if (LimelightSubsystem.getInstance().getTargetID() != 4) return;
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
@@ -78,7 +79,7 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, OrbitConstants.DEFAULT_PIPELINE);
+        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.DEFAULT_PIPELINE);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
         this.pid.close();
     }
@@ -88,7 +89,6 @@ public class CenterSpeakerCommand extends Command {
     */
     @Override
     public boolean isFinished() {
-        return this.pid.atSetpoint();
-        // return this.errorRadians <= Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return this.errorRadians > Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
     }
 }

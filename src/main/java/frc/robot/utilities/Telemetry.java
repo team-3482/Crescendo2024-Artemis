@@ -44,10 +44,9 @@ public class Telemetry {
         return instance;
     }
 
-    /** Runs {@link Telemetry#initialize()} and {@link Telemetry#publish()} once */
+    /** Runs {@link Telemetry#initialize()} once */
     private Telemetry() {
         initialize();
-        publish();
     }
 
     /** Initializes telemetry classes */

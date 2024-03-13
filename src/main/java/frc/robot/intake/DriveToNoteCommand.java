@@ -22,8 +22,6 @@ import frc.robot.swerve.SwerveSubsystem;
 
 /** A command that drives the bot forward until there is a note in the sterilizer or it times out. */
 public class DriveToNoteCommand extends Command {
-    private final String LIMELIGHT = LimelightConstants.INTAKE_LLIGHT;
-
     private final SlewRateLimiter driveLimiter;
     private final SlewRateLimiter turningLimiter;
     private PIDController pidController;
@@ -47,7 +45,7 @@ public class DriveToNoteCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT)) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
@@ -60,12 +58,18 @@ public class DriveToNoteCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT);
         double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
-
+        
         double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         double drivingSpeed = driveLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
             * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        
+        if (!hasTarget) {
+            turningSpeed = 0;
+            drivingSpeed /= 3;
+        }
         
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(drivingSpeed, 0, turningSpeed);
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
@@ -76,12 +80,7 @@ public class DriveToNoteCommand extends Command {
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
         pidController.close();
-        if (interrupted) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-        }
-        else {
-            LEDSubsystem.getInstance().setLightState(LightState.OFF);
-        }
+        LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     // Returns true when the command should end.
