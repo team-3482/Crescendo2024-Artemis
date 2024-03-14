@@ -11,7 +11,7 @@ import frc.robot.intake.DriveToNoteCommand;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
-import frc.robot.shooter.ShootCommand;
+import frc.robot.shooter.RevUpCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 
 /** A class that stores command chains for use elsewhere */
@@ -85,7 +85,7 @@ public class SequencedCommands {
         return Commands.sequence(
             new CenterSpeakerCommand(),
             new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE),
-            new ShootCommand(ShooterState.SPEAKER_CALCULATE)
+            new RevUpCommand(ShooterState.SPEAKER_CALCULATE)
         );
     }
 }

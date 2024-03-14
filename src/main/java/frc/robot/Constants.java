@@ -112,6 +112,7 @@ public final class Constants {
 
         /** Stores all shooter configuration related data */
         public static enum ShooterState{
+            FRONT_EJECT(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 1.0, 200.0, 0.0),
             INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
             SAFETY_1(false, 45.0, 0.6, 2100.0, 50.0),
             AMP(false, 65.0, 0.18, 630.0, 25.0),
@@ -304,9 +305,9 @@ public final class Constants {
          * basically the top speed reachable.
          * <p> This value should be lower than {@code PHYSICAL_MAX_MODULE_SPEED}. </p>
          */
-        public static final double DRIVE_SPEED_COEFFICENT = 4;
+        public static final double DRIVE_SPEED_COEFFICENT = 3;
         /** The rate of change limit in units per second for driving limiters (x and y) */
-        public static final double DRIVE_SLEW_RATE_LIMIT = 1;
+        public static final double DRIVE_SLEW_RATE_LIMIT = 1.75;
 
         /** Multiplies joystick and turning input by the specified coefficient */
         public static final double FINE_CONTROL_COEFFICENT = 0.25;
@@ -341,7 +342,7 @@ public final class Constants {
         public static final double SHOOTER_PIVOT_HEIGHT = 0;
 
         /** The loop time in seconds for telemetry */
-        public static final double TELEMETRY_LOOP_TIME = 0.5;
+        public static final double TELEMETRY_LOOP_TIME = 0.25;
     }
 
     /** Constants for the controller and any controller related assignments */

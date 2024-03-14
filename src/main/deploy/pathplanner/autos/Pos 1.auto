@@ -6,21 +6,33 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Pos 1 - Note 1"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0
+            "name": "Collect Note NOCENTER"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Note 1 - Outside Community"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Collect Note NOCENTER"
           }
         }
       ]

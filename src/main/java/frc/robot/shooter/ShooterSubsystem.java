@@ -98,6 +98,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param angle in degrees
      */
     public void resetPivotPosition(double angle) {
+        JSONManager.getInstance().saveShooterPivotPositions(angle);
         double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
         leftPivotMotor.setPosition(position);
         rightPivotMotor.setPosition(position);

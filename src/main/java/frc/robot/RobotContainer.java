@@ -131,6 +131,7 @@ public class RobotContainer {
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
+            ShooterSubsystem.getInstance().setShootingVelocities();
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
         // Zeroing functions
@@ -161,6 +162,7 @@ public class RobotContainer {
         // Cancel all scheduled commands and turn off LEDs
         operatorController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
+            ShooterSubsystem.getInstance().setShootingVelocities();
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
 
@@ -193,6 +195,17 @@ public class RobotContainer {
             () -> IntakeSubsystem.getInstance().setIntakeSpeed(-IntakeConstants.INTAKE_SPEED / 2),
             () -> IntakeSubsystem.getInstance().setIntakeSpeed(0)
         ));
+        // Front eject
+        operatorController.start().onTrue(Commands.parallel(
+                new ShootCommand(ShooterState.FRONT_EJECT).withTimeout(2),
+                Commands.runOnce(() -> SterilizerSubsystem.getInstance().moveForward(false))
+            ))
+            .onFalse(
+                Commands.runOnce(() -> {
+                    ShooterSubsystem.getInstance().setShootingVelocities();
+                    SterilizerSubsystem.getInstance().moveStop();
+                })
+            );
         
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(

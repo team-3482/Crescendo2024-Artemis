@@ -65,7 +65,7 @@ public class Telemetry {
     private class AdvantageScopeTelemetry {
         private AdvantageScopeTelemetry() {}
 
-        /** Publishes all one-time AdvantageScope telemetry */
+        /** Publishes all static AdvantageScope telemetry */
         public static void initialize() {}
             
         /** Publishes all AdvantageScope telemetry */
@@ -103,7 +103,7 @@ public class Telemetry {
     private class ShuffleboardTelemetry {
         private ShuffleboardTelemetry() {}
 
-        /** Publishes all one-time Shuffleboard telemetry */
+        /** Publishes all static Shuffleboard telemetry */
         public static void initialize() {
             // IntakeSubsystem
             ShuffleboardLayout intakeSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
@@ -148,7 +148,7 @@ public class Telemetry {
                 .withWidget(BuiltInWidgets.kCommand);
             shooterSubsystemLayout.add("Reset Position Higher Limit",
                 Commands.runOnce(() -> {
-                    ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0]);
+                    ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
                 }).ignoringDisable(true).withName(ShooterConstants.PIVOT_ANGLE_LIMITS[1] + " deg"))
                 .withPosition(0, 2)
                 .withWidget(BuiltInWidgets.kCommand);
@@ -158,7 +158,6 @@ public class Telemetry {
                 }).ignoringDisable(true).withName(90 + " deg"))
                 .withWidget(BuiltInWidgets.kCommand);
             
-            // TODO
             // SwerveSubsystem layout for change starting position
             ShuffleboardLayout swerveSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
                 .getLayout("Swerve Subsystem", BuiltInLayouts.kList)
@@ -208,26 +207,42 @@ public class Telemetry {
                 .withPosition(9, 1)
                 .withSize(6, 3)
                 .withProperties(Map.of("Show Crosshair", false, "Show Controls", false));
-            
-            
         }
+
+        /** Keeps track of which item to publish next */
+        private static int index = 0;
 
         /** Publishes all Shuffleboard telemetry */
         public static void publish() {
-            // IntakeSubsystem
-            DEFAULT_INTAKE_PIVOT_POSITION.setString(D_FORMAT.format(IntakeSubsystem.getInstance().getPivotPosition()));
+            switch (index) {
+                case 0: {
+                    // IntakeSubsystem
+                    DEFAULT_INTAKE_PIVOT_POSITION.setString(D_FORMAT.format(IntakeSubsystem.getInstance().getPivotPosition()));
+                    break;
+                }
 
-            // ShooterSubsystem
-            double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
-            DEFAULT_SHOOTER_PIVOT_POSITIONS.setString("Left    " + D_FORMAT.format(pos[0]) + "    ||    " + D_FORMAT.format(pos[1]) + "    Right");
+                case 1: {
+                    // ShooterSubsystem
+                    double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
+                    DEFAULT_SHOOTER_PIVOT_POSITIONS.setString("Left    " + D_FORMAT.format(pos[0]) + "    ||    " + D_FORMAT.format(pos[1]) + "    Right");
+                    break;
+                }
 
-            // Swerve Subsystem
-            SwerveSubsystem swerveSubsystem = SwerveSubsystem.getInstance();
-            DEFAULT_GYRO_HEADING.setDouble(swerveSubsystem.getHeading());
+                case 2: {
+                    // Swerve Subsystem
+                    DEFAULT_GYRO_HEADING.setDouble(SwerveSubsystem.getInstance().getHeading());
+                    break;
+                }
 
-            // LimelightSubsystem
-            DEFAULT_LIMELIGHT_ODOMETRY.setBoolean(swerveSubsystem.usingLimelightOdometry());
-            DEFAULT_LIMELIGHT_TARGET_ID.setInteger(LimelightSubsystem.getInstance().getTargetID());
+                case 3: {
+                    // LimelightSubsystem
+                    DEFAULT_LIMELIGHT_ODOMETRY.setBoolean(SwerveSubsystem.getInstance().usingLimelightOdometry());
+                    DEFAULT_LIMELIGHT_TARGET_ID.setInteger(LimelightSubsystem.getInstance().getTargetID());
+                    break;
+                }
+            }
+            
+            index = index == 3 ? 0 : index + 1;
         }
 
         /** What to round decimal values to on Shuffleboard */
