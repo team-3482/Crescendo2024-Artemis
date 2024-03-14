@@ -22,6 +22,7 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.limelight.LimelightHelpers;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.utilities.SwerveUtilities;
 import frc.robot.utilities.Telemetry;
@@ -269,16 +270,26 @@ public class SwerveSubsystem extends SubsystemBase {
     private boolean updateOdometryUsingVision() {
         // TODO use LL vision with lower trust
         if (true || !LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
-
-        Pose2d botpose = new Pose2d(
+        
+        public void updatePoseEstimatorWithVisionBotPose() {
+            double limelightLatency = LimelightSubsystem.getInstance().getLatency(LimelightConstants.SHOOTER_LLIGHT);
+        Pose2d limelightBotpose = new Pose2d(
             LimelightSubsystem.getInstance().getBotpose().getTranslation(),
             Rotation2d.fromDegrees(getHeading())
         );
-        Pose2d relative = botpose.relativeTo(getPose());
+        
+        // Invalid data
+        if (limelightBotpose.getX() == 0.0) return false;
+
+        double poseDifference = getPose().getTranslation().getDistance(limelightBotpose.getTranslation());
+
+        if ()
+
+        Pose2d relative = limelightBotpose.relativeTo(getPose());
         if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
             && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
             this.odometer.addVisionMeasurement(
-                botpose, Timer.getFPGATimestamp()
+                limelightBotpose, Timer.getFPGATimestamp()
                 - LimelightSubsystem.getInstance().getLatency(LimelightConstants.SHOOTER_LLIGHT));
             return true;
         }

@@ -33,11 +33,11 @@ public class RevUpCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        if (this.state.calculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
+        if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
             end(true);
         }
 
-        this.invertSpin = !this.state.calculateAngle()
+        this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
                 false : true;
         double[] speeds = this.state.getSpeeds(this.invertSpin);

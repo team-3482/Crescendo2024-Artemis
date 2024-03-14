@@ -123,6 +123,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("Collect Note NOCENTER",
             SequencedCommands.getCollectNoteCommandNoCenter());
         
+        NamedCommands.registerCommand("IntakeEject NOEND",
+            SequencedCommands.getIntakeEjectCommand());
         // Shoot
         NamedCommands.registerCommand("Rev Up SPEAKER",
             new RevUpCommand(ShooterState.SPEAKER));

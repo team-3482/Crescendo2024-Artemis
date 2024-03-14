@@ -112,30 +112,35 @@ public final class Constants {
 
         /** Stores all shooter configuration related data */
         public static enum ShooterState{
-            FRONT_EJECT(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 1.0, 200.0, 0.0),
-            INTAKE(false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
-            SAFETY_1(false, 45.0, 0.6, 2100.0, 50.0),
-            AMP(false, 65.0, 0.18, 630.0, 25.0),
-            SPEAKER(false, 65.0, 0.6, 2100.0, 50.0),
-            SPEAKER_CALCULATE(true, null, 0.4, 1800.0, 100.0),
-            MANUAL(false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
+            FRONT_EJECT(false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 1.0, 200.0, 0.0),
+            INTAKE(false, true, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
+            SAFETY_1(false, true, 45.0, 0.6, 2100.0, 50.0),
+            AMP(false, true, 65.0, 0.18, 630.0, 25.0),
+            SPEAKER(false, true, 65.0, 0.6, 2100.0, 50.0),
+            SPEAKER_CALCULATE(true, true, null, 0.4, 1800.0, 100.0),
+            MANUAL(false, false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
             ;
 
             boolean calculateAngle;
+            boolean autoEndShooting;
             Double positionAngle;
             Double highSpeed;
             Double highRPM;
             Double allowedError;
 
-            private ShooterState(boolean calculateAngle, Double angle, Double highSpeed, Double highRPM, Double allowedError) {
+            private ShooterState(boolean calculateAngle, boolean autoEndShooting, Double angle, Double highSpeed, Double highRPM, Double allowedError) {
                 this.calculateAngle = calculateAngle;
+                this.autoEndShooting = autoEndShooting;
                 this.positionAngle = angle;
                 this.highSpeed = highSpeed;
                 this.highRPM = highRPM;
                 this.allowedError = allowedError;
             }
-            public boolean calculateAngle() {
+            public boolean getCalculateAngle() {
                 return this.calculateAngle;
+            }
+            public boolean getAutoEndShooting() {
+                return this.autoEndShooting;
             }
             public double getAngle() {
                 return this.positionAngle;

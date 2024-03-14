@@ -12,6 +12,7 @@ import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
 import frc.robot.shooter.RevUpCommand;
+import frc.robot.shooter.ShootCommand;
 import frc.robot.swerve.CenterSpeakerCommand;
 
 /** A class that stores command chains for use elsewhere */
@@ -86,6 +87,18 @@ public class SequencedCommands {
             new CenterSpeakerCommand(),
             new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE),
             new RevUpCommand(ShooterState.SPEAKER_CALCULATE)
+        );
+    }
+
+    /**
+     * Creates a command that shoots notes immediately after picking them up and doesn't close the intake
+     * 
+     * @return the command
+     */
+    public static Command getIntakeEjectCommand() {
+        return Commands.parallel(
+            new PivotIntakeCommand(IntakeState.INTAKING),
+            new ShootCommand(ShooterState.FRONT_EJECT)
         );
     }
 }

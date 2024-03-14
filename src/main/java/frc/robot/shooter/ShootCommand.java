@@ -36,12 +36,12 @@ public class ShootCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        if (this.state.calculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
+        if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
             end(true);
         }
         this.finished = false;
 
-        this.invertSpin = !this.state.calculateAngle()
+        this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
                 false : true;
         ShooterSubsystem.getInstance().setShootingVelocities(this.state.getSpeeds(this.invertSpin));
@@ -64,7 +64,7 @@ public class ShootCommand extends Command {
 
         Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
         SterilizerSubsystem.getInstance().moveForward(false);
-        if (this.state == ShooterState.MANUAL) return;
+        if (!this.state.getAutoEndShooting()) return;
         if (!hasNote.isPresent()) {
             Timer.delay(2.5);
             this.finished = true;
@@ -89,6 +89,6 @@ public class ShootCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.state == ShooterState.MANUAL ? false : this.finished;
+        return this.state.getAutoEndShooting() ? this.finished : false;
     }
 }
