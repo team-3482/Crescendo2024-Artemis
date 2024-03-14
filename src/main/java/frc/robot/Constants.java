@@ -166,8 +166,22 @@ public final class Constants {
         public static final double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static final double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT / 3;
 
+        /** Initial bot positions used for initializing odometry, blue-alliance relative */
+        public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
+                Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
+                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
+                Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(120))))),
+            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
+                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(120))),
+                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
+                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(-120)))))
+        );
+
         public static enum PathfindingPosition {
-            SPEAKER,
+            SPEAKER_TOP,
+            SPEAKER_MIDDLE,
+            SPEAKER_BOTTOM,
             AMP,
             SAFETY_1
         }
@@ -175,12 +189,17 @@ public final class Constants {
         /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> PATHFIND_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
+                Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.TOP.getLocation())),
+                Map.entry(PathfindingPosition.SPEAKER_MIDDLE, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.MIDDLE.getLocation())),
+                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.MIDDLE.getLocation())),
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
+                Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.TOP.getLocation())),
+                Map.entry(PathfindingPosition.SPEAKER_MIDDLE, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.MIDDLE.getLocation())),
+                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.MIDDLE.getLocation())),
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
-                Map.entry(PathfindingPosition.SPEAKER, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))
+                Map.entry(PathfindingPosition.SPEAKER_MIDDLE, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))
                 // Map.entry(PathfindingPosition.SAFETY_1, new Pose2d(new Translation2d(13.9, 4.2), Rotation2d.fromDegrees(30)))
             ))
         );
@@ -210,19 +229,6 @@ public final class Constants {
                 return new StartingPositions[]{TOP, MIDDLE, BOTTOM, AUTO};
             }
         }
-
-        /** Initial bot positions used for initializing odometry, blue-alliance relative */
-        public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
-            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
-                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(120))))),
-            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(120))),
-                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(-120)))))
-        );
-
     }
 
     /** Constants used for orbiting April Tags */

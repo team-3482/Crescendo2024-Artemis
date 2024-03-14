@@ -101,10 +101,14 @@ public class RobotContainer {
     /** Register all NamedCommands for PathPlanner use */
     private void registerNamedCommands() {
         // Pathing
-        NamedCommands.registerCommand("Pathfind SPEAKER",
-            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER));
         NamedCommands.registerCommand("Pathfind AMP",
             PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
+        NamedCommands.registerCommand("Pathfind SPEAKER_TOP",
+            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_TOP));
+        NamedCommands.registerCommand("Pathfind SPEAKER_MIDDLE",
+            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE));
+        NamedCommands.registerCommand("Pathfind SPEAKER_BOTTOM",
+            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_BOTTOM));
         // NamedCommands.registerCommand("Bezier SPEAKER",
         //     PathingCommands.getBezierCommand(PathfindingPosition.SPEAKER));
         // NamedCommands.registerCommand("Bezier AMP",
@@ -156,7 +160,7 @@ public class RobotContainer {
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands
-        driveController.x().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER));
+        driveController.x().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE));
         driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
         // driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SAFETY_1));
     }
