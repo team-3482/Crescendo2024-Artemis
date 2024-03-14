@@ -26,6 +26,7 @@ import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
@@ -119,6 +120,10 @@ public class RobotContainer {
             SequencedCommands.getCollectNoteCommandNoCenter());
         
         // Shoot
+        NamedCommands.registerCommand("Rev Up SPEAKER",
+            new RevUpCommand(ShooterState.SPEAKER));
+        NamedCommands.registerCommand("Rev Up AMP",
+            new RevUpCommand(ShooterState.AMP));
         NamedCommands.registerCommand("Shoot SPEAKER",
             new ShootCommand(ShooterState.SPEAKER));
         NamedCommands.registerCommand("Shoot AMP",
