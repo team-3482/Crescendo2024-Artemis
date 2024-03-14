@@ -23,39 +23,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // Field2d limelight_field = new Field2d();
 
-    
-    // private GenericEntry SB_D_NSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-    //     .add("NOTE-SEE", false)
-    //     .withWidget(BuiltInWidgets.kBooleanBox)
-    //     .withPosition(3, 0)
-    //     .withSize(3, 3)
-    //     .getEntry();
-    // private GenericEntry SB_D_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
-    //     .add("TAG-SEE", false)
-    //     .withWidget(BuiltInWidgets.kBooleanBox)
-    //     .withPosition(6, 0)
-    //     .withSize(3, 3)
-    //     .getEntry();
-
-    // private GenericEntry SB_F_TID = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-    //     .add("T-ID", 0)
-    //     .withWidget(BuiltInWidgets.kTextView)
-    //     .withPosition(14, 4)
-    //     .withSize(2, 1)
-    //     .getEntry();
-    // private GenericEntry SB_F_TSEE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-    //     .add("TAG-SEE", false)
-    //     .withWidget(BuiltInWidgets.kBooleanBox)
-    //     .withPosition(14, 0)
-    //     .withSize(2, 2)
-    //     .getEntry();
-    // private GenericEntry SB_F_TUPDATE = Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-    //     .add("ADD-VISION", false)
-    //     .withWidget(BuiltInWidgets.kBooleanBox)
-    //     .withPosition(14, 2)
-    //     .withSize(2, 2)
-    //     .getEntry();
-
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
         super("LimelightSubsystem");
@@ -125,6 +92,16 @@ public class LimelightSubsystem extends SubsystemBase {
     public Pose2d getBotpose() {
         // return new Pose2d();
         return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.SHOOTER_LLIGHT);
+    }
+
+    /**
+     * Gets the amount of April Tags in view
+     * (using LimelightConstants.SHOOTER_LLight)
+     * 
+     * @return amount of April Tags in view
+     */
+    public int getVisibleTags() {
+        return (int) LimelightHelpers.getBotPose_wpiBlue(LimelightConstants.SHOOTER_LLIGHT)[7];
     }
 
     /**

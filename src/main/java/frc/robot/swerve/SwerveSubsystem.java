@@ -7,6 +7,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -263,34 +265,62 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     /**
-     * Calculates the necessary updates for the odometer
+     * Calculates the necessary updates for the odometer.
+     * @see https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
      * 
      * @return whether or not it updated
      */
     private boolean updateOdometryUsingVision() {
+        if (true) return false;
         // TODO use LL vision with lower trust
-        if (true || !LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return false;
-        
-        public void updatePoseEstimatorWithVisionBotPose() {
-            double limelightLatency = LimelightSubsystem.getInstance().getLatency(LimelightConstants.SHOOTER_LLIGHT);
-        Pose2d limelightBotpose = new Pose2d(
-            LimelightSubsystem.getInstance().getBotpose().getTranslation(),
-            Rotation2d.fromDegrees(getHeading())
-        );
-        
-        // Invalid data
-        if (limelightBotpose.getX() == 0.0) return false;
+        // Translation X, Y, Z
+        // Rotation Roll, Pitch, Yaw
+        // Total Latency (cl + tl)
+        // Tag count, span, average distance, average area
+        double[] rawLimelightData = LimelightHelpers.getBotPose_wpiBlue(LimelightConstants.SHOOTER_LLIGHT);
 
+        // No valid targets
+        if (rawLimelightData.length == 0 || rawLimelightData[0] == 0.0) return false;
+        
+        Pose2d limelightBotpose = new Pose2d(
+            new Translation2d(rawLimelightData[0], rawLimelightData[1]),
+            Rotation2d.fromDegrees(rawLimelightData[5])
+        );
         double poseDifference = getPose().getTranslation().getDistance(limelightBotpose.getTranslation());
 
-        if ()
+        // Any targets detected
+        if (rawLimelightData[7] > 0) {
+            double xyStds;
+            double degStds;
+            
+            // Two or more targets detected
+            if (rawLimelightData[7] >= 2) {
+                xyStds = 0.5;
+                degStds = 6;
+            }
+            // 1 target with large area and good accuracy
+            else if (rawLimelightData[10] > 0.8 && poseDifference < 0.5) {
+                xyStds = 1.0;
+                degStds = 12;
+            }
+            // 1 far target but with good accuracy
+            else if (rawLimelightData[10] > 0.1 && poseDifference < 0.3) {
+                xyStds = 2.0;
+                degStds = 30;
+            }
+            // Not trustworthy enough
+            else {
+                return false;
+            }
 
-        Pose2d relative = limelightBotpose.relativeTo(getPose());
-        if (Math.abs(relative.getX()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[0]
-            && Math.abs(relative.getY()) <= LimelightConstants.ODOMETRY_ALLOWED_ERROR_METERS[1]) {
+            this.odometer.setVisionMeasurementStdDevs(
+                VecBuilder.fill(xyStds, degStds, Units.degreesToRadians(degStds))
+            );
             this.odometer.addVisionMeasurement(
-                limelightBotpose, Timer.getFPGATimestamp()
-                - LimelightSubsystem.getInstance().getLatency(LimelightConstants.SHOOTER_LLIGHT));
+                limelightBotpose, 
+                Timer.getFPGATimestamp() - rawLimelightData[6] / 1000.0
+            );
+
             return true;
         }
         return false;

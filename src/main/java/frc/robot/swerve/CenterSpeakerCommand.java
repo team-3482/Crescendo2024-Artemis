@@ -4,10 +4,14 @@
 
 package frc.robot.swerve;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OrbitConstants;
@@ -49,15 +53,20 @@ public class CenterSpeakerCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
-        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.SPEAKER_PIPELINE);
-
+        // LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.SPEAKER_PIPELINE);
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        // Target 4 when blue or when no alliance is found, or 7 otherwise
+        LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
+            alliance.isPresent() && alliance.get() == Alliance.Red ? 7 : 4
+        );
+        
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     @Override
     public void execute() {
         // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
-        if (LimelightSubsystem.getInstance().getTargetID() != 4) return;
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return;
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
@@ -78,7 +87,7 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.DEFAULT_PIPELINE);
+        // LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.DEFAULT_PIPELINE);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
         this.pid.close();
     }

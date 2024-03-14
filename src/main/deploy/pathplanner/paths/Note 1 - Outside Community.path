@@ -50,6 +50,9 @@
   },
   "reversed": false,
   "folder": "Pos 1 (Bottom)",
-  "previewStartingState": null,
+  "previewStartingState": {
+    "rotation": -60.0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }

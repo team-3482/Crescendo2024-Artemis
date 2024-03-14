@@ -111,11 +111,11 @@ public final class Constants {
         public static final int MOTION_MAGIC_JERK = 1600;
 
         /** Stores all shooter configuration related data */
-        public static enum ShooterState{
+        public static enum ShooterState {
             FRONT_EJECT(false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 1.0, 200.0, 0.0),
             INTAKE(false, true, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
             SAFETY_1(false, true, 45.0, 0.6, 2100.0, 50.0),
-            AMP(false, true, 65.0, 0.18, 630.0, 25.0),
+            AMP(false, true, 65.0, 0.19, 625.0, 25.0),
             SPEAKER(false, true, 65.0, 0.6, 2100.0, 50.0),
             SPEAKER_CALCULATE(true, true, null, 0.4, 1800.0, 100.0),
             MANUAL(false, false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
@@ -174,13 +174,13 @@ public final class Constants {
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(0.69, 6.69), Rotation2d.fromDegrees(-120))),
+                Map.entry(3, new Pose2d(new Translation2d(0.75, 6.66), Rotation2d.fromDegrees(-60))),
                 Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(0.69, 4.40), Rotation2d.fromDegrees(120))))),
+                Map.entry(1, new Pose2d(new Translation2d(0.75, 4.45), Rotation2d.fromDegrees(60))))),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(120))),
+                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(-60))),
                 Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(-120)))))
+                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(60)))))
         );
 
         public static enum PathfindingPosition {
@@ -196,15 +196,14 @@ public final class Constants {
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
                 Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.TOP.getLocation())),
                 Map.entry(PathfindingPosition.SPEAKER_MIDDLE, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.MIDDLE.getLocation())),
-                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.MIDDLE.getLocation())),
+                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.BOTTOM.getLocation())),
                 Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90)))
             )),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
                 Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.TOP.getLocation())),
                 Map.entry(PathfindingPosition.SPEAKER_MIDDLE, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.MIDDLE.getLocation())),
-                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.MIDDLE.getLocation())),
-                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90))),
-                Map.entry(PathfindingPosition.SPEAKER_MIDDLE, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180)))
+                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.BOTTOM.getLocation())),
+                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90)))
                 // Map.entry(PathfindingPosition.SAFETY_1, new Pose2d(new Translation2d(13.9, 4.2), Rotation2d.fromDegrees(30)))
             ))
         );
@@ -283,12 +282,6 @@ public final class Constants {
         public static final int DEFAULT_PIPELINE = 0;
         /** The pipeline that filters for SPEAKER tags */
         public static final int SPEAKER_PIPELINE = 1;
-
-        /**
-         * Only accept limelight values that differ by these x and y values in meters at
-         * most from the internal odometer
-         */
-        public static final double[] ODOMETRY_ALLOWED_ERROR_METERS = new double[] {1, 1};
     }
 
     /** Constants for the kinematics and driving of the swerve system */
