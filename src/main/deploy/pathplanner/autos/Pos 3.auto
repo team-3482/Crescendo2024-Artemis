@@ -6,15 +6,46 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Pos 3 - Note 3"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0
+            "name": "Collect Note NOCENTER"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pathfind SPEAKER_TOP"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FixNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot SPEAKER"
+                }
+              }
+            ]
           }
         },
         {

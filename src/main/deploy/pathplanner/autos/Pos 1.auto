@@ -24,6 +24,31 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Pathfind SPEAKER_BOTTOM"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FixNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot SPEAKER"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Note 1 - Outside Community"
