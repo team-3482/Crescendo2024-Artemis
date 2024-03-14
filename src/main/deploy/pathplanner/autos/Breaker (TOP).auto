@@ -1,0 +1,50 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Breaker Path 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Breaker Path 2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Breaker Path 2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeEject NOEND"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
