@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Breaker Path 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Breaker Path 2"
+            "pathName": "Top Breaker Path 1"
           }
         },
         {
@@ -30,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Breaker Path 2"
+                  "pathName": "Top Breaker Path 2"
                 }
               },
               {

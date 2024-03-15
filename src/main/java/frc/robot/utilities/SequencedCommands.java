@@ -63,13 +63,13 @@ public class SequencedCommands {
         return Commands.sequence(
             Commands.parallel(
                 new PivotIntakeCommand(IntakeState.INTAKING),
-                new PivotShooterCommand(ShooterState.INTAKE),
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)
+                new PivotShooterCommand(ShooterState.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
-            // Commands.race(
-            new DriveToNoteCommand().withTimeout(3),
-            // ),
+            Commands.race(
+                new DriveToNoteCommand().withTimeout(5),
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)
+            ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeState.IDLE),
                 new PivotShooterCommand(ShooterState.SPEAKER)

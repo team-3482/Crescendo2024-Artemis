@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pos 1 - Note 1"
+            "pathName": "Bottom - Note Bottom"
           }
         },
         {
@@ -51,13 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 1 - Outside Community"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Collect Note NOCENTER"
+            "pathName": "Bottom - Outside Community"
           }
         }
       ]

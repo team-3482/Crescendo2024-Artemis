@@ -178,9 +178,9 @@ public final class Constants {
                 Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
                 Map.entry(1, new Pose2d(new Translation2d(0.75, 4.45), Rotation2d.fromDegrees(300))))),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(60))),
+                Map.entry(3, new Pose2d(new Translation2d(15.8, 6.66), Rotation2d.fromDegrees(60))),
                 Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(300)))))
+                Map.entry(1, new Pose2d(new Translation2d(15.8, 4.50), Rotation2d.fromDegrees(300)))))
         );
 
         public static enum PathfindingPosition {
@@ -254,7 +254,7 @@ public final class Constants {
         /** The rate limit in units per second for driving in orbit mode (x and y) */
         public static final double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
         /** The input speed the bot should have when driving to a note (between 0.0 and 1.0) */
-        public static final double NOTE_DRIVE_INPUT_SPEED = 0.25;
+        public static final double NOTE_DRIVE_INPUT_SPEED = (double) 1 / 3;
 
         /** Time limit for the centering command in seconds */
         public static final double CENTERING_TIMEOUT = 1.5;

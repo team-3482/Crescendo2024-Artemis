@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pos 3 - Note 3"
+            "pathName": "Top - Top Note"
           }
         },
         {
@@ -51,7 +51,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note 3 - Outside Community"
+            "pathName": "Top - Outside Community"
           }
         }
       ]

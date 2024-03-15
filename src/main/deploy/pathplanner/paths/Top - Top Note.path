@@ -30,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.25,
+      "waypointRelativePos": 0.15,
       "rotationDegrees": 60.0,
       "rotateFast": false
     }
@@ -49,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Pos 3 (Top)",
+  "folder": "Pos Top",
   "previewStartingState": {
     "rotation": 60.0,
     "velocity": 0
