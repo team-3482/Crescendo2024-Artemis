@@ -25,6 +25,7 @@ import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
+import frc.robot.shooter.ManuallyPivotShooterCommand;
 import frc.robot.shooter.PivotShooterCommand;
 import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
@@ -62,18 +63,6 @@ public class RobotContainer {
         initializeSubsystems();
         // Register named commands for pathplanner (do this after subsystem initialization)
         registerNamedCommands();
-            
-        // Sets the default command to driving swerve
-        SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
-            () -> -driveController.getLeftY(),
-            () -> -driveController.getLeftX(),
-            () -> -driveController.getRightX(),
-            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
-            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
-            // D-Pad / POV movement
-            ControllerConstants.DPAD_DRIVE_INPUT,
-            (Integer angle) -> driveController.pov(angle).getAsBoolean()
-        ));
 
         configureDriverBindings();
         configureOperatorBindings();
@@ -138,7 +127,17 @@ public class RobotContainer {
 
     /** Configures the button bindings of the driver controller */
     private void configureDriverBindings() {
-        // Driver controller
+        // Sets the default command to driving swerve
+        SwerveSubsystem.getInstance().setDefaultCommand(new SwerveDriveCommand(
+            () -> -driveController.getLeftY(),
+            () -> -driveController.getLeftX(),
+            () -> -driveController.getRightX(),
+            () -> !(driveController.getHID().getLeftTriggerAxis() >= 0.5),
+            () -> driveController.getHID().getRightTriggerAxis() >= 0.5,
+            // D-Pad / POV movement
+            ControllerConstants.DPAD_DRIVE_INPUT,
+            (Integer angle) -> driveController.pov(angle).getAsBoolean()
+        ));
         // Cancel all scheduled commands and turn off LEDs
         driveController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
@@ -169,7 +168,11 @@ public class RobotContainer {
 
     /** Configures the button bindings of the driver controller */
     private void configureOperatorBindings() {
-        // Operator controller
+        ShooterSubsystem.getInstance().setDefaultCommand(new ManuallyPivotShooterCommand(
+            () -> -operatorController.getLeftY(),
+            () -> -operatorController.getRightY(),
+            false
+        ));
         // Cancel all scheduled commands and turn off LEDs
         operatorController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
@@ -188,10 +191,10 @@ public class RobotContainer {
             new ShootCommand(ShooterState.AMP)
         ));
         // Shoot SAFETY
-        operatorController.x().whileTrue(Commands.sequence(
-            new PivotShooterCommand(ShooterState.SAFETY_1),
-            new ShootCommand(ShooterState.SAFETY_1)
-        ));
+        // operatorController.x().whileTrue(Commands.sequence(
+        //     new PivotShooterCommand(ShooterState.SAFETY_1),
+        //     new ShootCommand(ShooterState.SAFETY_1)
+        // ));
         // Run SHOOTER automatically
         // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
         // TODO LL Test CenterSpeakerCommand()
@@ -206,8 +209,8 @@ public class RobotContainer {
             () -> IntakeSubsystem.getInstance().setIntakeSpeed(-IntakeConstants.INTAKE_SPEED / 2),
             () -> IntakeSubsystem.getInstance().setIntakeSpeed(0)
         ));
-        // Front eject
-        operatorController.start().onTrue(Commands.parallel(
+        // Front eject (double rectangle)
+        operatorController.back().onTrue(Commands.parallel(
                 new ShootCommand(ShooterState.FRONT_EJECT).withTimeout(2),
                 Commands.runOnce(() -> SterilizerSubsystem.getInstance().moveForward(false))
             ))
@@ -217,6 +220,11 @@ public class RobotContainer {
                     SterilizerSubsystem.getInstance().moveStop();
                 })
             );
+        // Move sterilizer forward (burger)
+        operatorController.back().whileTrue(Commands.runEnd(
+            () -> SterilizerSubsystem.getInstance().moveForward(false),
+            () -> SterilizerSubsystem.getInstance().moveStop()
+        ));
         
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(

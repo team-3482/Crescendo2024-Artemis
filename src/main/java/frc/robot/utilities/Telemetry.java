@@ -173,14 +173,17 @@ public class Telemetry {
                 }
             }
             PITTING_STARTING_POSITION.onChange((StartingPositions position) -> {
-                SwerveSubsystem.getInstance().setPose(SwerveUtilities.getStartingPose(position));
-            });
+                    Pose2d startingPose = SwerveUtilities.getStartingPose(PITTING_STARTING_POSITION.getSelected());
+                    SwerveSubsystem.getInstance().setHeading(startingPose.getRotation().getDegrees());
+                    SwerveSubsystem.getInstance().setPose(startingPose);            });
             swerveSubsystemLayout.add("Starting Position", PITTING_STARTING_POSITION)
                 .withWidget(BuiltInWidgets.kComboBoxChooser);
             // Re-set chosen position
             swerveSubsystemLayout.add("Set Starting Position",
                 Commands.runOnce(() -> {
-                    SwerveSubsystem.getInstance().setPose(SwerveUtilities.getStartingPose(PITTING_STARTING_POSITION.getSelected()));
+                    Pose2d startingPose = SwerveUtilities.getStartingPose(PITTING_STARTING_POSITION.getSelected());
+                    SwerveSubsystem.getInstance().setHeading(startingPose.getRotation().getDegrees());
+                    SwerveSubsystem.getInstance().setPose(startingPose);
                 }).ignoringDisable(true).withName("Set Again"))
                 .withWidget(BuiltInWidgets.kCommand);
             

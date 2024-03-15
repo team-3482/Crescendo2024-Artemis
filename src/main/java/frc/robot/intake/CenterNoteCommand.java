@@ -85,7 +85,6 @@ public class CenterNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.pid.atSetpoint();
-        // return this.errorRadians <= Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return this.errorRadians <= Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
     }
 }

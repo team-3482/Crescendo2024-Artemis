@@ -103,6 +103,11 @@ public final class Constants {
             public static final double kD = 0.1;
         }
 
+        /** PID for the Shooter wheeels */
+        public static final double kP = 0.001;
+        /** Feed forward for the Shooter wheels */
+        public static final double kFF = 0.00026;
+
         /** Cruise velocity in rps */
         public static final int CRUISE_SPEED = 80;
         /** Acceleration in rps/s */
@@ -112,27 +117,28 @@ public final class Constants {
 
         /** Stores all shooter configuration related data */
         public static enum ShooterState {
-            FRONT_EJECT(false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 1.0, 200.0, 0.0),
-            INTAKE(false, true, ShooterConstants.PIVOT_ANGLE_LIMITS[0], null, null, null),
-            SAFETY_1(false, true, 45.0, 0.6, 2100.0, 50.0),
-            AMP(false, true, 65.0, 0.19, 625.0, 25.0),
-            SPEAKER(false, true, 65.0, 0.6, 2100.0, 50.0),
-            SPEAKER_CALCULATE(true, true, null, 0.4, 1800.0, 100.0),
-            MANUAL(false, false, null, SPEAKER_CALCULATE.getSpeeds(false)[1], SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
+            FRONT_EJECT(false, false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 25.0, 0.0),
+            INTAKE(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0],  null, null),
+            // SAFETY_1(false, true, true, 45.0, 1500.0, 25.0),
+            AMP(false, true, false, 65.0, 435.0, 10.0),
+            SPEAKER(false, true, false, 65.0, 1200.0, 25.0),
+            SPEAKER_CALCULATE(true, true, true, null, 1800.0, 25.0),
+            MANUAL(false, false, false, null, SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
             ;
 
             boolean calculateAngle;
             boolean autoEndShooting;
+            boolean spin;
             Double positionAngle;
-            Double highSpeed;
             Double highRPM;
             Double allowedError;
 
-            private ShooterState(boolean calculateAngle, boolean autoEndShooting, Double angle, Double highSpeed, Double highRPM, Double allowedError) {
+            private ShooterState(boolean calculateAngle, boolean autoEndShooting, boolean spin,
+                Double angle, Double highRPM, Double allowedError) {
                 this.calculateAngle = calculateAngle;
                 this.autoEndShooting = autoEndShooting;
+                this.spin = spin;
                 this.positionAngle = angle;
-                this.highSpeed = highSpeed;
                 this.highRPM = highRPM;
                 this.allowedError = allowedError;
             }
@@ -145,16 +151,10 @@ public final class Constants {
             public double getAngle() {
                 return this.positionAngle;
             }
-            public double[] getSpeeds(boolean invert) {
-                return new double[]{
-                    this.highSpeed * (this.calculateAngle || invert ? 1 : (double) 2 / 3),
-                    this.highSpeed * (!this.calculateAngle || invert ? (double) 2 / 3 : 1)
-                };
-            }
             public double[] getRPMs(boolean invert) {
                 return new double[]{
-                    this.highRPM * (this.calculateAngle || invert ? 1 : (double) 2 / 3),
-                    this.highRPM * (!this.calculateAngle || invert ? (double) 2 / 3 : 1)
+                    this.highRPM * (this.spin && !invert ? (double) 2 / 3 : 1),
+                    this.highRPM * (this.spin && invert ? (double) 2 / 3 : 1)
                 };
             }
             public double getAllowedError() {
@@ -174,13 +174,13 @@ public final class Constants {
         /** Initial bot positions used for initializing odometry, blue-alliance relative */
         public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
             Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(0.75, 6.66), Rotation2d.fromDegrees(-60))),
+                Map.entry(3, new Pose2d(new Translation2d(0.75, 6.66), Rotation2d.fromDegrees(60))),
                 Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(0.75, 4.45), Rotation2d.fromDegrees(60))))),
+                Map.entry(1, new Pose2d(new Translation2d(0.75, 4.45), Rotation2d.fromDegrees(300))))),
             Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(-60))),
+                Map.entry(3, new Pose2d(new Translation2d(15.85, 6.69), Rotation2d.fromDegrees(60))),
                 Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(60)))))
+                Map.entry(1, new Pose2d(new Translation2d(15.85, 4.40), Rotation2d.fromDegrees(300)))))
         );
 
         public static enum PathfindingPosition {

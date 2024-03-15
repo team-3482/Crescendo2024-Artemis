@@ -15,6 +15,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
@@ -38,7 +40,9 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean canShoot = false;
 
     private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    private SparkPIDController rightPID = rightShooter.getPIDController();
     private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
+    private SparkPIDController leftPID = leftShooter.getPIDController();
     
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
@@ -50,6 +54,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // leftShooter.setInverted(true);
         
         configureMotionMagic();
+        configurePID();
         
         double[] positions = JSONManager.getInstance().getShooterPivotPositions();
         leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
@@ -93,6 +98,21 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * Configures PID for both shooting motors
+     */
+    private void configurePID() {
+        // Left shooter
+        leftPID.setP(ShooterConstants.kP);
+        leftPID.setFF(ShooterConstants.kFF);
+        leftPID.setOutputRange(-1, 1);
+        
+        // Right shooter
+        rightPID.setP(ShooterConstants.kP);
+        rightPID.setFF(ShooterConstants.kFF);
+        rightPID.setOutputRange(-1, 1);
+    }
+
+    /**
      * Set the motor encoder's position to the pivot angle
      * 
      * @param angle in degrees
@@ -122,14 +142,25 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Set the pivot speeds (last resort) between -1.0 and 1.0.
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
+     * 
+     * @param speed for both motors
      */
     public void setPivotSpeed(double speed) {
+        setPivotSpeed(speed, speed);
+    }
+    /**
+     * Set the pivot speeds (last resort) between -1.0 and 1.0.
+     * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
+     * 
+     * @param leftSpeed speed for the left motor
+     * @param rightSpeed speed for the right motor
+     */
+    public void setPivotSpeed(double leftSpeed, double rightSpeed) {
         double[] positions = getPivotPositions();
-        double leftSpeed = speed, rightSpeed = speed;
-        leftSpeed = (speed < 0 && positions[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (speed > 0 && positions[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
-        rightSpeed = (speed < 0 && positions[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (speed > 0 && positions[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
+        leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+            (leftSpeed > 0 && positions[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
+        rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+            (rightSpeed > 0 && positions[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
 
         rightPivotMotor.set(rightSpeed);
         leftPivotMotor.set(leftSpeed);
@@ -167,8 +198,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocities between -1.0 and 1.0
      */
     public void setShootingVelocities(double[] velocities) {
-        leftShooter.set(velocities[0]);
-        rightShooter.set(velocities[1]);
+        leftPID.setReference(velocities[0], ControlType.kVelocity);
+        rightPID.setReference(velocities[1],  ControlType.kVelocity);
     }
 
     /**
@@ -180,10 +211,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        // DecimalFormat d = new DecimalFormat("#.##");
         // double[] vel = getShootingVelocities();
         // System.out.println(
-        //     "left vel : " + PhysicalConstants.DEC_FORMAT.format(vel[0]) + " right vel : "
-        //     + PhysicalConstants.DEC_FORMAT.format(vel[1])
+        //     "left vel : " + d.format(vel[0]) + " right vel : "
+        //     + d.format(vel[1])
         // );
     }
 }

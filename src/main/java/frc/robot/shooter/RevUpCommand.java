@@ -40,7 +40,7 @@ public class RevUpCommand extends Command {
         this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
                 false : true;
-        double[] speeds = this.state.getSpeeds(this.invertSpin);
+        double[] speeds = this.state.getRPMs(this.invertSpin);
         ShooterSubsystem.getInstance().setShootingVelocities(
             new double[]{speeds[0] / 2, speeds[1] / 2});
 

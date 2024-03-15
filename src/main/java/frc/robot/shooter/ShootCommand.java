@@ -44,7 +44,7 @@ public class ShootCommand extends Command {
         this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
                 false : true;
-        ShooterSubsystem.getInstance().setShootingVelocities(this.state.getSpeeds(this.invertSpin));
+        ShooterSubsystem.getInstance().setShootingVelocities(this.state.getRPMs(this.invertSpin));
 
         this.reachedRPM = false;
 

@@ -4,7 +4,6 @@
 
 package frc.robot.intake;
 
-
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -92,7 +91,7 @@ public class IntakeSubsystem extends SubsystemBase {
     /**
      * Sets the position of the through bore encoder
      * 
-     * @return position of the intake in degrees. 0 is at hard stop when extended.
+     * @return position of the intake in degrees. 0 should be at hard stop when extended.
      */
     public void resetPivotPosition(double position) {
         this.pivotEncoder.setPosition(Units.degreesToRotations(position));
@@ -101,7 +100,7 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         int position = (int) getPivotPosition();
-        if (this.pivotEncoder.getVelocity() == 0 && position <= 10) {
+        if (this.pivotEncoder.getVelocity() == 0 && position != 0  && position <= 10) {
             resetPivotPosition(0);
         }
     }
