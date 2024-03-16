@@ -26,7 +26,7 @@ public class SequencedCommands {
         return Commands.parallel(
             new PivotShooterCommand(ShooterState.INTAKE),
             new PivotIntakeCommand(IntakeState.INTAKING),
-            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)
+            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true)
         );
     }
 
@@ -44,7 +44,7 @@ public class SequencedCommands {
             new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED), 
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true), 
                 new DriveToNoteCommand().withTimeout(5)
             ),
             Commands.parallel(
@@ -66,9 +66,9 @@ public class SequencedCommands {
                 new PivotShooterCommand(ShooterState.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
-            Commands.race(
-                new DriveToNoteCommand().withTimeout(5),
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED)
+            Commands.deadline(
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true),
+                new DriveToNoteCommand().withTimeout(4)
             ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeState.IDLE),
@@ -96,9 +96,15 @@ public class SequencedCommands {
      * @return the command
      */
     public static Command getIntakeEjectCommand() {
-        return Commands.parallel(
-            new PivotIntakeCommand(IntakeState.INTAKING),
-            new ShootCommand(ShooterState.FRONT_EJECT)
+        return Commands.sequence(
+            Commands.parallel(
+                new PivotIntakeCommand(IntakeState.INTAKING),
+                new PivotShooterCommand(ShooterState.FRONT_EJECT)
+            ),    
+            Commands.parallel(
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, false),
+                new ShootCommand(ShooterState.FRONT_EJECT)
+            )
         );
     }
 }

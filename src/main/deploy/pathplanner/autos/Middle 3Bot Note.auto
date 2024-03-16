@@ -52,7 +52,45 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle - Outside Community"
+            "pathName": "Middle - Bottom Note"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Collect Note NOCENTER"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pathfind SPEAKER_MIDDLE"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FixNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot SPEAKER"
+                }
+              }
+            ]
           }
         }
       ]

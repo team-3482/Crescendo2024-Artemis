@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.auto.PathingCommands;
@@ -90,14 +91,20 @@ public class RobotContainer {
     /** Register all NamedCommands for PathPlanner use */
     private void registerNamedCommands() {
         // Pathing
-        NamedCommands.registerCommand("Pathfind AMP",
-            PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
-        NamedCommands.registerCommand("Pathfind SPEAKER_TOP",
-            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_TOP));
-        NamedCommands.registerCommand("Pathfind SPEAKER_MIDDLE",
-            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE));
-        NamedCommands.registerCommand("Pathfind SPEAKER_BOTTOM",
-            PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_BOTTOM));
+        // NOTE use Pathplanner paths to return to speaker
+        
+        // NamedCommands.registerCommand("Pathfind AMP",
+        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.AMP).schedule()
+        // ));
+        // NamedCommands.registerCommand("Pathfind SPEAKER_TOP",
+        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_TOP).schedule()
+        // ));
+        // NamedCommands.registerCommand("Pathfind SPEAKER_MIDDLE",
+        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE).schedule()
+        // ));
+        // NamedCommands.registerCommand("Pathfind SPEAKER_BOTTOM",
+        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_BOTTOM).schedule()
+        // ));
         // NamedCommands.registerCommand("Bezier SPEAKER",
         //     PathingCommands.getBezierCommand(PathfindingPosition.SPEAKER));
         // NamedCommands.registerCommand("Bezier AMP",
@@ -105,8 +112,8 @@ public class RobotContainer {
 
         // Intake
         NamedCommands.registerCommand("FixNote",
-            Commands.run(() -> SterilizerSubsystem.getInstance().moveBackward(true))
-                .withTimeout(0.5));
+            Commands.run(() -> SterilizerSubsystem.getInstance().moveBackward(false))
+                .withTimeout(1));
         NamedCommands.registerCommand("Collect Note",
             SequencedCommands.getCollectNoteCommand());
         NamedCommands.registerCommand("Collect Note NOCENTER",
@@ -161,8 +168,12 @@ public class RobotContainer {
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands
-        driveController.x().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE));
-        driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.AMP));
+        driveController.x().onTrue(Commands.runOnce(
+            () -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE).schedule()
+        ));
+        driveController.a().whileTrue(Commands.runOnce(
+            () -> PathingCommands.getPathfindCommand(PathfindingPosition.AMP).schedule()
+        ));
         // driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SAFETY_1));
     }
 
@@ -173,6 +184,13 @@ public class RobotContainer {
             () -> -operatorController.getRightY(),
             false
         ));
+        operatorController.leftStick().onTrue(Commands.runOnce(
+            () -> ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[1])
+        ));
+        operatorController.rightStick().onTrue(Commands.runOnce(
+            () -> ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0])
+        ));
+
         // Cancel all scheduled commands and turn off LEDs
         operatorController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
@@ -195,10 +213,10 @@ public class RobotContainer {
         //     new PivotShooterCommand(ShooterState.SAFETY_1),
         //     new ShootCommand(ShooterState.SAFETY_1)
         // ));
-        // Run SHOOTER automatically
-        // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
         // TODO LL Test CenterSpeakerCommand()
-        // operatorController.x().onTrue(new CenterSpeakerCommand());
+        operatorController.x().onTrue(new CenterSpeakerCommand());
+        // TODO Run SHOOTER automatically
+        // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
         // Reverse sterilizer (0.2 speed)
         operatorController.y().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().moveBackward(true),
@@ -221,19 +239,19 @@ public class RobotContainer {
                 })
             );
         // Move sterilizer forward (burger)
-        operatorController.back().whileTrue(Commands.runEnd(
+        operatorController.start().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().moveForward(false),
             () -> SterilizerSubsystem.getInstance().moveStop()
         ));
         
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.2),
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0.2, false),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0, false)
         ));
         operatorController.povDown().whileTrue(Commands.runEnd(
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.2),
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0)
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.2, false),
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0, false)
         ));
         // Move the intake manually (last resort, not recommended)
         operatorController.povRight().whileTrue(Commands.runEnd(

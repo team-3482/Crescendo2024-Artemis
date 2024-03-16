@@ -106,7 +106,7 @@ public final class Constants {
         /** PID for the Shooter wheeels */
         public static final double kP = 0.001;
         /** Feed forward for the Shooter wheels */
-        public static final double kFF = 0.00026;
+        public static final double kFF = 0.000265;
 
         /** Cruise velocity in rps */
         public static final int CRUISE_SPEED = 80;
@@ -117,12 +117,12 @@ public final class Constants {
 
         /** Stores all shooter configuration related data */
         public static enum ShooterState {
-            FRONT_EJECT(false, false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 25.0, 0.0),
+            FRONT_EJECT(false, false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 600.0, 0.0),
             INTAKE(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0],  null, null),
             // SAFETY_1(false, true, true, 45.0, 1500.0, 25.0),
             AMP(false, true, false, 65.0, 435.0, 10.0),
-            SPEAKER(false, true, false, 65.0, 1200.0, 25.0),
-            SPEAKER_CALCULATE(true, true, true, null, 1800.0, 25.0),
+            SPEAKER(false, true, false, 65.0, 1500.0, 75.0),
+            SPEAKER_CALCULATE(true, true, true, null, 1800.0, 75.0),
             MANUAL(false, false, false, null, SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
             ;
 
@@ -241,7 +241,7 @@ public final class Constants {
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 1;
-            public static final double KP = 0.8;
+            public static final double KP = 1.2;
             public static final double KI = 0;
             public static final double KD = 0;
         }

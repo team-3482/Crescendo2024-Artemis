@@ -44,18 +44,37 @@ public class ManuallyPivotShooterCommand extends Command {
     public void execute() {
         double leftSpeed = leftSpeedSupplier.get();
         double rightSpeed = rightSpeedSupplier.get();
-        leftSpeed = Math.abs(leftSpeed) >= 0.5 ? Math.signum(leftSpeed) * 0.1 : 0;
-        rightSpeed = Math.abs(rightSpeed) >= 0.5 ? Math.signum(rightSpeed) * 0.1 : 0;
+        
+        if (Math.abs(leftSpeed) >= 0.85) {
+            leftSpeed = Math.signum(leftSpeed) * 0.2;
+        }
+        else if (Math.abs(leftSpeed) >= 0.15) {
+            leftSpeed = Math.signum(leftSpeed) * 0.1;
+        }
+        else {
+            leftSpeed = 0;
+        }
+
+        if (Math.abs(rightSpeed) >= 0.85) {
+            rightSpeed = Math.signum(rightSpeed) * 0.2;
+        }
+        else if (Math.abs(rightSpeed) >= 0.15) {
+            rightSpeed = Math.signum(rightSpeed) * 0.1;
+        }
+        else {
+            rightSpeed = 0;
+        }
 
         ShooterSubsystem.getInstance().setPivotSpeed(
             swapSides ? rightSpeed : leftSpeed,
-            swapSides ? leftSpeed : rightSpeed);
+            swapSides ? leftSpeed : rightSpeed,
+            true);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        ShooterSubsystem.getInstance().setPivotSpeed(0);
+        ShooterSubsystem.getInstance().setPivotSpeed(0, false);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

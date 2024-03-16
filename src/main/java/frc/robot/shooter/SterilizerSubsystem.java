@@ -54,7 +54,7 @@ public class SterilizerSubsystem extends SubsystemBase {
      * @param calibrate lower speed for centering the note
      */
     public void moveForward(boolean calibrate) {
-        feederMotor.set(SterilizerConstants.FEEDING_SPEED * (calibrate ? SterilizerConstants.NOTE_CALIBRATION_MUL : 1));
+        feederMotor.set(0.8 * (calibrate ? SterilizerConstants.NOTE_CALIBRATION_MUL : 1));
     }
     
     /**

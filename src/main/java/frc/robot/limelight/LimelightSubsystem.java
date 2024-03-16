@@ -4,8 +4,12 @@
 
 package frc.robot.limelight;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
 
@@ -27,7 +31,11 @@ public class LimelightSubsystem extends SubsystemBase {
     public LimelightSubsystem() {
         super("LimelightSubsystem");
         
-
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        // Target 4 when blue or when no alliance is found, or 7 otherwise
+        LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
+            alliance.isPresent() && alliance.get() == Alliance.Red ? 7 : 4
+        );
         // Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
         //     .add("Field (limelight)", limelight_field)
         //     .withWidget(BuiltInWidgets.kField)

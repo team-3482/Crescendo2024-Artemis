@@ -24,9 +24,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Pathfind SPEAKER_BOTTOM"
+            "pathName": "Bottom"
           }
         },
         {
@@ -57,6 +57,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Bottom",
   "choreoAuto": false
 }

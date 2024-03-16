@@ -4,6 +4,7 @@
 
 package frc.robot.shooter;
 
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -56,6 +57,8 @@ public class ShootCommand extends Command {
     public void execute() {
         double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
         double[] rpmGoals = this.state.getRPMs(this.invertSpin);
+        System.out.println("Diff : [" + (int) Math.abs(rpmGoals[0] - velocities[0]) + " | " + (int) Math.abs(rpmGoals[1] - velocities[1]) +  "]");
+        
         if (!this.reachedRPM
             && ((Math.abs(rpmGoals[0] - velocities[0]) > this.state.getAllowedError()
             || Math.abs(rpmGoals[1] - velocities[1]) > this.state.getAllowedError())))

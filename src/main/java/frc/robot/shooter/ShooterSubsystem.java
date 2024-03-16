@@ -144,9 +144,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
      * 
      * @param speed for both motors
+     * @param override the soft limits
      */
-    public void setPivotSpeed(double speed) {
-        setPivotSpeed(speed, speed);
+    public void setPivotSpeed(double speed, boolean override) {
+        setPivotSpeed(speed, speed, override);
     }
     /**
      * Set the pivot speeds (last resort) between -1.0 and 1.0.
@@ -154,13 +155,16 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @param leftSpeed speed for the left motor
      * @param rightSpeed speed for the right motor
+     * @param override the soft limits
      */
-    public void setPivotSpeed(double leftSpeed, double rightSpeed) {
-        double[] positions = getPivotPositions();
-        leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (leftSpeed > 0 && positions[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
-        rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-            (rightSpeed > 0 && positions[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
+    public void setPivotSpeed(double leftSpeed, double rightSpeed, boolean override) {
+        if (!override) {
+            double[] positions = getPivotPositions();
+            leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+                (leftSpeed > 0 && positions[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
+            rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
+                (rightSpeed > 0 && positions[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
+        }
 
         rightPivotMotor.set(rightSpeed);
         leftPivotMotor.set(leftSpeed);

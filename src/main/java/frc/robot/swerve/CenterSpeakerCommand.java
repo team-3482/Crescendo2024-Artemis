@@ -6,6 +6,7 @@ package frc.robot.swerve;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,7 +19,6 @@ import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
-import frc.robot.limelight.LimelightHelpers;
 import frc.robot.limelight.LimelightSubsystem;
 
 /** An command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
@@ -29,6 +29,8 @@ public class CenterSpeakerCommand extends Command {
     private PIDController pid;
     /** Used for {@link CenterSpeakerCommand#isFinished()} */
     private double errorRadians;
+    /** Used to avoid repeated calls to DS API */
+    private Optional<Alliance> alliance;
 
     public CenterSpeakerCommand() {
         setName("CenterSpeakerCommand");
@@ -53,12 +55,8 @@ public class CenterSpeakerCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
+        this.alliance = DriverStation.getAlliance();
         // LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.SPEAKER_PIPELINE);
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        // Target 4 when blue or when no alliance is found, or 7 otherwise
-        LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
-            alliance.isPresent() && alliance.get() == Alliance.Red ? 7 : 4
-        );
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
@@ -66,7 +64,7 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void execute() {
         // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) return;
+        if (LimelightSubsystem.getInstance().getTargetID() != (alliance.get() == Alliance.Red ? 7 : 4)) return;
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
@@ -74,7 +72,8 @@ public class CenterSpeakerCommand extends Command {
         double turningSpeed = pid.calculate(this.errorRadians, 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, 
+            MathUtil.clamp(turningSpeed, -1.0, 1.0));
         
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
@@ -93,10 +92,11 @@ public class CenterSpeakerCommand extends Command {
     }
 
     /**
-    * End logic in {@link CenterSpeakerCommand#execute()} body
+    * Ends the command when the error is smaller than tolerance at {@link OrbitConstants}
     */
     @Override
     public boolean isFinished() {
-        return this.errorRadians > Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return Math.abs(this.errorRadians) <= Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        // return this.pid.atSetpoint();
     }
 }

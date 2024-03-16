@@ -18,27 +18,31 @@ public class SpinIntakeCommand extends Command {
     private double speed;
     private double timeout;
     private Timer timer;
+    private boolean stopForNote;
 
     /**
      * Initializes a new IntakeCommand
      * 
      * @param state state of the intake
      * @param timeout the amount of seconds before the command should auto stop
+     * @param stopForNote stop the command when a note is in the sterilizer
      */
-    public SpinIntakeCommand(double speed, double timeout) {
+    public SpinIntakeCommand(double speed, double timeout, boolean stopForNote) {
         setName("SpinIntakeCommand");
         this.speed = speed;
         this.timeout = timeout;
         this.timer = new Timer();
+        this.stopForNote = stopForNote;
     }
 
     /**
      * Initializes a new IntakeCommand using a default timeout of Double.POSITIVE_INFINITY
      * 
      * @param state state of the intake
+     * @param stopForNote stop the command when a note is in the sterilizer
      */
-    public SpinIntakeCommand(double speed) {
-        this(speed, Double.POSITIVE_INFINITY);
+    public SpinIntakeCommand(double speed, boolean stopForNote) {
+        this(speed, Double.POSITIVE_INFINITY, stopForNote);
     }
 
     @Override
@@ -70,8 +74,8 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        Optional<Boolean> hasNote= SterilizerSubsystem.getInstance().hasNote();
+        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
         return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout)
-            || (hasNote.isPresent() && hasNote.get());
+            || (this.stopForNote && hasNote.isPresent() && hasNote.get());
     }
 }

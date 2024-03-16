@@ -80,7 +80,7 @@ public class PivotShooterCommand extends Command {
         if (interrupted) {
             ShooterSubsystem.getInstance().canShoot = false;
         }
-        ShooterSubsystem.getInstance().setPivotSpeed(0);
+        ShooterSubsystem.getInstance().setPivotSpeed(0, false);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
