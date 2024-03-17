@@ -6,8 +6,7 @@ package frc.robot.intake;
 
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
@@ -33,7 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
     /** Neo */
     private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
     /** Through bore encoder */
-    private RelativeEncoder pivotEncoder = bottomIntakeMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    // private RelativeEncoder pivotEncoder = bottomIntakeMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    private SparkAbsoluteEncoder pivotEncoder = bottomIntakeMotor.getAbsoluteEncoder();
 
     public IntakeSubsystem() {
         super("IntakeSubsystem");
@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
         bottomIntakeMotor.follow(topIntakeMotor, true);
         pivotEncoder.setInverted(true);
 
-        resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
+        // resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
     }
 
     /**
@@ -88,20 +88,20 @@ public class IntakeSubsystem extends SubsystemBase {
         return Units.rotationsToDegrees(this.pivotEncoder.getPosition());
     }
 
-    /**
-     * Sets the position of the through bore encoder
-     * 
-     * @return position of the intake in degrees. 0 should be at hard stop when extended.
-     */
-    public void resetPivotPosition(double position) {
-        this.pivotEncoder.setPosition(Units.degreesToRotations(position));
-    }
+    // /**
+    //  * Sets the position of the through bore encoder
+    //  * 
+    //  * @return position of the intake in degrees. 0 should be at hard stop when extended.
+    //  */
+    // public void resetPivotPosition(double position) {
+        // this.pivotEncoder.setPosition(Units.degreesToRotations(position));
+    // }
 
     @Override
     public void periodic() {
-        int position = (int) getPivotPosition();
-        if (this.pivotEncoder.getVelocity() == 0 && position != 0  && position <= 10) {
-            resetPivotPosition(0);
-        }
+        // int position = (int) getPivotPosition();
+        // if (this.pivotEncoder.getVelocity() == 0 && position != 0  && position <= 10) {
+        //     resetPivotPosition(0);
+        // 
     }
 }

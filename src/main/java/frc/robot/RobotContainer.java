@@ -164,7 +164,6 @@ public class RobotContainer {
                 new PivotIntakeCommand(IntakeState.IDLE),
                 new PivotShooterCommand(ShooterState.SPEAKER))
         );
-                
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands

@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
@@ -106,24 +105,24 @@ public class Telemetry {
         /** Publishes all static Shuffleboard telemetry */
         public static void initialize() {
             // IntakeSubsystem
-            ShuffleboardLayout intakeSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
-                .getLayout("Intake Subsystem", BuiltInLayouts.kList)
-                .withProperties(Map.of("Label position", "TOP"))
-                .withPosition(0, 0)
-                .withSize(3, 6);
-            // Reset the pivot's position
-            intakeSubsystemLayout.add("Reset Position Lower Limit",
-                Commands.runOnce(() -> {
-                    IntakeSubsystem.getInstance().resetPivotPosition(0);
-                }).ignoringDisable(true).withName(0 + " deg"))
-                .withPosition(0, 1)
-                .withWidget(BuiltInWidgets.kCommand);
-            intakeSubsystemLayout.add("Reset Position Higher Limit",
-                Commands.runOnce(() -> {
-                    IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
-                }).ignoringDisable(true).withName(IntakeConstants.IntakeState.IDLE.getAngle() + " deg"))
-                .withPosition(0, 2)
-                .withWidget(BuiltInWidgets.kCommand);
+            // ShuffleboardLayout intakeSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
+            //     .getLayout("Intake Subsystem", BuiltInLayouts.kList)
+            //     .withProperties(Map.of("Label position", "TOP"))
+            //     .withPosition(0, 0)
+            //     .withSize(3, 6);
+            // // Reset the pivot's position
+            // intakeSubsystemLayout.add("Reset Position Lower Limit",
+            //     Commands.runOnce(() -> {
+            //         IntakeSubsystem.getInstance().resetPivotPosition(0);
+            //     }).ignoringDisable(true).withName(0 + " deg"))
+            //     .withPosition(0, 1)
+            //     .withWidget(BuiltInWidgets.kCommand);
+            // intakeSubsystemLayout.add("Reset Position Higher Limit",
+            //     Commands.runOnce(() -> {
+            //         IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
+            //     }).ignoringDisable(true).withName(IntakeConstants.IntakeState.IDLE.getAngle() + " deg"))
+            //     .withPosition(0, 2)
+            //     .withWidget(BuiltInWidgets.kCommand);
             
             // Shooter Subsystem
             ShuffleboardLayout shooterSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)

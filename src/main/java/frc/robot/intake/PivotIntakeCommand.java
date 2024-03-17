@@ -6,7 +6,6 @@ package frc.robot.intake;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
@@ -19,8 +18,8 @@ public class PivotIntakeCommand extends Command {
     private PIDController pid;
     private boolean up;
 
-    private boolean brokenEncoderIsItDown;
-    private Timer brokenEncoderTimer = new Timer();
+    // private boolean brokenEncoderIsItDown;
+    // private Timer brokenEncoderTimer = new Timer();
 
     /**
      * Initializes a new PivotIntakeCommand
@@ -35,8 +34,9 @@ public class PivotIntakeCommand extends Command {
         
         this.pid = new PIDController(IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
         this.pid.setTolerance(this.state.getTolerance());
+        this.pid.enableContinuousInput(0, 2 * Math.PI);
 
-        this.brokenEncoderIsItDown = false;
+        // this.brokenEncoderIsItDown = false;
 
         this.addRequirements(IntakeSubsystem.getInstance());
     }
@@ -45,7 +45,7 @@ public class PivotIntakeCommand extends Command {
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.pid.reset();
-        this.brokenEncoderTimer.restart();
+        // this.brokenEncoderTimer.restart();
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
@@ -54,25 +54,25 @@ public class PivotIntakeCommand extends Command {
         double speed;
         if (this.up) {
             speed = IntakeConstants.PIVOT_UP_SPEED;
-            this.brokenEncoderIsItDown = false;
+            // this.brokenEncoderIsItDown = false;
         }
         else {
             speed = this.pid.calculate(
                 Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
                 Units.degreesToRadians(this.state.getAngle()));
-            this.brokenEncoderIsItDown = true;
+            // this.brokenEncoderIsItDown = true;
         }
         IntakeSubsystem.getInstance().setPivotSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (this.brokenEncoderIsItDown) {
-            IntakeSubsystem.getInstance().resetPivotPosition(0);
-        }
-        else {
-            IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
-        }
+        // if (this.brokenEncoderIsItDown) {
+        //     IntakeSubsystem.getInstance().resetPivotPosition(0);
+        // }
+        // else {
+        //     IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
+        // }
         IntakeSubsystem.getInstance().setPivotSpeed(0);
         this.pid.close();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
@@ -80,7 +80,7 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.brokenEncoderTimer.hasElapsed(1.25);
-        // return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() ) <= this.state.getTolerance();
+        // return this.brokenEncoderTimer.hasElapsed(1.25);
+        return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() ) <= this.state.getTolerance();
     }
 }
