@@ -60,7 +60,6 @@ public class RevUpCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
-        return hasNote.isPresent() && hasNote.get();
+        return SterilizerSubsystem.getInstance().hasNote();
     }
 }

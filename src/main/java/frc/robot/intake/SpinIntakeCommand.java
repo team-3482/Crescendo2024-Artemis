@@ -74,8 +74,8 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
+        
         return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout)
-            || (this.stopForNote && hasNote.isPresent() && hasNote.get());
+            || (this.stopForNote && SterilizerSubsystem.getInstance().hasNote());
     }
 }

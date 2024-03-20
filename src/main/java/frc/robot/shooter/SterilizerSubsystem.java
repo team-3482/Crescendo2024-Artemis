@@ -36,16 +36,26 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
     
     /**
-     * Returns whether or not there is a note in the subsystem (laser broken)
+     * Returns whether or not the lazer has a measurement and if the measurement 
+     * means the sterilizer has a note.
      * 
      * @return contains a note, empty optional if invalid measurements
      */
-    public Optional<Boolean> hasNote() {
+    public Optional<Boolean> hasNoteMeasurement() {
         LaserCan.Measurement measurement = laser.getMeasurement();
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
             return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Returns whether there is a note in the sterilizer or not (if the lazer is broken or not)
+     * 
+     * @return sterilizer contains a note
+     */
+    public boolean hasNote() {
+        return this.hasNoteMeasurement().isPresent() && this.hasNoteMeasurement().get();
     }
     
     /**
@@ -75,7 +85,8 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        LEDSubsystem.getInstance().setDefaultLightState(
-            this.hasNote().isPresent() && this.hasNote().get() ? LightState.HOLDING_NOTE : LightState.OFF);
+        if(this.hasNote()) {
+            LEDSubsystem.getInstance().setLightState(LightState.HOLDING_NOTE, false);
+        } 
     }
 }

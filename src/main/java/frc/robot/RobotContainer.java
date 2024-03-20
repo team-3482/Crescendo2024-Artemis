@@ -117,7 +117,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("Collect Note",
             SequencedCommands.getCollectNoteCommand());
         NamedCommands.registerCommand("Collect Note NOCENTER",
-            SequencedCommands.getCollectNoteCommandNoCenter());
+            SequencedCommands.getAutonCollectNoteCommand());
         
         NamedCommands.registerCommand("IntakeEject NOEND",
             SequencedCommands.getIntakeEjectCommand());

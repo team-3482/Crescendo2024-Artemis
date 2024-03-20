@@ -65,7 +65,7 @@ public class ShootCommand extends Command {
             return;
         this.reachedRPM = true;
 
-        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNote();
+        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNoteMeasurement();
         SterilizerSubsystem.getInstance().moveForward(false);
         if (!this.state.getAutoEndShooting()) return;
         if (!hasNote.isPresent()) {

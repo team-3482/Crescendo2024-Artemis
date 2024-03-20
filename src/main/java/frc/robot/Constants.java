@@ -364,15 +364,9 @@ public final class Constants {
     /** Constants used with the LEDSubsystem */
     public static final class LEDConstants {
         /** Port that the LED strip is plugged into */
-        public static final int UNDERGLOW_LED_PORT = 7;
-        /** Port that the LED strip is plugged into */
-        public static final int LEFT_ELEVATOR_LED_PORT = 4;
-        /** Port that the LED strip is plugged into */
-        public static final int RIGHT_ELEVATOR_LED_PORT = 9;
+        public static final int LED_PORT = 7;
         /** Number of LEDs to iterate through */
-        public static final int UNDERGLOW_LED_COUNT = 150;
-        /** Number of LEDs to iterate through */
-        public static final int ELEVATOR_LED_COUNT = 18;
+        public static final int LED_COUNT = 150;
     }
 
     /** Constants for the swerve modules */

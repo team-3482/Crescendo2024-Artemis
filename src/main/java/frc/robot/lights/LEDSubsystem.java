@@ -7,10 +7,14 @@ package frc.robot.lights;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.shooter.SterilizerSubsystem;
 
 import java.util.Map;
+import java.util.Optional;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -26,13 +30,15 @@ public class LEDSubsystem extends SubsystemBase {
         return instance;
     }
     
-    private LEDStrip underGlowStrip;
+
+    private AddressableLEDBuffer ledBuffer;
+    private AddressableLED ledStrip;
+    // LED Buffer
     // private LEDStrip leftElevatorStrip;
     // private LEDStrip rightElevatorStrip;
 
     private double lastLedUpdate = 0.0;
     private LightState state;
-    private LightState defaultState;
 
     private SimpleWidget SB_D_LED_WIDGET = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("LED Status", false);
@@ -48,13 +54,17 @@ public class LEDSubsystem extends SubsystemBase {
      */
     private LEDSubsystem() {
         super("LEDSubsystem");
-        this.underGlowStrip = new LEDStrip(LEDConstants.UNDERGLOW_LED_PORT, LEDConstants.UNDERGLOW_LED_COUNT);
-        // this.leftElevatorStrip = new LEDStrip(LEDConstants.LEFT_ELEVATOR_LED_PORT, LEDConstants.ELEVATOR_LED_COUNT);
-        // this.rightElevatorStrip = new LEDStrip(LEDConstants.RIGHT_ELEVATOR_LED_PORT, LEDConstants.ELEVATOR_LED_COUNT);
+        
+        this.ledBuffer = new AddressableLEDBuffer(LEDConstants.LED_COUNT);
+
+        this.ledStrip = new AddressableLED(LEDConstants.LED_PORT);
+        this.ledStrip.setLength(LEDConstants.LED_COUNT);
+        this.ledStrip.start();
+
         this.lastLedUpdate = Timer.getFPGATimestamp();
 
-        this.defaultState = LightState.OFF;
-        this.state = this.defaultState;
+        this.state = LightState.OFF;
+
     }
 
     @Override
@@ -65,10 +75,18 @@ public class LEDSubsystem extends SubsystemBase {
             if (timestamp - this.lastLedUpdate >= this.state.interval) {
                 this.state.cycleColors();
                 this.lastLedUpdate = timestamp;
+                this.updateLights();
             }
         }
+    };
+
+    /** 
+     * Updates the light colors of the light strips
+     */
+    private void updateLights() {
         Color color = this.state.getColor();
-      
+
+
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
         }
@@ -76,12 +94,12 @@ public class LEDSubsystem extends SubsystemBase {
             SB_D_LED_WIDGET.withProperties(Map.of("colorWhenTrue", color.getHexadecimal()));
             SB_D_LED_ENTRY.setBoolean(true);
         }
+        for (int i = 0; i < this.ledBuffer.getLength(); i++) {
+            this.ledBuffer.setRGB(i, color.getRed(), color.getGreen(), color.getBlue());
+        }
 
-        underGlowStrip.setColor(color);
-        // leftElevatorStrip.setColor(color);
-        // rightElevatorStrip.setColor(color);
-
-    };
+        this.ledStrip.setData(this.ledBuffer);
+    }
 
     /**
      * Sets the state of the lights on the bot.
@@ -89,17 +107,20 @@ public class LEDSubsystem extends SubsystemBase {
      * @param state Desired {@link LightState}
      */
     public void setLightState(LightState state) {
-        this.state = state;
+        this.setLightState(state, true);
     }
 
     /**
-     * Sets the default state of the lights on the bot
-     * 
+     * Sets the state of the lights on the bot. If ovverideCurrent is true, will override current colors, else, will only change colors if the current state is off
      * @param state Desired {@link LightState}
+     * @param overrideCurrentState Whether the lights should overide the current lightt state or not.
      */
-    public void setDefaultLightState(LightState state) {
-        this.defaultState = state;
-        this.setCommandStopState(false);
+    public void setLightState(LightState state, boolean overrideCurrentState){
+        if(overrideCurrentState || (!overrideCurrentState && this.state == LightState.OFF)) {
+            this.state = state;
+            this.updateLights();
+        }
+        // Else -> do nothing beacuase there is already a light state and override if false
     }
 
     /**
@@ -112,7 +133,7 @@ public class LEDSubsystem extends SubsystemBase {
             this.setLightState(LightState.WARNING);
         }
         else {
-            this.setLightState(this.defaultState);
+            this.setLightState(SterilizerSubsystem.getInstance().hasNote()? LightState.HOLDING_NOTE : LightState.OFF);
         }
     }
     

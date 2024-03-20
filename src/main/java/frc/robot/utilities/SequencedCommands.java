@@ -56,7 +56,7 @@ public class SequencedCommands {
     
     /**
      * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
-     * until it has a note in the sterilizer or the limelight does not see the note anymore.
+     * until it has a note in the sterilizer
      * @return the command
      */
     public static Command getCollectNoteCommandNoCenter() {
@@ -76,6 +76,25 @@ public class SequencedCommands {
             )
         );
     }
+    /**
+     * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
+     * until it has a note in the sterilizer. It does not return the pivots to the idle positions because 
+     * other commands will move them if they need the pivots to be moved (decreses time required for command)
+     * @return the command
+     */
+    public static Command getAutonCollectNoteCommand() {
+        return Commands.sequence(
+            Commands.parallel(
+                new PivotIntakeCommand(IntakeState.INTAKING),
+                new PivotShooterCommand(ShooterState.INTAKE)
+            ),
+            // Will end as soon as there is a note in the SpinIntakeCommand
+            Commands.deadline(
+                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true),
+                new DriveToNoteCommand().withTimeout(4)
+            )
+        );
+    }
 
     /**
      * Creates a command that shoots a note into the speaker automatically from the current position.
@@ -84,8 +103,10 @@ public class SequencedCommands {
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
-            new CenterSpeakerCommand(),
-            new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE),
+            Commands.parallel(
+                new CenterSpeakerCommand(),
+                new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE)
+            ),
             new RevUpCommand(ShooterState.SPEAKER_CALCULATE)
         );
     }
