@@ -4,7 +4,6 @@
 
 package frc.robot.shooter;
 
-import java.text.DecimalFormat;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;

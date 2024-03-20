@@ -10,7 +10,6 @@ import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.shooter.SterilizerSubsystem;
 
 import java.util.Map;
-import java.util.Optional;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -31,11 +30,10 @@ public class LEDSubsystem extends SubsystemBase {
     }
     
 
-    private AddressableLEDBuffer ledBuffer;
-    private AddressableLED ledStrip;
     // LED Buffer
-    // private LEDStrip leftElevatorStrip;
-    // private LEDStrip rightElevatorStrip;
+    private AddressableLEDBuffer ledBuffer;
+    // LED 
+    private AddressableLED ledStrip;
 
     private double lastLedUpdate = 0.0;
     private LightState state;

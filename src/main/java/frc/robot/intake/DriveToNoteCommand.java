@@ -4,8 +4,6 @@
 
 package frc.robot.intake;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

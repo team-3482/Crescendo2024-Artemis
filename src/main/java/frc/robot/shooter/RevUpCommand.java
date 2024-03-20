@@ -4,8 +4,6 @@
 
 package frc.robot.shooter;
 
-import java.util.Optional;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
