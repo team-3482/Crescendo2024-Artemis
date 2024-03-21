@@ -4,76 +4,67 @@
 
 package frc.robot.intake;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SterilizerConstants;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.SterilizerSubsystem;
 
-/** A command to spin the rollers in the intake at the desired speed. */
+/** A command to spin the rollers in the intake using the current {@link IntakeState}. */
 public class SpinIntakeCommand extends Command {
-
-    private double speed;
-    private double timeout;
-    private Timer timer;
+    private IntakeState state;
     private boolean stopForNote;
 
     /**
-     * Initializes a new IntakeCommand
+     * Initializes a new SpinIntakeCommand
      * 
      * @param state state of the intake
-     * @param timeout the amount of seconds before the command should auto stop
      * @param stopForNote stop the command when a note is in the sterilizer
      */
-    public SpinIntakeCommand(double speed, double timeout, boolean stopForNote) {
-        setName("SpinIntakeCommand");
-        this.speed = speed;
-        this.timeout = timeout;
-        this.timer = new Timer();
+    public SpinIntakeCommand(IntakeState state, boolean stopForNote) {
+        setName("IntakeCommand");
+        this.state = state;
         this.stopForNote = stopForNote;
     }
 
     /**
-     * Initializes a new IntakeCommand using a default timeout of Double.POSITIVE_INFINITY
+     * Initializes a new SpinIntakeCommand that stops for notes (overloaded)
      * 
      * @param state state of the intake
-     * @param stopForNote stop the command when a note is in the sterilizer
      */
-    public SpinIntakeCommand(double speed, boolean stopForNote) {
-        this(speed, Double.POSITIVE_INFINITY, stopForNote);
+    public SpinIntakeCommand(IntakeState state) {
+        this(state, true);
     }
 
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        this.timer.restart();
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
     @Override
     public void execute() {
-        IntakeSubsystem.getInstance().setIntakeSpeed(this.speed);
+        IntakeSubsystem.getInstance().setIntakeSpeed(this.state.getSpeed());
         
-        if (this.speed > 0) {
-            SterilizerSubsystem.getInstance().moveForward(false);
+        if (this.state.getSpeed() > 0) {
+            SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
         }
-        else if (this.speed < 0) {
-            SterilizerSubsystem.getInstance().moveBackward(true);
+        else if (this.state.getSpeed() < 0) {
+            SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.FEEDING_SPEED);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         IntakeSubsystem.getInstance().setIntakeSpeed(0);
-        SterilizerSubsystem.getInstance().moveStop();
-        this.timer.stop();
+        SterilizerSubsystem.getInstance().setSpeed();
+
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     @Override
     public boolean isFinished() {
-        
-        return (this.timeout != Double.POSITIVE_INFINITY && this.timer.get() >= this.timeout)
-            || (this.stopForNote && SterilizerSubsystem.getInstance().hasNote());
+        return this.stopForNote && SterilizerSubsystem.getInstance().hasNote();
     }
 }

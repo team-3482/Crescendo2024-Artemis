@@ -4,10 +4,9 @@
 
 package frc.robot.shooter;
 
-import java.util.Optional;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SterilizerConstants;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
@@ -64,17 +63,17 @@ public class ShootCommand extends Command {
             return;
         this.reachedRPM = true;
 
-        Optional<Boolean> hasNote = SterilizerSubsystem.getInstance().hasNoteMeasurement();
-        SterilizerSubsystem.getInstance().moveForward(false);
+        Boolean hasNote = SterilizerSubsystem.getInstance().hasNote();
+        SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
         if (!this.state.getAutoEndShooting()) return;
-        if (!hasNote.isPresent()) {
+        if (hasNote == null) {
             Timer.delay(2.5);
             this.finished = true;
         } 
-        else if (hasNote.get()) {
+        else if (!hasNote) {
             Timer.delay(0.5);
         }
-        if (hasNote.isPresent() && !hasNote.get()) {
+        else if (hasNote) {
             this.finished = true;
         }
     }
@@ -82,8 +81,8 @@ public class ShootCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        ShooterSubsystem.getInstance().setShootingVelocities(new double[]{0, 0});
-        SterilizerSubsystem.getInstance().moveStop();
+        ShooterSubsystem.getInstance().setShootingVelocities();
+        SterilizerSubsystem.getInstance().setSpeed();
 
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }

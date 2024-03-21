@@ -51,6 +51,13 @@ public class Color {
     public String getHexadecimal() {
         return String.format("#%02x%02x%02x", red, green, blue);  
     }
+
+    /**
+     * Check if this color is the same as another
+     * 
+     * @param other color
+     * @return if the colors are the same
+     */
     public boolean equals(Color other) {
         return red == other.red && blue == other.blue && green == other.green;
     }

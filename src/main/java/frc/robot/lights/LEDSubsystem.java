@@ -84,7 +84,6 @@ public class LEDSubsystem extends SubsystemBase {
     private void updateLights() {
         Color color = this.state.getColor();
 
-
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
         }
@@ -92,6 +91,7 @@ public class LEDSubsystem extends SubsystemBase {
             SB_D_LED_WIDGET.withProperties(Map.of("colorWhenTrue", color.getHexadecimal()));
             SB_D_LED_ENTRY.setBoolean(true);
         }
+
         for (int i = 0; i < this.ledBuffer.getLength(); i++) {
             this.ledBuffer.setRGB(i, color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -109,16 +109,17 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the state of the lights on the bot. If ovverideCurrent is true, will override current colors, else, will only change colors if the current state is off
+     * Sets the state of the lights on the bot. 
+     * If ovverideCurrent is true, it will override current colors, otherwise it will only change colors if the current state is off
+     * 
      * @param state Desired {@link LightState}
      * @param overrideCurrentState Whether the lights should overide the current lightt state or not.
      */
     public void setLightState(LightState state, boolean overrideCurrentState){
-        if(overrideCurrentState || (!overrideCurrentState && this.state == LightState.OFF)) {
+        if (overrideCurrentState || (!overrideCurrentState && this.state == LightState.OFF)) {
             this.state = state;
             this.updateLights();
         }
-        // Else -> do nothing beacuase there is already a light state and override if false
     }
 
     /**
@@ -131,7 +132,7 @@ public class LEDSubsystem extends SubsystemBase {
             this.setLightState(LightState.WARNING);
         }
         else {
-            this.setLightState(SterilizerSubsystem.getInstance().hasNote()? LightState.HOLDING_NOTE : LightState.OFF);
+            this.setLightState(SterilizerSubsystem.getInstance().hasNote() == true ? LightState.HOLDING_NOTE : LightState.OFF);
         }
     }
     

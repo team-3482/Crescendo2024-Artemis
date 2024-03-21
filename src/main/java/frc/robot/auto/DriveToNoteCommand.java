@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.intake;
+package frc.robot.auto;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -11,33 +11,31 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.NoteConstants;
-import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
+import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 
-/** An command to turn the bot until the note it sees is centered in front of the intake. */
-public class CenterNoteCommand extends Command {
-    private final String LIMELIGHT = LimelightConstants.INTAKE_LLIGHT;
-
+/** A command that drives the bot forward until there is a note in the sterilizer or it times out. */
+public class DriveToNoteCommand extends Command {
+    private final SlewRateLimiter driveLimiter;
     private final SlewRateLimiter turningLimiter;
-    private PIDController pid;
-    /** Used for {@link CenterNoteCommand#isFinished()} */
-    private double errorRadians;
+    private PIDController pidController;
 
-    /**
-    * Creates a new CenterNoteCommand.
-    */
-    public CenterNoteCommand() {
-        setName("CenterNoteCommand");
+    /** Creates a new CenterNoteCommand. */
+    public DriveToNoteCommand() {
+        setName("DriveToNoteCommand");
+        
+        this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
-        this.pid = new PIDController(
+
+        this.pidController = new PIDController(
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pid.setTolerance(Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
+        this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(SwerveSubsystem.getInstance());
@@ -46,13 +44,12 @@ public class CenterNoteCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT)) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
-        this.pid.reset();
+        pidController.reset();
 
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
@@ -60,17 +57,20 @@ public class CenterNoteCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
-        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT)) return;
-
-        this.errorRadians = Units.degreesToRadians(
-            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT));
-
-        double turningSpeed = pid.calculate(this.errorRadians, 0);
+        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT);
+        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
+        
+        double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
-
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, turningSpeed);
-
+        double drivingSpeed = driveLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
+            * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
+        
+        if (!hasTarget) {
+            turningSpeed = 0;
+            drivingSpeed /= 3;
+        }
+        
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(drivingSpeed, 0, turningSpeed);
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
@@ -78,13 +78,13 @@ public class CenterNoteCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
+        pidController.close();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        this.pid.close();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.errorRadians <= Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return SterilizerSubsystem.getInstance().hasNote();
     }
 }

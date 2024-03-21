@@ -2,18 +2,16 @@ package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.NoteConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShooterConstants.ShooterState;
-import frc.robot.intake.CenterNoteCommand;
-import frc.robot.intake.DriveToNoteCommand;
+import frc.robot.auto.CenterNoteCommand;
+import frc.robot.auto.CenterSpeakerCommand;
+import frc.robot.auto.DriveToNoteCommand;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
-import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
-import frc.robot.swerve.CenterSpeakerCommand;
 
 /** A class that stores command chains for use elsewhere */
 public class SequencedCommands {
@@ -26,7 +24,7 @@ public class SequencedCommands {
         return Commands.parallel(
             new PivotShooterCommand(ShooterState.INTAKE),
             new PivotIntakeCommand(IntakeState.INTAKING),
-            new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true)
+            new SpinIntakeCommand(IntakeState.INTAKING)
         );
     }
 
@@ -44,7 +42,7 @@ public class SequencedCommands {
             new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true), 
+                new SpinIntakeCommand(IntakeState.INTAKING), 
                 new DriveToNoteCommand().withTimeout(5)
             ),
             Commands.parallel(
@@ -67,7 +65,7 @@ public class SequencedCommands {
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.deadline(
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true),
+                new SpinIntakeCommand(IntakeState.INTAKING),
                 new DriveToNoteCommand().withTimeout(4)
             ),
             Commands.parallel(
@@ -90,7 +88,7 @@ public class SequencedCommands {
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.deadline(
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, true),
+                new SpinIntakeCommand(IntakeState.INTAKING),
                 new DriveToNoteCommand().withTimeout(4)
             )
         );
@@ -107,7 +105,7 @@ public class SequencedCommands {
                 new CenterSpeakerCommand(),
                 new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE)
             ),
-            new RevUpCommand(ShooterState.SPEAKER_CALCULATE)
+            new ShootCommand(ShooterState.SPEAKER_CALCULATE)
         );
     }
 
@@ -123,7 +121,7 @@ public class SequencedCommands {
                 new PivotShooterCommand(ShooterState.FRONT_EJECT)
             ),    
             Commands.parallel(
-                new SpinIntakeCommand(IntakeConstants.INTAKE_SPEED, false),
+                new SpinIntakeCommand(IntakeState.INTAKING, false),
                 new ShootCommand(ShooterState.FRONT_EJECT)
             )
         );

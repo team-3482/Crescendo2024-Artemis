@@ -4,8 +4,6 @@
 
 package frc.robot.shooter;
 
-import java.util.Optional;
-
 import com.revrobotics.CANSparkFlex;
 
 import au.grapplerobotics.LaserCan;
@@ -28,7 +26,8 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
 
     private CANSparkFlex feederMotor = new CANSparkFlex(SterilizerConstants.NEO_MOTOR_ID, MotorType.kBrushless);
-    private LaserCan laser = new LaserCan(SterilizerConstants.LASER_ID);
+    private LaserCan backLaser = new LaserCan(SterilizerConstants.BACK_LASER_ID);
+    private LaserCan frontLaser = new LaserCan(SterilizerConstants.FRONT_LASER_ID);
 
     /** Creates a new SterilizerSubsystem. LaserCAN is configured in the GrappleHook app */
     public SterilizerSubsystem() {
@@ -36,56 +35,72 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
     
     /**
-     * Returns whether or not the lazer has a measurement and if the measurement 
-     * means the sterilizer has a note.
+     * Gets the distances of notes from each laser.
      * 
-     * @return contains a note, empty optional if invalid measurements
+     * @return measurements, back laser [0] and front laser [1]
+     * @apiNote null when the measurement is invalid.
      */
-    public Optional<Boolean> hasNoteMeasurement() {
-        LaserCan.Measurement measurement = laser.getMeasurement();
-        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            return Optional.ofNullable(measurement.distance_mm <= SterilizerConstants.NOTE_DISTANCE_LASER);
-        }
-        return Optional.empty();
+    public Integer[] getLaserMeasurements() {
+        LaserCan.Measurement backMm = backLaser.getMeasurement();
+        LaserCan.Measurement frontMm = frontLaser.getMeasurement();
+        
+        Integer[] measurements = new Integer[]{
+            backMm != null && backMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
+                backMm.distance_mm : null,
+            frontMm != null && frontMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
+                frontMm.distance_mm : null
+        };
+
+        return measurements;
     }
 
     /**
-     * Returns whether there is a note in the sterilizer or not (if the lazer is broken or not)
+     * Checks the distances of {@link SterilizerSubsystem#getLaserMeasurements()} against the measurements for a note.
      * 
-     * @return sterilizer contains a note
+     * @return has notes, back laser [0] and front laser [1]
+     * @apiNote null when the measurement is invalid.
      */
-    public boolean hasNote() {
-        return this.hasNoteMeasurement().isPresent() && this.hasNoteMeasurement().get();
+    public Boolean[] getHasNotes() {
+        Integer[] measurements = getLaserMeasurements();
+
+        return new Boolean[]{
+            measurements[0] == null ? null : measurements[0] <= SterilizerConstants.NOTE_DISTANCE_LASER,
+            measurements[1] == null ? null : measurements[1] <= SterilizerConstants.NOTE_DISTANCE_LASER
+        };
+    }
+
+    /**
+     * Checks if either of {@link SterilizerSubsystem#getHasNotes()} is true
+     * 
+     * @return if either laser sees a note
+     * @apiNote null if both measurements are invalid
+     */
+    public Boolean hasNote() {
+        Boolean[] notes = getHasNotes();
+
+        return notes[0] == null && notes[1] == null ? null : notes[0] || notes[1];
     }
     
     /**
-     * Moves the note forwards to the shooter
+     * Spins the sterilizer at the given speed
      * 
-     * @param calibrate lower speed for centering the note
+     * @param speed from -1.0 to 1.0
      */
-    public void moveForward(boolean calibrate) {
-        feederMotor.set(0.8 * (calibrate ? SterilizerConstants.NOTE_CALIBRATION_MUL : 1));
+    public void setSpeed(double speed) {
+        feederMotor.set(speed);
     }
-    
+
     /**
-     * Moves the note backwards to the intake. Do not run for too long, otherwise the note will get stuck above the PDH.
-     * 
-     * @param calibrate lower speed for centering the note
+     * Stops the sterilizer (overloaded)
      */
-    public void moveBackward(boolean calibrate) {
-        feederMotor.set(-SterilizerConstants.FEEDING_SPEED * (calibrate ? SterilizerConstants.NOTE_CALIBRATION_MUL : 1));
-    }
-    
-    /**
-     * Stops the NEO motor
-     */
-    public void moveStop() {
-        feederMotor.set(0);
+    public void setSpeed() {
+        setSpeed(0);
     }
 
     @Override
     public void periodic() {
-        if(this.hasNote()) {
+        Boolean _hasNote = hasNote();
+        if (_hasNote != null && _hasNote) {
             LEDSubsystem.getInstance().setLightState(LightState.HOLDING_NOTE, false);
         } 
     }

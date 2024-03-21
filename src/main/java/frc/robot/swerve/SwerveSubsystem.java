@@ -84,9 +84,6 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveKinematics.DRIVE_KINEMATICS, getRotation2d(), getModulePositions(),
         SwerveUtilities.getStartingPose(Telemetry.getInstance().getSelectedStartingPosition()));
     
-    // Initialize a field to track of robot position in SmartDashboard
-    // private Field2d swerve_field = new Field2d();
-    
     /** Keep track of desiredStates for Telemetry */
     private SwerveModuleState[] desiredStates = new SwerveModuleState[4];
     /** Save whether or not currently using LL Odometry */
@@ -118,14 +115,6 @@ public class SwerveSubsystem extends SubsystemBase {
                 return false;
             },
             this);
-        
-        // Set up custom logging to add the current path to a field 2d widget on shuffleboard
-        // PathPlannerLogging.setLogActivePathCallback((poses) -> swerve_field.getObject("path").setPoses(poses));
-        // Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        //     .add("Field (SwervePoseEstimator)", swerve_field)
-        //     .withWidget(BuiltInWidgets.kField)
-        //     .withPosition(0, 0)
-        //     .withSize(7, 4);
 
         gyro.getConfigurator().apply((new MountPoseConfigs()).withMountPoseYaw(0));
         
@@ -260,8 +249,6 @@ public class SwerveSubsystem extends SubsystemBase {
         this.odometer.update(getRotation2d(), getModulePositions());
         
         this.usingLimelightOdometry = updateOdometryUsingVision();
-
-        // this.swerve_field.setRobotPose(getPose());
     }
 
     /**

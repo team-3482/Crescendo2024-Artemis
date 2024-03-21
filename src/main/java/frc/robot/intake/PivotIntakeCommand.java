@@ -15,7 +15,7 @@ import frc.robot.lights.LEDSubsystem.LightState;
 /** A command to move the intake to a specific position. */
 public class PivotIntakeCommand extends Command {
     private IntakeState state;
-    private PIDController pid;
+    // private PIDController pid;
     private boolean up;
 
     // private boolean brokenEncoderIsItDown;
@@ -32,9 +32,9 @@ public class PivotIntakeCommand extends Command {
         
         this.up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
         
-        this.pid = new PIDController(IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
-        this.pid.setTolerance(this.state.getTolerance());
-        this.pid.enableContinuousInput(0, 2 * Math.PI);
+        // this.pid = new PIDController(IntakeConstants.PIVOT_PID_P_DOWN, 0, 0);
+        // this.pid.setTolerance(this.state.getTolerance());
+        // this.pid.enableContinuousInput(0, 2 * Math.PI);
 
         // this.brokenEncoderIsItDown = false;
 
@@ -44,7 +44,7 @@ public class PivotIntakeCommand extends Command {
     @Override
     public void initialize() {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        this.pid.reset();
+        // this.pid.reset();
         // this.brokenEncoderTimer.restart();
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
@@ -57,9 +57,10 @@ public class PivotIntakeCommand extends Command {
             // this.brokenEncoderIsItDown = false;
         }
         else {
-            speed = this.pid.calculate(
-                Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
-                Units.degreesToRadians(this.state.getAngle()));
+            // speed = this.pid.calculate(
+            //     Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
+            //     Units.degreesToRadians(this.state.getAngle()));
+            speed = IntakeConstants.PIVOT_DOWN_SPEED;
             // this.brokenEncoderIsItDown = true;
         }
         IntakeSubsystem.getInstance().setPivotSpeed(speed);
@@ -74,13 +75,13 @@ public class PivotIntakeCommand extends Command {
         //     IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
         // }
         IntakeSubsystem.getInstance().setPivotSpeed(0);
-        this.pid.close();
+        // this.pid.close();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     @Override
     public boolean isFinished() {
         // return this.brokenEncoderTimer.hasElapsed(1.25);
-        return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() ) <= this.state.getTolerance();
+        return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition()) <= this.state.getTolerance();
     }
 }

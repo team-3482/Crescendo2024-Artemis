@@ -19,6 +19,8 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.Constants.SterilizerConstants;
+import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.PathingCommands;
 import frc.robot.Constants.AutonConstants.PathfindingPosition;
 import frc.robot.Constants.ShooterConstants.ShooterState;
@@ -28,12 +30,10 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ManuallyPivotShooterCommand;
 import frc.robot.shooter.PivotShooterCommand;
-import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
-import frc.robot.swerve.CenterSpeakerCommand;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.JSONManager;
 import frc.robot.utilities.SequencedCommands;
@@ -111,8 +111,8 @@ public class RobotContainer {
         //     PathingCommands.getBezierCommand(PathfindingPosition.AMP));
 
         // Intake
-        NamedCommands.registerCommand("FixNote",
-            Commands.run(() -> SterilizerSubsystem.getInstance().moveBackward(false))
+        NamedCommands.registerCommand("FixNote", // TODO do this automatically
+            Commands.run(() -> SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.ADJUSTING_SPEED))
                 .withTimeout(1));
         NamedCommands.registerCommand("Collect Note",
             SequencedCommands.getCollectNoteCommand());
@@ -122,10 +122,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeEject NOEND",
             SequencedCommands.getIntakeEjectCommand());
         // Shoot
-        NamedCommands.registerCommand("Rev Up SPEAKER",
-            new RevUpCommand(ShooterState.SPEAKER));
-        NamedCommands.registerCommand("Rev Up AMP",
-            new RevUpCommand(ShooterState.AMP));
         NamedCommands.registerCommand("Shoot SPEAKER",
             new ShootCommand(ShooterState.SPEAKER));
         NamedCommands.registerCommand("Shoot AMP",
@@ -218,8 +214,8 @@ public class RobotContainer {
         // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
         // Reverse sterilizer (0.2 speed)
         operatorController.y().whileTrue(Commands.runEnd(
-            () -> SterilizerSubsystem.getInstance().moveBackward(true),
-            () -> SterilizerSubsystem.getInstance().moveStop()
+            () -> SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.ADJUSTING_SPEED),
+            () -> SterilizerSubsystem.getInstance().setSpeed()
         ));
         // Reverse intake (0.5 speed)
         operatorController.a().whileTrue(Commands.runEnd(
@@ -229,18 +225,18 @@ public class RobotContainer {
         // Front eject (double rectangle)
         operatorController.back().onTrue(Commands.parallel(
                 new ShootCommand(ShooterState.FRONT_EJECT).withTimeout(2),
-                Commands.runOnce(() -> SterilizerSubsystem.getInstance().moveForward(false))
+                Commands.runOnce(() -> SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED))
             ))
             .onFalse(
                 Commands.runOnce(() -> {
                     ShooterSubsystem.getInstance().setShootingVelocities();
-                    SterilizerSubsystem.getInstance().moveStop();
+                    SterilizerSubsystem.getInstance().setSpeed();;
                 })
             );
         // Move sterilizer forward (burger)
         operatorController.start().whileTrue(Commands.runEnd(
-            () -> SterilizerSubsystem.getInstance().moveForward(false),
-            () -> SterilizerSubsystem.getInstance().moveStop()
+            () -> SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED),
+            () -> SterilizerSubsystem.getInstance().setSpeed()
         ));
         
         // Move the pivot manually (last resort, not recommended)
@@ -254,11 +250,11 @@ public class RobotContainer {
         ));
         // Move the intake manually (last resort, not recommended)
         operatorController.povRight().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeedSafe(0.2),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(0.2, true),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
         operatorController.povLeft().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setPivotSpeedSafe(-0.1),
+            () -> IntakeSubsystem.getInstance().setPivotSpeed(-0.1, true),
             () -> IntakeSubsystem.getInstance().setPivotSpeed(0)
         ));
     }

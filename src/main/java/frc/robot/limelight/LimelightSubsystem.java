@@ -25,8 +25,6 @@ public class LimelightSubsystem extends SubsystemBase {
         return instance;
     }
 
-    // Field2d limelight_field = new Field2d();
-
     /** Creates a new LimelightSubsystem. */
     public LimelightSubsystem() {
         super("LimelightSubsystem");
@@ -36,11 +34,6 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
             alliance.isPresent() && alliance.get() == Alliance.Red ? 7 : 4
         );
-        // Shuffleboard.getTab(ShuffleboardTabConstants.FIELDS)
-        //     .add("Field (limelight)", limelight_field)
-        //     .withWidget(BuiltInWidgets.kField)
-        //     .withPosition(7, 0)
-        //     .withSize(7, 4);
     }
 
     /**
@@ -123,18 +116,5 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
-        // limelight_field.setRobotPose(this.getBotpose());
-        // int tid = this.getTargetID();
-        // boolean tSee = this.hasTarget(LimelightConstants.SHOOTER_LLIGHT);
-        // boolean nSee = this.hasTarget(LimelightConstants.INTAKE_LLIGHT);
-
-        // Default Shuffleboard
-        // SB_D_TSEE.setBoolean(tSee);
-        // SB_D_NSEE.setBoolean(nSee);
-
-        // Field Shuffleboard (disabled for competition)
-        // SB_F_TID.setInteger(tid);
-        // SB_F_TSEE.setBoolean(tSee);
-    }
+    public void periodic() {}
 }

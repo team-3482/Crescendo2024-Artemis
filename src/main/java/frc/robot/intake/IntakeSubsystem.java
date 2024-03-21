@@ -25,83 +25,81 @@ public class IntakeSubsystem extends SubsystemBase {
         return instance;
     }
 
+    /** Leader for the intake pivot */
     private CANSparkFlex leftPivotMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+    /** Follower of {@link IntakeSubsystem#leftPivotMotor} for the intake pivot */
     private CANSparkFlex rightPivotMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-    /** Vortex */
+
+    /** Vortex - leader of {@link IntakeSubsystem#bottomIntakeMotor} for intaking */
     private CANSparkFlex topIntakeMotor = new CANSparkFlex(IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
-    /** Neo */
+    /** Neo - Follower for intaking*/
     private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
-    /** Through bore encoder */
-    // private RelativeEncoder pivotEncoder = bottomIntakeMotor.getAlternateEncoder(SparkMaxAlternateEncoder.Type.kQuadrature, 8192);
+    /** Through bore encoder in absolute mode */
     private SparkAbsoluteEncoder pivotEncoder = bottomIntakeMotor.getAbsoluteEncoder();
 
     public IntakeSubsystem() {
         super("IntakeSubsystem");
+
         leftPivotMotor.setInverted(false);
         rightPivotMotor.follow(leftPivotMotor, true);
+
         topIntakeMotor.setInverted(true);
         bottomIntakeMotor.follow(topIntakeMotor, true);
-        pivotEncoder.setInverted(true);
-
-        // resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
+        
+        pivotEncoder.setInverted(true);  // Inverted so the IntakeState.IDLE position is positive
     }
 
     /**
-     * Moves the note forward through the intake
+     * Sets the speeds of the top and bottom intaking motors.
      * 
-     * @param intakeSpeed the speed of the intake motors
+     * @param speed of the intake motors between -1.0 and 1.0
      */
-    public void setIntakeSpeed(double intakeSpeed) {
-        topIntakeMotor.set(intakeSpeed);
+    public void setIntakeSpeed(double speed) {
+        topIntakeMotor.set(speed);
     }
 
     /**
-     * Set pivot motors to a specific speed
+     * Set pivot motors to a specific speed when position is within the bounds provided by
+     * {@link IntakeState#INTAKING} and {@link IntakeState#IDLE}
+     * 
+     * @param speed between -1.0 and 1.0
+     * @param safe stop when at the soft stops
+     */
+    public void setPivotSpeed(double speed, boolean safe) {
+        if (safe) {
+            double position = getPivotPosition();
+            speed = 
+                (speed < 0 && Math.abs(IntakeState.INTAKING.getAngle() - position) <= IntakeState.INTAKING.getTolerance()) ||
+                (speed > 0 && Math.abs(IntakeState.IDLE.getAngle() - position) <= IntakeState.IDLE.getTolerance())
+                    ? 0 : speed;
+        }
+        leftPivotMotor.set(speed);
+    }
+
+    /**
+     * Set pivot motors to a specific speed safely (overloaded)
      * 
      * @param speed between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
-        leftPivotMotor.set(speed);
+        setPivotSpeed(speed, true);
     }
 
     /**
-     * Set pivot motors to a specific speed but stops near extremities
+     * Gets the absolute position of the through bore encoder.
      * 
-     * @param speed between -1.0 and 1.0
-     */
-    public void setPivotSpeedSafe(double speed) {
-        double position = getPivotPosition();
-        speed = 
-            (speed < 0 && Math.abs(IntakeState.INTAKING.getAngle() - position) <= IntakeState.INTAKING.getTolerance()) ||
-            (speed > 0 && Math.abs(IntakeState.IDLE.getAngle() - position) <= IntakeState.IDLE.getTolerance())
-                ? 0 : speed;
-
-        leftPivotMotor.set(speed);
-    }
-
-    /**
-     * Gets the position of the through bore encoder
-     * 
-     * @return position of the intake in degrees. 0 is at hard stop when extended.
+     * @return position of the intake in degrees.
+     *  
+     * @apiNote 0 is at hard stop when extended.
      */
     public double getPivotPosition() {
-        return Units.rotationsToDegrees(this.pivotEncoder.getPosition());
+        double position = Units.rotationsToDegrees(this.pivotEncoder.getPosition());
+        // Because it's an absolute encoder, make sure it isn't returning values like 359 or 358
+        if (position > 350)
+            position = 0;
+        return position;
     }
-
-    // /**
-    //  * Sets the position of the through bore encoder
-    //  * 
-    //  * @return position of the intake in degrees. 0 should be at hard stop when extended.
-    //  */
-    // public void resetPivotPosition(double position) {
-        // this.pivotEncoder.setPosition(Units.degreesToRotations(position));
-    // }
 
     @Override
-    public void periodic() {
-        // int position = (int) getPivotPosition();
-        // if (this.pivotEncoder.getVelocity() == 0 && position != 0  && position <= 10) {
-        //     resetPivotPosition(0);
-        // 
-    }
+    public void periodic() {}
 }

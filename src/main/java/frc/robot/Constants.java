@@ -22,7 +22,6 @@ public final class Constants {
     public static final class ShuffleboardTabConstants {
         public static final String DEFAULT = "Competition";
         public static final String PITTING = "Utilities";
-        // public static final String FIELDS = "Field"; // Disabled for competition
     }
 
     public static final class IntakeConstants {
@@ -35,23 +34,24 @@ public final class Constants {
         public static final double INTAKE_SPEED = 0.25;
         /** PID Proportional to use when moving the intake down */
         public static final double PIVOT_PID_P_DOWN = 0.05;
-        /** Constant speed to use to retract the intake from -1.0 to 1.0*/
+        /** Constant speed to use to retract the intake from 0 to 1.0*/
         public static final double PIVOT_UP_SPEED = 0.2;
-
-        // /** Position for the intake opened in degrees */
-        // public static final int MOTOR_TO_PIVOT_RATIO = 9;
+        /** Constant speed to use to lower the intake from -1.0 to 0*/
+        public static final double PIVOT_DOWN_SPEED = 0.1;
 
         public static enum IntakeState{
-            INTAKING(0, 7.5),
+            INTAKING(5, 60, INTAKE_SPEED),
             /** The hardware stop angle for the intake when it is idle in degrees*/
-            IDLE(160, 25);
+            IDLE(160, 25, 0);
             /* Angle of the intake in degrees */
             double intakeAngle;
             double tolerance;
+            double speed;
 
-            private IntakeState(double intakeAngle, double tolerance) {
+            private IntakeState(double intakeAngle, double tolerance, double speed) {
                 this.intakeAngle = intakeAngle;
                 this.tolerance = tolerance;
+                this.speed = speed;
             }
             public double getAngle() {
                 return this.intakeAngle;
@@ -59,19 +59,23 @@ public final class Constants {
             public double getTolerance() {
                 return this.tolerance;
             }
+            public double getSpeed() {
+                return this.speed;
+            }
         }
     }
 
     /** Constants used for the sterilizer */
     public static final class SterilizerConstants {
         public static final int NEO_MOTOR_ID = 10;
-        public static final int LASER_ID = 35;
-        /** How fast the motor should spin to safely move the note. Between 0 and 1.0 */
+        public static final int BACK_LASER_ID = 35;
+        public static final int FRONT_LASER_ID = 34;
+        /** How fast the motor should spin to move the note. Between 0 and 1.0 */
         public static final double FEEDING_SPEED = 0.65;
+        /** How fast the motor should spin to adjust the note. Between 0 and 1.0 */
+        public static final double ADJUSTING_SPEED = 0.25;
         /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
         public static final double NOTE_DISTANCE_LASER = 150;
-        /** The multiplier for centering the note */
-        public static final double NOTE_CALIBRATION_MUL = 0.2;
     }
 
     /**
