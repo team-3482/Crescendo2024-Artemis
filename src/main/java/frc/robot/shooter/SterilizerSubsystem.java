@@ -4,6 +4,9 @@
 
 package frc.robot.shooter;
 
+import java.util.Optional;
+import java.util.OptionalInt;
+
 import com.revrobotics.CANSparkFlex;
 
 import au.grapplerobotics.LaserCan;
@@ -38,17 +41,17 @@ public class SterilizerSubsystem extends SubsystemBase {
      * Gets the distances of notes from each laser.
      * 
      * @return measurements, back laser [0] and front laser [1]
-     * @apiNote null when the measurement is invalid.
+     * @apiNote empty optional when the measurement is invalid.
      */
-    public Integer[] getLaserMeasurements() {
+    public OptionalInt[] getLaserMeasurements() {
         LaserCan.Measurement backMm = backLaser.getMeasurement();
         LaserCan.Measurement frontMm = frontLaser.getMeasurement();
         
-        Integer[] measurements = new Integer[]{
+        OptionalInt[] measurements = new OptionalInt[]{
             backMm != null && backMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
-                backMm.distance_mm : null,
+                OptionalInt.of(backMm.distance_mm) : OptionalInt.empty(),
             frontMm != null && frontMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
-                frontMm.distance_mm : null
+                OptionalInt.of(backMm.distance_mm) : OptionalInt.empty()
         };
 
         return measurements;
@@ -58,27 +61,30 @@ public class SterilizerSubsystem extends SubsystemBase {
      * Checks the distances of {@link SterilizerSubsystem#getLaserMeasurements()} against the measurements for a note.
      * 
      * @return has notes, back laser [0] and front laser [1]
-     * @apiNote null when the measurement is invalid.
+     * @apiNote empty optional when the measurement is invalid.
      */
-    public Boolean[] getHasNotes() {
-        Integer[] measurements = getLaserMeasurements();
+    public Optional<Boolean>[] getHasNotes() {
+        OptionalInt[] measurements = getLaserMeasurements();
 
-        return new Boolean[]{
-            measurements[0] == null ? null : measurements[0] <= SterilizerConstants.NOTE_DISTANCE_LASER,
-            measurements[1] == null ? null : measurements[1] <= SterilizerConstants.NOTE_DISTANCE_LASER
-        };
+        @SuppressWarnings("unchecked")
+        Optional<Boolean>[] sketchy = (Optional<Boolean>[]) new Optional<?>[2];
+        sketchy[0] = measurements[0].isPresent()
+            ? Optional.ofNullable(measurements[0].getAsInt() <= SterilizerConstants.NOTE_DISTANCE_LASER) : Optional.empty();
+        sketchy[1] = measurements[1].isPresent()
+            ? Optional.ofNullable(measurements[1].getAsInt() <= SterilizerConstants.NOTE_DISTANCE_LASER) : Optional.empty();
+        return sketchy;
     }
 
     /**
      * Checks if either of {@link SterilizerSubsystem#getHasNotes()} is true
      * 
      * @return if either laser sees a note
-     * @apiNote null if both measurements are invalid
+     * @apiNote will still return false if both measurements are invalid
      */
-    public Boolean hasNote() {
-        Boolean[] notes = getHasNotes();
+    public boolean hasNote() {
+        Optional<Boolean>[] notes = getHasNotes();
 
-        return notes[0] == null && notes[1] == null ? null : notes[0] || notes[1];
+        return (notes[0].isPresent() && notes[0].get()) || (notes[1].isPresent() && notes[1].get());
     }
     
     /**
@@ -99,8 +105,7 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Boolean _hasNote = hasNote();
-        if (_hasNote != null && _hasNote) {
+        if (hasNote()) {
             LEDSubsystem.getInstance().setLightState(LightState.HOLDING_NOTE, false);
         } 
     }

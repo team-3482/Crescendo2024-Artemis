@@ -4,6 +4,8 @@
 
 package frc.robot.shooter;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SterilizerConstants;
@@ -15,7 +17,6 @@ import frc.robot.swerve.SwerveSubsystem;
 /** A command that spins the large wheels of the shooter at the desired speed. */
 public class ShootCommand extends Command {
     private boolean reachedRPM;
-    private boolean finished;
     private ShooterState state;
     private boolean invertSpin;
 
@@ -38,7 +39,6 @@ public class ShootCommand extends Command {
         if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
             end(true);
         }
-        this.finished = false;
 
         this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
@@ -63,18 +63,20 @@ public class ShootCommand extends Command {
             return;
         this.reachedRPM = true;
 
-        Boolean hasNote = SterilizerSubsystem.getInstance().hasNote();
+        Optional<Boolean>[] hasNote = SterilizerSubsystem.getInstance().getHasNotes();
         SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
+        
         if (!this.state.getAutoEndShooting()) return;
-        if (hasNote == null) {
-            Timer.delay(2.5);
-            this.finished = true;
-        } 
-        else if (!hasNote) {
-            Timer.delay(0.5);
+        
+        if (hasNote[0].isEmpty() && hasNote[1].isEmpty()) {
+            Timer.delay(1.5);
+            end(false);
         }
-        else if (hasNote) {
-            this.finished = true;
+        else if (!hasNote[0].get() && !hasNote[1].get()) {
+            end(false);
+        }
+        else {
+            Timer.delay(0.25);
         }
     }
 
@@ -87,9 +89,13 @@ public class ShootCommand extends Command {
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    // Returns true when the command should end.
+    /**
+     * Always returns false because the command will end itself
+     * 
+     * @return false
+     */
     @Override
     public boolean isFinished() {
-        return this.state.getAutoEndShooting() ? this.finished : false;
+        return false;
     }
 }
