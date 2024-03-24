@@ -118,14 +118,16 @@ public class RobotContainer {
             SequencedCommands.getCollectNoteCommand());
         NamedCommands.registerCommand("Collect Note NOCENTER",
             SequencedCommands.getAutonCollectNoteCommand());
-        
-        NamedCommands.registerCommand("IntakeEject NOEND",
-            SequencedCommands.getIntakeEjectCommand());
+            
         // Shoot
         NamedCommands.registerCommand("Shoot SPEAKER",
             new ShootCommand(ShooterState.SPEAKER));
         NamedCommands.registerCommand("Shoot AMP",
             new ShootCommand(ShooterState.AMP));
+        
+        // Other
+        NamedCommands.registerCommand("IntakeEject NOEND",
+            SequencedCommands.getIntakeEjectCommand());
     }
 
     /** Configures the button bindings of the driver controller */
@@ -203,15 +205,9 @@ public class RobotContainer {
             new PivotShooterCommand(ShooterState.AMP),
             new ShootCommand(ShooterState.AMP)
         ));
-        // Shoot SAFETY
-        // operatorController.x().whileTrue(Commands.sequence(
-        //     new PivotShooterCommand(ShooterState.SAFETY_1),
-        //     new ShootCommand(ShooterState.SAFETY_1)
-        // ));
-        // TODO LL Test CenterSpeakerCommand()
-        operatorController.x().onTrue(new CenterSpeakerCommand());
         // TODO Run SHOOTER automatically
-        // operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
+        operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
+        
         // Reverse sterilizer (0.2 speed)
         operatorController.y().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.ADJUSTING_SPEED),

@@ -46,13 +46,7 @@ public class SpinIntakeCommand extends Command {
     @Override
     public void execute() {
         IntakeSubsystem.getInstance().setIntakeSpeed(this.state.getSpeed());
-        
-        if (this.state.getSpeed() > 0) {
-            SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
-        }
-        else if (this.state.getSpeed() < 0) {
-            SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.FEEDING_SPEED);
-        }
+        SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED * Math.signum(this.state.getSpeed()));
     }
 
     @Override

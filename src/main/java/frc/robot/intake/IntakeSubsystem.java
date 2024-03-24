@@ -59,6 +59,13 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /**
+     * Sets the speeds of the top and bottom intaking motors to 0. (overloaded)
+     */
+    public void setIntakeSpeed() {
+        setIntakeSpeed(0);
+    }
+
+    /**
      * Set pivot motors to a specific speed when position is within the bounds provided by
      * {@link IntakeState#INTAKING} and {@link IntakeState#IDLE}
      * 
@@ -69,8 +76,8 @@ public class IntakeSubsystem extends SubsystemBase {
         if (safe) {
             double position = getPivotPosition();
             speed = 
-                (speed < 0 && Math.abs(IntakeState.INTAKING.getAngle() - position) <= IntakeState.INTAKING.getTolerance()) ||
-                (speed > 0 && Math.abs(IntakeState.IDLE.getAngle() - position) <= IntakeState.IDLE.getTolerance())
+                (speed < 0 && Math.abs(IntakeState.INTAKING.getAngle() - position) <= 1) ||
+                (speed > 0 && Math.abs(IntakeState.IDLE.getAngle() - position) <= 1)
                     ? 0 : speed;
         }
         leftPivotMotor.set(speed);

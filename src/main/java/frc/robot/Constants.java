@@ -32,17 +32,19 @@ public final class Constants {
 
         /** Speed at which to run the intake motors */
         public static final double INTAKE_SPEED = 0.25;
+        /** PID Proportional to use when moving the intake up */
+        public static final double PIVOT_PID_P_UP = 0.075;
         /** PID Proportional to use when moving the intake down */
-        public static final double PIVOT_PID_P_DOWN = 0.05;
+        public static final double PIVOT_PID_P_DOWN = 0.075;
         /** Constant speed to use to retract the intake from 0 to 1.0*/
         public static final double PIVOT_UP_SPEED = 0.2;
         /** Constant speed to use to lower the intake from -1.0 to 0*/
         public static final double PIVOT_DOWN_SPEED = 0.1;
 
         public static enum IntakeState{
-            INTAKING(5, 60, INTAKE_SPEED),
+            INTAKING(0, 1, INTAKE_SPEED),
             /** The hardware stop angle for the intake when it is idle in degrees*/
-            IDLE(160, 25, 0);
+            IDLE(150, 10, 0);
             /* Angle of the intake in degrees */
             double intakeAngle;
             double tolerance;

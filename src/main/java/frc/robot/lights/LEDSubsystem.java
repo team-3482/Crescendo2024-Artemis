@@ -83,7 +83,7 @@ public class LEDSubsystem extends SubsystemBase {
      */
     private void updateLights() {
         Color color = this.state.getColor();
-
+        
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
         }
