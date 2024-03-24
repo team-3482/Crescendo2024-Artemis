@@ -85,11 +85,15 @@ public final class Constants {
      * @implNote LEFT/RIGHT for motors is based on the Note's POV as it travels through the shooter
      */
     public static final class ShooterConstants {
-        public static final int LEFT_PIVOT_MOTOR_ID = 20;
-        public static final int RIGHT_PIVOT_MOTOR_ID = 21;
+        // Shooting wheels
         public static final int LEFT_SHOOTER_MOTOR_ID = 11;
         public static final int RIGHT_SHOOTER_MOTOR_ID = 12;
-        public static final int HEX_PIVOT_ENCODER_ID = 30;
+        
+        // Pivot
+        public static final int LEFT_PIVOT_MOTOR_ID = 20;
+        public static final int RIGHT_PIVOT_MOTOR_ID = 21;
+        public static final int LEFT_CANCODER_ID = 22;
+        public static final int RIGHT_CANCODER_ID = 23;
         
         // Pivot Stuff
         public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33

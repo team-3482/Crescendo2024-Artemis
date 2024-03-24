@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -39,14 +40,18 @@ public class ShooterSubsystem extends SubsystemBase {
     /** This is used after a pivot command to be sure the robot can chain a shooting command */
     public boolean canShoot = false;
 
+    // Shooting wheels
     private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
     private SparkPIDController rightPID = rightShooter.getPIDController();
     private CANSparkFlex leftShooter = new CANSparkFlex(ShooterConstants.LEFT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
     private SparkPIDController leftPID = leftShooter.getPIDController();
     
+    // Pivot
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private CANcoder rightCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private CANcoder leftCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
@@ -54,7 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // leftShooter.setInverted(true);
         
         configureMotionMagic();
-        configurePID();
+        configureShootingPID();
         
         double[] positions = JSONManager.getInstance().getShooterPivotPositions();
         leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
@@ -65,16 +70,17 @@ public class ShooterSubsystem extends SubsystemBase {
      * Configures motion magic for the intake pivot talon
      */
     private void configureMotionMagic() {
+        // Shared configurations
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         
         FeedbackConfigs feedbackConfigs = configuration.Feedback;
-        feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         // Sets the gear ratio from the motor to the mechanism (pivot)
         feedbackConfigs.SensorToMechanismRatio = 0;
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
         // motorOutputConfigs.DutyCycleNeutralDeadband = 0.001;
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Right motor not inverted
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         
         // Set Motion Magic gains in slot0
@@ -91,16 +97,20 @@ public class ShooterSubsystem extends SubsystemBase {
         motionMagicConfigs.MotionMagicAcceleration = ShooterConstants.CRUISE_ACCELERATION;
         motionMagicConfigs.MotionMagicJerk = ShooterConstants.MOTION_MAGIC_JERK;
         
+        // Motor-specific configurations
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Right motor not inverted
+        feedbackConfigs.FeedbackRemoteSensorID = ShooterConstants.RIGHT_CANCODER_ID;
         this.rightPivotMotor.getConfigurator().apply(configuration);
         
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Left motor inverted
+        feedbackConfigs.FeedbackRemoteSensorID = ShooterConstants.LEFT_CANCODER_ID;
         this.leftPivotMotor.getConfigurator().apply(configuration);
     }
 
     /**
      * Configures PID for both shooting motors
      */
-    private void configurePID() {
+    private void configureShootingPID() {
         // Left shooter
         leftPID.setP(ShooterConstants.kP);
         leftPID.setFF(ShooterConstants.kFF);
@@ -113,15 +123,18 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * @deprecated This method should not be used. Set CANCoders zeroes in Phoenix Tuner X instead.
+     * 
      * Set the motor encoder's position to the pivot angle
      * 
      * @param angle in degrees
      */
+    @Deprecated
     public void resetPivotPosition(double angle) {
-        JSONManager.getInstance().saveShooterPivotPositions(angle);
-        double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
-        leftPivotMotor.setPosition(position);
-        rightPivotMotor.setPosition(position);
+        // JSONManager.getInstance().saveShooterPivotPositions(angle);
+        // double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
+        // leftPivotMotor.setPosition(position);
+        // rightPivotMotor.setPosition(position);
     }
     
     /**
@@ -171,17 +184,20 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the positions of the pivots (after gear ratio) using the motor's rotor.
+     * Gets the positions of the pivots using the CANCoders.
      * <p> Left [0] and right [1] </p>
-     * <p> Note : it is recommended to follow only the right [1] motor for pivot positioning </p>
      * 
      * @return positions in degrees
      */
     public double[] getPivotPositions() {
         return new double[]{
-            Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO),
-            Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO)
+            Units.rotationsToDegrees(leftCANcoder.getPosition().getValueAsDouble()),
+            Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble())
         };
+        // return new double[]{
+        //     Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO),
+        //     Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO)
+        // };
     }
 
     /**
