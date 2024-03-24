@@ -4,6 +4,8 @@
 
 package frc.robot.intake;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SterilizerConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
@@ -46,7 +48,24 @@ public class SpinIntakeCommand extends Command {
     @Override
     public void execute() {
         IntakeSubsystem.getInstance().setIntakeSpeed(this.state.getSpeed());
-        SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED * Math.signum(this.state.getSpeed()));
+        Optional<Boolean>[] hasNotesOptionals = SterilizerSubsystem.getInstance().getHasNotes();
+        boolean[] hasNotes = new boolean[]{
+            hasNotesOptionals[0].isPresent() && hasNotesOptionals[0].get(),
+            hasNotesOptionals[1].isPresent() && hasNotesOptionals[1].get()
+        };
+
+        if (this.state.getSpeed() < 0) {
+            SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.FEEDING_SPEED);
+        }
+        else if (!this.stopForNote || (!hasNotes[0] && !hasNotes[1])) {
+            SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
+        }
+        else if (hasNotes[0] && !hasNotes[1]) {
+            SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.ADJUSTING_SPEED);
+        }
+        else if (hasNotes[0] && hasNotes[1]) {
+            end(false);
+        }
     }
 
     @Override
@@ -57,8 +76,14 @@ public class SpinIntakeCommand extends Command {
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
+    /**
+     * Will return false because the {@link SpinIntakeCommand#execute()} loop will end this command
+     * 
+     * @return false
+     */
     @Override
     public boolean isFinished() {
-        return this.stopForNote && SterilizerSubsystem.getInstance().hasNote();
+        // return this.stopForNote && SterilizerSubsystem.getInstance().hasNote();
+        return false;
     }
 }
