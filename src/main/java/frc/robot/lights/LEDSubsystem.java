@@ -37,6 +37,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private double lastLedUpdate = 0.0;
     private LightState state;
+    private LightState previousState;
 
     private SimpleWidget SB_D_LED_WIDGET = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("LED Status", false);
@@ -62,6 +63,7 @@ public class LEDSubsystem extends SubsystemBase {
         this.lastLedUpdate = Timer.getFPGATimestamp();
 
         this.state = LightState.OFF;
+        this.previousState = this.state;
 
     }
 
@@ -83,6 +85,9 @@ public class LEDSubsystem extends SubsystemBase {
      */
     private void updateLights() {
         Color color = this.state.getColor();
+
+        // Does not update the lights if the new color is the same as the current color
+        if(this.previousState.getColor() == color) return; 
         
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
@@ -97,6 +102,7 @@ public class LEDSubsystem extends SubsystemBase {
         }
 
         this.ledStrip.setData(this.ledBuffer);
+        this.previousState = this.state;
     }
 
     /**
