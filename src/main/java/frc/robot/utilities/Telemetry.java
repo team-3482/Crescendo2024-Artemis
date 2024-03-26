@@ -44,26 +44,29 @@ public class Telemetry {
         return instance;
     }
 
-    private static boolean LOG_TIMESTAMPS = false; 
+    // TODO toggle widget in Shuffleboard
+    private static boolean LOG_TIMESTAMPS = false;
 
     /**
      * Prints the string to the console with a tag and timestamp
+     * 
      * @param message to be printed to the console
      * @param error is the log statement an error
      */
     public static void logMessage(String message, boolean error) {
-        String messageTag = "[LOGGER" + (LOG_TIMESTAMPS ? Timer.getFPGATimestamp() : "") + "] " + (error? "[ERROR] ": "");
+        String messageTag = error ? "[ERROR] " : "[INFO] " +
+            (LOG_TIMESTAMPS ? "[" + ShuffleboardTelemetry.D_FORMAT.format(Timer.getFPGATimestamp()) + " sec] ": "");
         System.out.println(messageTag + message);
     }
 
-   /**
-     * Prints the string to the console with a tag and timestamp
+    /**
+     * Prints the string to the console with a tag and timestamp and no error (overloaded)
+     * 
      * @param message to be printed to the console
      */
     public static void logMessage(String message) {
         logMessage(message, false);
     }
-
 
     /** Runs {@link Telemetry#initialize()} once */
     private Telemetry() {

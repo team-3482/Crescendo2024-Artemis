@@ -42,18 +42,18 @@ public class PivotIntakeCommand extends Command {
 
         // this.brokenEncoderIsItDown = false;
 
-        this.addRequirements(IntakeSubsystem.getInstance());
+        addRequirements(IntakeSubsystem.getInstance());
     }
 
     @Override
     public void initialize() {
         this.pid.reset();
         // this.brokenEncoderTimer.restart();
+        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
         double speed;
         if (this.up) {
             // this.brokenEncoderIsItDown = false;
@@ -72,17 +72,18 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        IntakeSubsystem.getInstance().setPivotSpeed(0);
+        this.pid.close();
+        
         // if (this.brokenEncoderIsItDown) {
         //     IntakeSubsystem.getInstance().resetPivotPosition(0);
         // }
         // else {
         //     IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
         // }
-        this.pid.close();
 
-        IntakeSubsystem.getInstance().setPivotSpeed(0);
+        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     @Override

@@ -57,7 +57,6 @@ public class CenterSpeakerCommand extends Command {
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
         this.alliance = DriverStation.getAlliance();
-        // LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.SPEAKER_PIPELINE);
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
@@ -86,13 +85,11 @@ public class CenterSpeakerCommand extends Command {
     */
     @Override
     public void end(boolean interrupted) {
+        SwerveSubsystem.getInstance().stopModules();
         this.pid.close();
         
-        SwerveSubsystem.getInstance().stopModules();
-        // LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.DEFAULT_PIPELINE);
+        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        Telemetry.logMessage(this.getName(), interrupted);
-
     }
 
     /**

@@ -108,8 +108,8 @@ public class SwerveDriveCommand extends Command {
         // Multiplies by fine control to limit the speeds
         double fineControlCoefficent = fineControl? SwerveKinematics.FINE_CONTROL_COEFFICENT : 1.0;
         chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond * fineControlCoefficent, 
-                                            chassisSpeeds.vyMetersPerSecond * fineControlCoefficent, 
-                                            chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent);
+            chassisSpeeds.vyMetersPerSecond * fineControlCoefficent,
+            chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent);
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
@@ -153,10 +153,9 @@ public class SwerveDriveCommand extends Command {
     }
 
     /**
-    * Returns false because this command should run forever, throughout the robots
-    * being enabled
+    * Returns false because this is a default command for the {@link SwerveSubsystem}
     * 
-    * @return boolean - always false
+    * @return false
     */
     @Override
     public boolean isFinished() {

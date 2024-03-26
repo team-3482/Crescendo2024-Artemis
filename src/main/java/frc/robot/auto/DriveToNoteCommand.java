@@ -49,7 +49,7 @@ public class DriveToNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        pidController.reset();
+        this.pidController.reset();
 
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
@@ -60,7 +60,7 @@ public class DriveToNoteCommand extends Command {
         boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT);
         double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
         
-        double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
+        double turningSpeed = this.pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         double drivingSpeed = driveLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
             * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
@@ -77,11 +77,11 @@ public class DriveToNoteCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        pidController.close();
-
         SwerveSubsystem.getInstance().stopModules();
+        this.pidController.close();
+        
+        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     // Returns true when the command should end.

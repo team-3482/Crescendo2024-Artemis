@@ -27,8 +27,9 @@ public class PivotShooterCommand extends Command {
     public PivotShooterCommand(ShooterState state) {
         setName("PivotShooterCommand");
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(ShooterSubsystem.getInstance());
         this.state = state;
+
+        addRequirements(ShooterSubsystem.getInstance());
     }
     
     // Called when the command is initially scheduled.
@@ -66,8 +67,8 @@ public class PivotShooterCommand extends Command {
         // }
 
         // ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
-
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
+        
+        // LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -77,12 +78,14 @@ public class PivotShooterCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        ShooterSubsystem.getInstance().setPivotSpeed(0, false);
+
         if (interrupted) {
             ShooterSubsystem.getInstance().canShoot = false;
         }
-        ShooterSubsystem.getInstance().setPivotSpeed(0, false);
+
+        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     // Returns true when the command should end.

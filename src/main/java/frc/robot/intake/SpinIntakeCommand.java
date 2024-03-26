@@ -29,6 +29,8 @@ public class SpinIntakeCommand extends Command {
         setName("IntakeCommand");
         this.state = state;
         this.stopForNote = stopForNote;
+
+        addRequirements(IntakeSubsystem.getInstance(), SterilizerSubsystem.getInstance());
     }
 
     /**
@@ -70,11 +72,11 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        IntakeSubsystem.getInstance().setIntakeSpeed(0);
+        IntakeSubsystem.getInstance().setIntakeSpeed();
         SterilizerSubsystem.getInstance().setSpeed();
 
+        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     /**

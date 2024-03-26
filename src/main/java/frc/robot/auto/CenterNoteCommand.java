@@ -48,13 +48,13 @@ public class CenterNoteCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        // End the Command if it starts without seeing a note
         if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-            return;
+            end(true);
         }
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
-
+        
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
@@ -78,12 +78,11 @@ public class CenterNoteCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        SwerveSubsystem.getInstance().stopModules();
         this.pid.close();
         
-        SwerveSubsystem.getInstance().stopModules();
+        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        Telemetry.logMessage(this.getName(), interrupted);
-        
     }
 
     // Returns true when the command should end.
