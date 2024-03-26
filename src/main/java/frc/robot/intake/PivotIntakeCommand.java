@@ -11,6 +11,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.utilities.Telemetry;
 
 /** A command to move the intake to a specific position. */
 public class PivotIntakeCommand extends Command {
@@ -46,7 +47,6 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.pid.reset();
         // this.brokenEncoderTimer.restart();
     }
@@ -78,9 +78,11 @@ public class PivotIntakeCommand extends Command {
         // else {
         //     IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
         // }
-        IntakeSubsystem.getInstance().setPivotSpeed(0);
         this.pid.close();
+
+        IntakeSubsystem.getInstance().setPivotSpeed(0);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     @Override

@@ -105,7 +105,7 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println("Has Note : " + hasNote());
+        //System.out.println("Has Note : " + hasNote());
         if (hasNote()) {
             LEDSubsystem.getInstance().setLightState(LightState.HOLDING_NOTE, false);
         } 

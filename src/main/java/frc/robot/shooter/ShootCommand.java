@@ -13,6 +13,7 @@ import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.Telemetry;
 
 /** A command that spins the large wheels of the shooter at the desired speed. */
 public class ShootCommand extends Command {
@@ -35,7 +36,6 @@ public class ShootCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
             end(true);
         }
@@ -87,6 +87,7 @@ public class ShootCommand extends Command {
         SterilizerSubsystem.getInstance().setSpeed();
 
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     /**

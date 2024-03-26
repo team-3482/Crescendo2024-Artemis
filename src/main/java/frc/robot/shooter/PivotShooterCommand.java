@@ -12,6 +12,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.utilities.Telemetry;
 
 /** A command that moves the shooter pivot to a desired position. */
 public class PivotShooterCommand extends Command {
@@ -33,7 +34,6 @@ public class PivotShooterCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         ShooterSubsystem.getInstance().canShoot = true;
         if(!this.state.getCalculateAngle()) {
             this.shootingAngle = this.state.getAngle();
@@ -82,6 +82,7 @@ public class PivotShooterCommand extends Command {
         }
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     // Returns true when the command should end.

@@ -12,6 +12,7 @@ import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.SterilizerSubsystem;
+import frc.robot.utilities.Telemetry;
 
 /** A command to spin the rollers in the intake using the current {@link IntakeState}. */
 public class SpinIntakeCommand extends Command {
@@ -41,7 +42,6 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
@@ -74,6 +74,7 @@ public class SpinIntakeCommand extends Command {
         SterilizerSubsystem.getInstance().setSpeed();
 
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     /**

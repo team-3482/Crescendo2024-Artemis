@@ -172,6 +172,8 @@ public class RobotContainer {
             () -> PathingCommands.getPathfindCommand(PathfindingPosition.AMP).schedule()
         ));
         // driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SAFETY_1));
+        Telemetry.logMessage("Testing message");
+        Telemetry.logMessage("Testing message", true);
     }
 
     /** Configures the button bindings of the driver controller */

@@ -6,8 +6,6 @@ package frc.robot.shooter;
 
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.lights.LEDSubsystem;
-import frc.robot.lights.LEDSubsystem.LightState;
 
 /** A command that moves the shooter pivot to a desired position. */
 public class ManuallyPivotShooterCommand extends Command {
@@ -33,11 +31,7 @@ public class ManuallyPivotShooterCommand extends Command {
     
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
-    }
+    public void initialize() {    }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
@@ -75,7 +69,6 @@ public class ManuallyPivotShooterCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
-        LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     // Returns true when the command should end. It never ends due to being a default command.

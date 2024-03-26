@@ -17,6 +17,7 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.Telemetry;
 
 /** A command that drives the bot forward until there is a note in the sterilizer or it times out. */
 public class DriveToNoteCommand extends Command {
@@ -48,7 +49,6 @@ public class DriveToNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         pidController.reset();
 
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
@@ -77,9 +77,11 @@ public class DriveToNoteCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        SwerveSubsystem.getInstance().stopModules();
         pidController.close();
+
+        SwerveSubsystem.getInstance().stopModules();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
+        Telemetry.logMessage(this.getName(), interrupted);
     }
 
     // Returns true when the command should end.

@@ -21,6 +21,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.Telemetry;
 
 /** An command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
 public class CenterSpeakerCommand extends Command {
@@ -53,7 +54,6 @@ public class CenterSpeakerCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
         this.alliance = DriverStation.getAlliance();
@@ -86,10 +86,13 @@ public class CenterSpeakerCommand extends Command {
     */
     @Override
     public void end(boolean interrupted) {
+        this.pid.close();
+        
         SwerveSubsystem.getInstance().stopModules();
         // LimelightHelpers.setPipelineIndex(LimelightConstants.SHOOTER_LLIGHT, LimelightConstants.DEFAULT_PIPELINE);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        this.pid.close();
+        Telemetry.logMessage(this.getName(), interrupted);
+
     }
 
     /**

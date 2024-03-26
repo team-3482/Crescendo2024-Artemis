@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,6 +43,27 @@ public class Telemetry {
         }
         return instance;
     }
+
+    private static boolean LOG_TIMESTAMPS = false; 
+
+    /**
+     * Prints the string to the console with a tag and timestamp
+     * @param message to be printed to the console
+     * @param error is the log statement an error
+     */
+    public static void logMessage(String message, boolean error) {
+        String messageTag = "[LOGGER" + (LOG_TIMESTAMPS ? Timer.getFPGATimestamp() : "") + "] " + (error? "[ERROR] ": "");
+        System.out.println(messageTag + message);
+    }
+
+   /**
+     * Prints the string to the console with a tag and timestamp
+     * @param message to be printed to the console
+     */
+    public static void logMessage(String message) {
+        logMessage(message, false);
+    }
+
 
     /** Runs {@link Telemetry#initialize()} once */
     private Telemetry() {

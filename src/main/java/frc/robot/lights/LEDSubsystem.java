@@ -37,7 +37,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private double lastLedUpdate = 0.0;
     private LightState state;
-    private LightState previousState;
+    private Color previousColor;
 
     private SimpleWidget SB_D_LED_WIDGET = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
         .add("LED Status", false);
@@ -63,7 +63,7 @@ public class LEDSubsystem extends SubsystemBase {
         this.lastLedUpdate = Timer.getFPGATimestamp();
 
         this.state = LightState.OFF;
-        this.previousState = this.state;
+        this.previousColor = this.state.getColor();
 
     }
 
@@ -78,6 +78,11 @@ public class LEDSubsystem extends SubsystemBase {
                 this.updateLights();
             }
         }
+
+        // Updates the lights only if the light state changes
+        if(!this.state.getColor().equals(this.previousColor)){
+            updateLights();
+        }
     };
 
     /** 
@@ -85,9 +90,6 @@ public class LEDSubsystem extends SubsystemBase {
      */
     private void updateLights() {
         Color color = this.state.getColor();
-
-        // Does not update the lights if the new color is the same as the current color
-        if(this.previousState.getColor() == color) return; 
         
         if (color.equals(Color.off())) {
             SB_D_LED_ENTRY.setBoolean(false);
@@ -102,7 +104,8 @@ public class LEDSubsystem extends SubsystemBase {
         }
 
         this.ledStrip.setData(this.ledBuffer);
-        this.previousState = this.state;
+
+        this.previousColor = this.state.getColor();
     }
 
     /**
@@ -111,6 +114,7 @@ public class LEDSubsystem extends SubsystemBase {
      * @param state Desired {@link LightState}
      */
     public void setLightState(LightState state) {
+        System.out.println("LED State changed:" + state);
         this.setLightState(state, true);
     }
 
@@ -124,7 +128,6 @@ public class LEDSubsystem extends SubsystemBase {
     public void setLightState(LightState state, boolean overrideCurrentState){
         if (overrideCurrentState || (!overrideCurrentState && this.state == LightState.OFF)) {
             this.state = state;
-            this.updateLights();
         }
     }
 
@@ -150,8 +153,6 @@ public class LEDSubsystem extends SubsystemBase {
         CMD_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
         /** Command is considered autonoumous if the human driver does not have control over the robot movement during the command */
         AUTO_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
-        /** For when the command is initializing (if you see this color, there is an issue) */
-        CMD_INIT(Double.POSITIVE_INFINITY, new Color(255, 255, 0)),
         
         HOLDING_NOTE(Double.POSITIVE_INFINITY, new Color(255, 127, 0))
         ;

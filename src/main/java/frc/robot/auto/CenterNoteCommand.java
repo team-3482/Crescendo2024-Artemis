@@ -17,6 +17,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.Telemetry;
 
 /** An command to turn the bot until the note it sees is centered in front of the intake. */
 public class CenterNoteCommand extends Command {
@@ -51,7 +52,6 @@ public class CenterNoteCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
 
@@ -78,9 +78,12 @@ public class CenterNoteCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        this.pid.close();
+        
         SwerveSubsystem.getInstance().stopModules();
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
-        this.pid.close();
+        Telemetry.logMessage(this.getName(), interrupted);
+        
     }
 
     // Returns true when the command should end.

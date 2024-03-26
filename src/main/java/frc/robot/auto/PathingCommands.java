@@ -53,7 +53,6 @@ public final class PathingCommands {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return Commands.none();
         }
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
         
         Pose2d targetPose = AutonConstants.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
         
@@ -71,8 +70,6 @@ public final class PathingCommands {
      * @return the Bezier command or {@link Commands#none()} if no alliance is found
      */
     public static Command getBezierCommand(PathfindingPosition targetPosition) {
-        LEDSubsystem.getInstance().setLightState(LightState.CMD_INIT);
-        
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent()) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
