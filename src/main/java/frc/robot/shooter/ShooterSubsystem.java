@@ -50,8 +50,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    private CANcoder rightCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    private CANcoder leftCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
 
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
@@ -237,5 +237,7 @@ public class ShooterSubsystem extends SubsystemBase {
         //     "left vel : " + d.format(vel[0]) + " right vel : "
         //     + d.format(vel[1])
         // );
+        // System.out.println("Left : " + (int) Units.rotationsToDegrees(leftCANcoder.getPosition().getValueAsDouble()) +
+        //     " Right : " + (int) Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble()));
     }
 }

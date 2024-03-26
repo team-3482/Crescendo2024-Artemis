@@ -238,11 +238,11 @@ public class RobotContainer {
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(
             () -> ShooterSubsystem.getInstance().setPivotSpeed(0.2, false),
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0, false)
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0, true)
         ));
         operatorController.povDown().whileTrue(Commands.runEnd(
             () -> ShooterSubsystem.getInstance().setPivotSpeed(-0.2, false),
-            () -> ShooterSubsystem.getInstance().setPivotSpeed(0, false)
+            () -> ShooterSubsystem.getInstance().setPivotSpeed(0, true)
         ));
         // Move the intake manually (last resort, not recommended)
         operatorController.povRight().whileTrue(Commands.runEnd(
