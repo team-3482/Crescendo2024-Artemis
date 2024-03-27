@@ -23,14 +23,17 @@ public class SpinIntakeCommand extends Command {
      * Initializes a new SpinIntakeCommand
      * 
      * @param state state of the intake
-     * @param stopForNote stop the command when a note is in the sterilizer
+     * @param stopForNote stop the command when a note is in the sterilizer.
+     * @apiNote if stofForNote is false, this subsystem will NOT run the sterilizer.
+     * Use it in conjunction with {@link ShootCommmand}
      */
     public SpinIntakeCommand(IntakeState state, boolean stopForNote) {
         setName("IntakeCommand");
         this.state = state;
         this.stopForNote = stopForNote;
 
-        addRequirements(IntakeSubsystem.getInstance(), SterilizerSubsystem.getInstance());
+        // Don't require anything because this command is run in parallel multiple times
+        // addRequirements(IntakeSubsystem.getInstance(), SterilizerSubsystem.getInstance());
     }
 
     /**
@@ -50,6 +53,9 @@ public class SpinIntakeCommand extends Command {
     @Override
     public void execute() {
         IntakeSubsystem.getInstance().setIntakeSpeed(this.state.getSpeed());
+        
+        if (!this.stopForNote) return;
+
         Optional<Boolean>[] hasNotesOptionals = SterilizerSubsystem.getInstance().getHasNotes();
         boolean[] hasNotes = new boolean[]{
             hasNotesOptionals[0].isPresent() && hasNotesOptionals[0].get(),
@@ -59,7 +65,7 @@ public class SpinIntakeCommand extends Command {
         if (this.state.getSpeed() < 0) {
             SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.FEEDING_SPEED);
         }
-        else if (!this.stopForNote || (!hasNotes[0] && !hasNotes[1])) {
+        else if (!hasNotes[0] && !hasNotes[1]) {
             SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
         }
         else if (hasNotes[0] && !hasNotes[1]) {

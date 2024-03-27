@@ -41,7 +41,7 @@ public final class Constants {
         /** Constant speed to use to lower the intake from -1.0 to 0*/
         public static final double PIVOT_DOWN_SPEED = 0.1;
 
-        public static enum IntakeState{
+        public static enum IntakeState {
             INTAKING(0, 1, INTAKE_SPEED),
             /** The hardware stop angle for the intake when it is idle in degrees*/
             IDLE(150, 10, 0);
