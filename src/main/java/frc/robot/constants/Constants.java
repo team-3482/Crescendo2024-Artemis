@@ -6,10 +6,7 @@ package frc.robot.constants;
 
 import java.util.Map;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -142,12 +139,6 @@ public final class Constants {
         /** Jerk in rps/s^2 (0.1 seconds) */
         public static final int MOTION_MAGIC_JERK = 1600;
 
-        /** Locations of the speaker for both alliances in meters */
-        public static final Map<DriverStation.Alliance, Translation3d> SPEAKER_LOCATIONS = Map.ofEntries(
-            Map.entry(DriverStation.Alliance.Blue, new Translation3d(0, 5.55, 3)),
-            Map.entry(DriverStation.Alliance.Red, new Translation3d(16.5, 5.55, 3))
-        );
-
         /** Stores all shooter configuration related data */
         public static enum ShooterState {
             FRONT_EJECT(false, false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 600.0, 0.0),
@@ -203,69 +194,6 @@ public final class Constants {
         public static final double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
         public static final double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static final double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT / 3;
-
-        /** Initial bot positions used for initializing odometry, blue-alliance relative */
-        public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
-            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(0.75, 6.66), Rotation2d.fromDegrees(60))),
-                Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(0.75, 4.45), Rotation2d.fromDegrees(300))))),
-            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(3, new Pose2d(new Translation2d(15.8, 6.66), Rotation2d.fromDegrees(60))),
-                Map.entry(2, new Pose2d(new Translation2d(15.2, 5.55), Rotation2d.fromDegrees(180))),
-                Map.entry(1, new Pose2d(new Translation2d(15.8, 4.50), Rotation2d.fromDegrees(300)))))
-        );
-
-        public static enum PathfindingPosition {
-            SPEAKER_TOP,
-            SPEAKER_MIDDLE,
-            SPEAKER_BOTTOM,
-            AMP,
-            SAFETY_1
-        }
-
-        /** Position the robot will line up to in front of each AprilTag, blue-alliance relative */
-        public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> PATHFIND_POSITIONS = Map.ofEntries(
-            Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
-                Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.TOP.getLocation())),
-                Map.entry(PathfindingPosition.SPEAKER_MIDDLE, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.MIDDLE.getLocation())),
-                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.BOTTOM.getLocation())),
-                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(1.8, 7.66), Rotation2d.fromDegrees(90)))
-            )),
-            Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
-                Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.TOP.getLocation())),
-                Map.entry(PathfindingPosition.SPEAKER_MIDDLE, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.MIDDLE.getLocation())),
-                Map.entry(PathfindingPosition.SPEAKER_BOTTOM, STARTING_POSITIONS.get(DriverStation.Alliance.Red).get(StartingPositions.BOTTOM.getLocation())),
-                Map.entry(PathfindingPosition.AMP, new Pose2d(new Translation2d(14.7, 7.66), Rotation2d.fromDegrees(-90)))
-                // Map.entry(PathfindingPosition.SAFETY_1, new Pose2d(new Translation2d(13.9, 4.2), Rotation2d.fromDegrees(30)))
-            ))
-        );
-
-        /** Same orientation as PathPlanner field */
-        public static enum StartingPositions {
-            TOP("Top", 3),
-            MIDDLE("Middle", 2),
-            BOTTOM("Bottom", 1),
-            AUTO("Auto", 0)
-            ;
-
-            String name;
-            int location;
-
-            private StartingPositions(String name, int position) {
-                this.name = name;
-                this.location = position;
-            }
-            public String getName() {
-                return this.name;
-            }
-            public int getLocation() {
-                return this.location;
-            }
-            public static StartingPositions[] getStartingPositions() {
-                return new StartingPositions[]{TOP, MIDDLE, BOTTOM, AUTO};
-            }
-        }
     }
 
     /** Constants used for orbiting April Tags */

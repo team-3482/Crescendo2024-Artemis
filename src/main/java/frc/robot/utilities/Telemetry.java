@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Constants.LimelightConstants;
 import frc.robot.constants.Constants.ShooterConstants;
 import frc.robot.constants.Constants.ShuffleboardTabConstants;
-import frc.robot.constants.Constants.AutonConstants.StartingPositions;
+import frc.robot.constants.Positions.StartingPositions;
 import frc.robot.constants.Constants.TelemetryConstants.LoggingMode;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.limelight.LimelightSubsystem;

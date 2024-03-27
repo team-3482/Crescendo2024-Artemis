@@ -10,8 +10,8 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Robot;
-import frc.robot.constants.Constants.AutonConstants;
-import frc.robot.constants.Constants.AutonConstants.StartingPositions;
+import frc.robot.constants.Positions;
+import frc.robot.constants.Positions.StartingPositions;
 
 public class SwerveUtilities {
     
@@ -79,10 +79,10 @@ public class SwerveUtilities {
             pose = new Pose2d();
         }
         else if (!startingPosition.equals(StartingPositions.AUTO)) {
-            pose = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(startingPosition.getLocation());
+            pose = Positions.STARTING_POSITIONS.get(alliance.get()).get(startingPosition.getLocation());
         }
         else if (location.isPresent()) {
-            pose = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
+            pose = Positions.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
         }
         else {
             pose = new Pose2d();

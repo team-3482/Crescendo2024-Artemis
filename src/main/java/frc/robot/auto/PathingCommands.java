@@ -18,8 +18,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.constants.Positions;
 import frc.robot.constants.Constants.AutonConstants;
-import frc.robot.constants.Constants.AutonConstants.PathfindingPosition;
+import frc.robot.constants.Positions.PathfindingPosition;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
@@ -54,7 +55,7 @@ public final class PathingCommands {
             return Commands.none();
         }
         
-        Pose2d targetPose = AutonConstants.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
+        Pose2d targetPose = Positions.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
         
         Command path = AutoBuilder.pathfindToPose(targetPose, PathingCommands.CONSTRAINTS, 0, 0.1);
         path.setName("PathfindCommand");
@@ -78,7 +79,7 @@ public final class PathingCommands {
         
         Pose2d botPose = SwerveSubsystem.getInstance().getPose();
         // The rotation component for endPos is used for the GoalEndState rotation
-        Pose2d endPos = AutonConstants.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
+        Pose2d endPos = Positions.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
         // The travelRotation represents the direction of travel
         Rotation2d travelRotation = endPos.getRotation();
         
