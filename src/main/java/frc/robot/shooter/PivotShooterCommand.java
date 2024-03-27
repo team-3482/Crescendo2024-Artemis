@@ -6,22 +6,12 @@ package frc.robot.shooter;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.OrbitConstants;
-import frc.robot.Constants.PhysicalConstants;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterConstants.ShooterState;
-import frc.robot.Constants.TelemetryConstants.LoggingMode;
+import frc.robot.constants.Constants.ShooterConstants;
+import frc.robot.constants.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
-import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
 /** A command that moves the shooter pivot to a desired position. */
@@ -45,7 +35,6 @@ public class PivotShooterCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        ShooterSubsystem.getInstance().canShoot = true;
         if(!this.state.getCalculateAngle()) {
             this.shootingAngle = this.state.getAngle();
             ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
@@ -96,10 +85,7 @@ public class PivotShooterCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
-
-        if (interrupted) {
-            ShooterSubsystem.getInstance().canShoot = false;
-        }
+        ShooterSubsystem.getInstance().canShoot = !interrupted;
         
         Telemetry.logCommandEnd(getName(), interrupted, "goal " + Telemetry.D_FORMAT.format(this.shootingAngle));
         LEDSubsystem.getInstance().setCommandStopState(interrupted);

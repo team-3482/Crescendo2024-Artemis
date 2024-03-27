@@ -11,8 +11,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.constants.Constants.IntakeConstants;
+import frc.robot.constants.Constants.IntakeConstants.IntakeState;
 
 public class IntakeSubsystem extends SubsystemBase {
     // Singleton Design Pattern

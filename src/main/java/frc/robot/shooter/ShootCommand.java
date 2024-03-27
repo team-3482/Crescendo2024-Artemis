@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SterilizerConstants;
-import frc.robot.Constants.ShooterConstants.ShooterState;
+import frc.robot.constants.Constants.SterilizerConstants;
+import frc.robot.constants.Constants.ShooterConstants.ShooterState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;

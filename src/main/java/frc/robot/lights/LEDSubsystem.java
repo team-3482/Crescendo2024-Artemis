@@ -5,8 +5,8 @@
 package frc.robot.lights;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LEDConstants;
-import frc.robot.Constants.ShuffleboardTabConstants;
+import frc.robot.constants.Constants.LEDConstants;
+import frc.robot.constants.Constants.ShuffleboardTabConstants;
 import frc.robot.shooter.SterilizerSubsystem;
 
 import java.util.Map;

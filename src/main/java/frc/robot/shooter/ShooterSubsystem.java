@@ -23,8 +23,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.constants.Constants.ShooterConstants;
+import frc.robot.constants.Constants.SwerveModuleConstants;
 import frc.robot.utilities.JSONManager;
 
 public class ShooterSubsystem extends SubsystemBase {    

@@ -7,8 +7,8 @@ package frc.robot.intake;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SterilizerConstants;
-import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.constants.Constants.SterilizerConstants;
+import frc.robot.constants.Constants.IntakeConstants.IntakeState;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.SterilizerSubsystem;

@@ -14,7 +14,7 @@ import au.grapplerobotics.LaserCan;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.SterilizerConstants;
+import frc.robot.constants.Constants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 

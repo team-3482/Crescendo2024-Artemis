@@ -10,8 +10,8 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Robot;
-import frc.robot.Constants.AutonConstants;
-import frc.robot.Constants.AutonConstants.StartingPositions;
+import frc.robot.constants.Constants.AutonConstants;
+import frc.robot.constants.Constants.AutonConstants.StartingPositions;
 
 public class SwerveUtilities {
     

@@ -10,7 +10,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.constants.Constants.ShooterConstants;
 
 public class JSONManager {
     // Singleton Design Pattern

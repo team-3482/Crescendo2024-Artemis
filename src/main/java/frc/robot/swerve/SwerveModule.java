@@ -10,9 +10,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.PhysicalConstants;
-import frc.robot.Constants.SwerveKinematics;
-import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.constants.Constants.PhysicalConstants;
+import frc.robot.constants.Constants.SwerveKinematics;
+import frc.robot.constants.Constants.SwerveModuleConstants;
 
 public class SwerveModule {
     // Instances of the drivng and turning motor for the module

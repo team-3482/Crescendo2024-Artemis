@@ -2,12 +2,12 @@ package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.NoteConstants;
-import frc.robot.Constants.IntakeConstants.IntakeState;
-import frc.robot.Constants.ShooterConstants.ShooterState;
 import frc.robot.auto.CenterNoteCommand;
 import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.DriveToNoteCommand;
+import frc.robot.constants.Constants.NoteConstants;
+import frc.robot.constants.Constants.IntakeConstants.IntakeState;
+import frc.robot.constants.Constants.ShooterConstants.ShooterState;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;

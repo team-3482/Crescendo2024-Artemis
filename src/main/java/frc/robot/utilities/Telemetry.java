@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShuffleboardTabConstants;
-import frc.robot.Constants.AutonConstants.StartingPositions;
-import frc.robot.Constants.TelemetryConstants.LoggingMode;
+import frc.robot.constants.Constants.LimelightConstants;
+import frc.robot.constants.Constants.ShooterConstants;
+import frc.robot.constants.Constants.ShuffleboardTabConstants;
+import frc.robot.constants.Constants.AutonConstants.StartingPositions;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingMode;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
@@ -70,22 +70,18 @@ public class Telemetry {
     /**
      * Logs the end of a command with an error tag if the command was interrupted or an info tag if the command ended normally 
      * @param name of the command
-     * @param interrupted was the command interrupted?
+     * @param interrupted whether the command was interrupted
+     * @param trailing printed after the name and interruption
      */
-    public static void logCommandEnd(String name, boolean interrupted, String... extraInformation) {
-        String extraInfo = "";
-        if(extraInformation.length > 0) {
-            for (String information : extraInformation) {
-                extraInfo += "(" + information + ") ";
+    public static void logCommandEnd(String name, boolean interrupted, String... trailing) {
+        String _trailing = "";
+        if (trailing.length > 0) {
+            for (String information : trailing) {
+                _trailing += "(" + information + ") ";
             }
         }
 
-        if(interrupted){
-            logMessage(name + " ended " + extraInfo , LoggingMode.INFO);
-        }
-        else{
-            logMessage(name + " interrupted " + extraInfo, LoggingMode.ERROR);
-        }
+        logMessage(name + " ended " + _trailing, interrupted ? LoggingMode.ERROR : LoggingMode.INFO);
     }
 
     /**
