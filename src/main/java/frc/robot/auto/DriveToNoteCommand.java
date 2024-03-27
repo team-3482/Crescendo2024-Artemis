@@ -80,7 +80,7 @@ public class DriveToNoteCommand extends Command {
         SwerveSubsystem.getInstance().stopModules();
         this.pidController.close();
         
-        Telemetry.logMessage(getName() + (interrupted ? " interrupted" : " ended"), interrupted);
+        Telemetry.logCommandEnd(getName(), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

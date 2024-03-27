@@ -18,6 +18,7 @@ import frc.robot.Constants.OrbitConstants;
 import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShooterConstants.ShooterState;
+import frc.robot.Constants.TelemetryConstants.LoggingMode;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
@@ -99,11 +100,8 @@ public class PivotShooterCommand extends Command {
         if (interrupted) {
             ShooterSubsystem.getInstance().canShoot = false;
         }
-
-        Telemetry.logMessage(getName() +
-            (interrupted ? " interrupted (goal " + Telemetry.D_FORMAT.format(this.shootingAngle) + ")": " ended"),
-            interrupted
-        );
+        
+        Telemetry.logCommandEnd(getName(), interrupted, "goal " + Telemetry.D_FORMAT.format(this.shootingAngle));
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

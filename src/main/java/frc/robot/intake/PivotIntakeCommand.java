@@ -82,7 +82,7 @@ public class PivotIntakeCommand extends Command {
         //     IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
         // }
 
-        Telemetry.logMessage(getName() + (interrupted ? " interrupted" : " ended"), interrupted);
+        Telemetry.logCommandEnd(getName(), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

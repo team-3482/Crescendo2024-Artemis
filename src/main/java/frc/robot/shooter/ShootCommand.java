@@ -86,7 +86,7 @@ public class ShootCommand extends Command {
         ShooterSubsystem.getInstance().setShootingVelocities();
         SterilizerSubsystem.getInstance().setSpeed();
 
-        Telemetry.logMessage(getName() + (interrupted ? " interrupted" : " ended"), interrupted);
+        Telemetry.logCommandEnd(getName(), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

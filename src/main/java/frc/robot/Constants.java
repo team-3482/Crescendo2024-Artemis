@@ -25,6 +25,22 @@ public final class Constants {
         public static final String PITTING = "Utilities";
     }
 
+    public static final class TelemetryConstants {
+        public static enum LoggingMode {
+            INFO("INFO"),
+            ERROR("ERROR");
+
+            String tag;
+            private LoggingMode (String tag) {
+                this.tag = tag;
+            }
+            public String getTag()
+            {
+                return "[" + this.tag + "]";
+            }
+        }    
+    }
+
     public static final class IntakeConstants {
         public static final int LEFT_MOTOR_ID = 20;
         public static final int RIGHT_MOTOR_ID = 21;

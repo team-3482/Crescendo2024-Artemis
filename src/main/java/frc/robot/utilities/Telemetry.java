@@ -27,6 +27,7 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.ShuffleboardTabConstants;
 import frc.robot.Constants.AutonConstants.StartingPositions;
+import frc.robot.Constants.TelemetryConstants.LoggingMode;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
@@ -57,14 +58,34 @@ public class Telemetry {
      * Prints the string to the console with a tag and timestamp.
      * 
      * @param message to be printed to the console
-     * @param error use [ERROR] tag instead of [INFO]
+     * @param logMode indicates which tag should be used in the console
      * @apiNote if {@link Telemetry#LOG_TIMESTAMPS} is null, it will never log timestamps
      */
-    public static void logMessage(String message, boolean error) {
-        String messageTag = error ? "[ERROR] " : "[INFO] " +
+    public static void logMessage(String message, LoggingMode logMode) {
+        String messageTag = logMode.getTag() + " " +
             (LOG_TIMESTAMPS == null ? false : LOG_TIMESTAMPS.getBoolean(false)
                 ? "[" + D_FORMAT.format(Timer.getFPGATimestamp()) + " sec] ": "");
         System.out.println(messageTag + message);
+    }
+    /**
+     * Logs the end of a command with an error tag if the command was interrupted or an info tag if the command ended normally 
+     * @param name of the command
+     * @param interrupted was the command interrupted?
+     */
+    public static void logCommandEnd(String name, boolean interrupted, String... extraInformation) {
+        String extraInfo = "";
+        if(extraInformation.length > 0) {
+            for (String information : extraInformation) {
+                extraInfo += "(" + information + ") ";
+            }
+        }
+
+        if(interrupted){
+            logMessage(name + " ended " + extraInfo , LoggingMode.INFO);
+        }
+        else{
+            logMessage(name + " interrupted " + extraInfo, LoggingMode.ERROR);
+        }
     }
 
     /**
@@ -73,7 +94,7 @@ public class Telemetry {
      * @param message to be printed to the console
      */
     public static void logMessage(String message) {
-        logMessage(message, false);
+        logMessage(message, LoggingMode.INFO);
     }
 
     /** Runs {@link Telemetry#initialize()} once */
