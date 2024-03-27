@@ -9,6 +9,7 @@ import java.util.Map;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -124,6 +125,12 @@ public final class Constants {
         public static final int CRUISE_ACCELERATION = 80;
         /** Jerk in rps/s^2 (0.1 seconds) */
         public static final int MOTION_MAGIC_JERK = 1600;
+
+        /** Locations of the speaker for both alliances in meters */
+        public static final Map<DriverStation.Alliance, Translation3d> SPEAKER_LOCATIONS = Map.ofEntries(
+            Map.entry(DriverStation.Alliance.Blue, new Translation3d(0, 5.55, 3)),
+            Map.entry(DriverStation.Alliance.Red, new Translation3d(16.5, 5.55, 3))
+        );
 
         /** Stores all shooter configuration related data */
         public static enum ShooterState {
