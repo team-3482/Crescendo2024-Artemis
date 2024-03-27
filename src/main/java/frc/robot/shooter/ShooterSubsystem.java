@@ -25,7 +25,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
-import frc.robot.constants.PhysicalConstants.SwerveModuleConfigs;
 import frc.robot.utilities.JSONManager;
 
 public class ShooterSubsystem extends SubsystemBase {    

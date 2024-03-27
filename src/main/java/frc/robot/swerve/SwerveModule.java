@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.SwerveKinematics;
-import frc.robot.constants.PhysicalConstants.SwerveModuleConfigs;
 
 public class SwerveModule {
     // Instances of the drivng and turning motor for the module
