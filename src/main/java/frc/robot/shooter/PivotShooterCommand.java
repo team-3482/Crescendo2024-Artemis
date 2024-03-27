@@ -84,14 +84,18 @@ public class PivotShooterCommand extends Command {
             ShooterSubsystem.getInstance().canShoot = false;
         }
 
-        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
+        Telemetry.logMessage(getName() +
+            (interrupted ? " interrupted (goal " + Telemetry.D_FORMAT.format(this.shootingAngle) + ")": " ended"),
+            interrupted
+        );
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(ShooterSubsystem.getInstance().getPivotPositions()[1] - this.shootingAngle)
-            <= ShooterConstants.ALLOWED_PIVOT_ERROR;
+        double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        return Math.abs(pivotPositions[0] - this.shootingAngle) <= ShooterConstants.ALLOWED_PIVOT_ERROR
+            && Math.abs(pivotPositions[1] - this.shootingAngle) <= ShooterConstants.ALLOWED_PIVOT_ERROR;
     }
 }

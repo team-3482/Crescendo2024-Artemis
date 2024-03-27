@@ -88,7 +88,7 @@ public class CenterSpeakerCommand extends Command {
         SwerveSubsystem.getInstance().stopModules();
         this.pid.close();
         
-        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
+        Telemetry.logMessage(getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

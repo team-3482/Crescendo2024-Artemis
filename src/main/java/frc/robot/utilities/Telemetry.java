@@ -44,18 +44,26 @@ public class Telemetry {
         return instance;
     }
 
-    // TODO toggle widget in Shuffleboard
-    private static boolean LOG_TIMESTAMPS = false;
+    /** What to round decimal values to on Shuffleboard */
+    public static final DecimalFormat D_FORMAT = new DecimalFormat("#.##");
+    /**
+     * Toggle for displaying timestamps using {@link Telemetry#logMessage(String, boolean)}
+     * @apiNote If {@link Telemetry#initialize()} has not run, this will be {@code null} </p>
+     */
+    private static GenericEntry LOG_TIMESTAMPS = null;
+    // private static boolean LOG_TIMESTAMPS = false;
 
     /**
-     * Prints the string to the console with a tag and timestamp
+     * Prints the string to the console with a tag and timestamp.
      * 
      * @param message to be printed to the console
-     * @param error is the log statement an error
+     * @param error use [ERROR] tag instead of [INFO]
+     * @apiNote if {@link Telemetry#LOG_TIMESTAMPS} is null, it will never log timestamps
      */
     public static void logMessage(String message, boolean error) {
         String messageTag = error ? "[ERROR] " : "[INFO] " +
-            (LOG_TIMESTAMPS ? "[" + ShuffleboardTelemetry.D_FORMAT.format(Timer.getFPGATimestamp()) + " sec] ": "");
+            (LOG_TIMESTAMPS == null ? false : LOG_TIMESTAMPS.getBoolean(false)
+                ? "[" + D_FORMAT.format(Timer.getFPGATimestamp()) + " sec] ": "");
         System.out.println(messageTag + message);
     }
 
@@ -77,6 +85,18 @@ public class Telemetry {
     public void initialize() {
         AdvantageScopeTelemetry.initialize();
         ShuffleboardTelemetry.initialize();
+        
+        // Telemetry layout
+        ShuffleboardLayout telemetryLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
+            .getLayout("Swerve Subsystem", BuiltInLayouts.kList)
+            .withProperties(Map.of("Label position", "TOP"))
+            .withPosition(9, 0)
+            .withSize(3, 6);
+        LOG_TIMESTAMPS = telemetryLayout.add("Log Timestamps", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(0, 0)
+            .withSize(3, 1)
+            .getEntry();
     }
 
     /** Publishes telemetry classes */
@@ -245,14 +265,14 @@ public class Telemetry {
             switch (index) {
                 case 0: {
                     // IntakeSubsystem
-                    DEFAULT_INTAKE_PIVOT_POSITION.setString(D_FORMAT.format(IntakeSubsystem.getInstance().getPivotPosition()));
+                    DEFAULT_INTAKE_PIVOT_POSITION.setString(Telemetry.D_FORMAT.format(IntakeSubsystem.getInstance().getPivotPosition()));
                     break;
                 }
 
                 case 1: {
                     // ShooterSubsystem
                     double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
-                    DEFAULT_SHOOTER_PIVOT_POSITIONS.setString("Left    " + D_FORMAT.format(pos[0]) + "    ||    " + D_FORMAT.format(pos[1]) + "    Right");
+                    DEFAULT_SHOOTER_PIVOT_POSITIONS.setString("Left    " + Telemetry.D_FORMAT.format(pos[0]) + "    ||    " + Telemetry.D_FORMAT.format(pos[1]) + "    Right");
                     break;
                 }
 
@@ -272,9 +292,6 @@ public class Telemetry {
             
             index = index == 3 ? 0 : index + 1;
         }
-
-        /** What to round decimal values to on Shuffleboard */
-        public static final DecimalFormat D_FORMAT = new DecimalFormat("#.##");
 
         // LEDSubsystem
         // Staying in LEDSubsystem.java for blinking UNLESS it impacts loop time

@@ -75,7 +75,7 @@ public class SpinIntakeCommand extends Command {
         IntakeSubsystem.getInstance().setIntakeSpeed();
         SterilizerSubsystem.getInstance().setSpeed();
 
-        Telemetry.logMessage(this.getName() + (interrupted ? " interrupted" : " ended"), interrupted);
+        Telemetry.logMessage(getName() + (interrupted ? " interrupted" : " ended"), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
