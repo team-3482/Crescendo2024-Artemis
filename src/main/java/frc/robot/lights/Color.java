@@ -54,7 +54,6 @@ public class Color {
 
     /**
      * Check if this color is the same as another
-     * 
      * @param other color
      * @return if the colors are the same
      */

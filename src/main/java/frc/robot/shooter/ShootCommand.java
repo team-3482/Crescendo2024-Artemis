@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.SterilizerConstants;
-import frc.robot.constants.Constants.ShooterConstants.ShooterState;
+import frc.robot.constants.Constants.ShooterStates;
+import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
@@ -18,7 +18,7 @@ import frc.robot.utilities.Telemetry;
 /** A command that spins the large wheels of the shooter at the desired speed. */
 public class ShootCommand extends Command {
     private boolean reachedRPM;
-    private ShooterState state;
+    private ShooterStates state;
     private boolean invertSpin;
 
     /**
@@ -26,7 +26,7 @@ public class ShootCommand extends Command {
     *
     * @param state the shooter state to follow
     */
-    public ShootCommand(ShooterState state) {
+    public ShootCommand(ShooterStates state) {
         setName("ShootCommand");
         this.state = state;
         // Use addRequirements() here to declare subsystem dependencies.
@@ -92,7 +92,6 @@ public class ShootCommand extends Command {
 
     /**
      * Always returns false because the command will end itself
-     * 
      * @return false
      */
     @Override

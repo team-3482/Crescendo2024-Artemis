@@ -10,9 +10,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.constants.Constants.PhysicalConstants;
-import frc.robot.constants.Constants.SwerveKinematics;
-import frc.robot.constants.Constants.SwerveModuleConstants;
+import frc.robot.constants.PhysicalConstants.RobotConstants;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
+import frc.robot.constants.PhysicalConstants.SwerveModuleConfigs;
 
 public class SwerveModule {
     // Instances of the drivng and turning motor for the module
@@ -30,11 +30,9 @@ public class SwerveModule {
 
     /**
     * Creates an Instance of the Swerve Module with the specified options
-    * 
     * @param driveMotorID            - CAN ID for the driving SparkMax
     * @param turningMotorID          - CAN ID for the turning SparkMax
-    * @param turningEncoderID        - CAN ID for the turning encoder (on the
-    *                                swerve CAN bus)
+    * @param turningEncoderID        - CAN ID for the turning encoder (on the swerve CAN bus)
     * @param driveMotorReversed      - is the driving motor inverted?
     * @param turningMotorReversed    - is the turning motor inverted?
     * @param absoluteEncoderReversed - is the turning encoder inverted?
@@ -54,7 +52,7 @@ public class SwerveModule {
         this.turningMotor.setInverted(turningMotorReversed);
 
         // Initializes the turning encoder on the specific CAN bus
-        this.turningEncoder = new CANcoder(turningEncoderID, SwerveModuleConstants.SWERVE_CAN_BUS);
+        this.turningEncoder = new CANcoder(turningEncoderID, RobotConstants.SWERVE_CAN_BUS);
 
         // Initializes the PID controller using the determined values
         this.turningPidController = new PIDController(
@@ -68,7 +66,6 @@ public class SwerveModule {
 
     /**
     * Returns the turning position of the CANcoder
-    * 
     * @return position of the turning CANcoder (in radians)
     */
     public double getTurningPosition() {
@@ -77,7 +74,6 @@ public class SwerveModule {
 
     /**
     * Returns the speed of the turning encoder
-    * 
     * @return speed of the turning encoder (radians/second)
     */
     public double getTurningVelocity() {
@@ -89,7 +85,6 @@ public class SwerveModule {
 
     /**
     * Returns the turning position of the CANcoder
-    * 
     * @return position of the turning CANcoder (in radians)
     */
     public double getAbsoluteEncoderRad() {
@@ -101,7 +96,6 @@ public class SwerveModule {
 
     /**
     * Returns the current state of the swerve module
-    * 
     * @return current state of the swerve module
     */
     public SwerveModuleState getState() {
@@ -109,7 +103,7 @@ public class SwerveModule {
         double velocity = this.driveMotor.getEncoder().getVelocity();
         // The ratio turns rotations/min into radians/second
         // it also makes sure that the odometry getting values from this gets meters correctly
-        velocity *= PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        velocity *= RobotConstants.SWERVE_WHEEL_DIAMETER * RobotConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModuleState(velocity, new Rotation2d(getTurningPosition()));
     }
   
@@ -122,7 +116,7 @@ public class SwerveModule {
         // Gets drive position as rotations
         double positionRot = this.driveMotor.getEncoder().getPosition();
         // Turns rotations to radians
-        double positionMeters = positionRot * PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        double positionMeters = positionRot * RobotConstants.SWERVE_WHEEL_DIAMETER * RobotConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModulePosition(positionMeters, new Rotation2d(getTurningPosition()));
     }
 
@@ -135,7 +129,6 @@ public class SwerveModule {
 
     /**
     * Sets the current state to a desired state
-    * 
     * @param state - desired state of the swerve module
     */
     public void setDesiredState(SwerveModuleState state) {

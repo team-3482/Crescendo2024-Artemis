@@ -10,7 +10,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import edu.wpi.first.wpilibj.Filesystem;
-import frc.robot.constants.Constants.ShooterConstants;
+import frc.robot.constants.PhysicalConstants.ShooterConstants;
 
 public class JSONManager {
     // Singleton Design Pattern
@@ -44,7 +44,6 @@ public class JSONManager {
 
     /**
      * Writes the shooter pivot's positions to the JSON file
-     * 
      * @param leftMotorPosition
      * @param rightMotorPosition
      */ 
@@ -63,7 +62,6 @@ public class JSONManager {
 
     /**
      * Writes the shooter pivot's position to the JSON file (overloaded)
-     * 
      * @param motorPosition
      */ 
     public void saveShooterPivotPositions(double motorPosition) {
@@ -92,7 +90,6 @@ public class JSONManager {
 
     /**
      * A method used to read the data from the JSON file storing positions
-     * 
      * @param file to read from
      * @return the read JSON data
      */
@@ -112,7 +109,6 @@ public class JSONManager {
 
     /**
      * A method used to write to the file containing the JSON data
-     * 
      * @param file to write to
      * @param json the JSON data to write
      */

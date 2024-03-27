@@ -6,8 +6,8 @@ import frc.robot.auto.CenterNoteCommand;
 import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.DriveToNoteCommand;
 import frc.robot.constants.Constants.NoteConstants;
-import frc.robot.constants.Constants.IntakeConstants.IntakeState;
-import frc.robot.constants.Constants.ShooterConstants.ShooterState;
+import frc.robot.constants.Constants.IntakeStates;
+import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
@@ -22,9 +22,9 @@ public class SequencedCommands {
      */
     public static Command getIntakeCommand() {
         return Commands.parallel(
-            new PivotShooterCommand(ShooterState.INTAKE),
-            new PivotIntakeCommand(IntakeState.INTAKING),
-            new SpinIntakeCommand(IntakeState.INTAKING)
+            new PivotShooterCommand(ShooterStates.INTAKE),
+            new PivotIntakeCommand(IntakeStates.INTAKING),
+            new SpinIntakeCommand(IntakeStates.INTAKING)
         );
     }
 
@@ -36,18 +36,18 @@ public class SequencedCommands {
     public static Command getCollectNoteCommand() {
         return Commands.sequence(
             Commands.parallel(
-                new PivotIntakeCommand(IntakeState.INTAKING),
-                new PivotShooterCommand(ShooterState.INTAKE)
+                new PivotIntakeCommand(IntakeStates.INTAKING),
+                new PivotShooterCommand(ShooterStates.INTAKE)
             ),
             new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
-                new SpinIntakeCommand(IntakeState.INTAKING), 
+                new SpinIntakeCommand(IntakeStates.INTAKING), 
                 new DriveToNoteCommand().withTimeout(5)
             ),
             Commands.parallel(
-                new PivotIntakeCommand(IntakeState.IDLE),
-                new PivotShooterCommand(ShooterState.SPEAKER)
+                new PivotIntakeCommand(IntakeStates.IDLE),
+                new PivotShooterCommand(ShooterStates.SPEAKER)
             )
         );
     }
@@ -60,17 +60,17 @@ public class SequencedCommands {
     public static Command getCollectNoteCommandNoCenter() {
         return Commands.sequence(
             Commands.parallel(
-                new PivotIntakeCommand(IntakeState.INTAKING),
-                new PivotShooterCommand(ShooterState.INTAKE)
+                new PivotIntakeCommand(IntakeStates.INTAKING),
+                new PivotShooterCommand(ShooterStates.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.deadline(
-                new SpinIntakeCommand(IntakeState.INTAKING),
+                new SpinIntakeCommand(IntakeStates.INTAKING),
                 new DriveToNoteCommand().withTimeout(4)
             ),
             Commands.parallel(
-                new PivotIntakeCommand(IntakeState.IDLE),
-                new PivotShooterCommand(ShooterState.SPEAKER)
+                new PivotIntakeCommand(IntakeStates.IDLE),
+                new PivotShooterCommand(ShooterStates.SPEAKER)
             )
         );
     }
@@ -83,12 +83,12 @@ public class SequencedCommands {
     public static Command getAutonCollectNoteCommand() {
         return Commands.sequence(
             Commands.parallel(
-                new PivotIntakeCommand(IntakeState.INTAKING),
-                new PivotShooterCommand(ShooterState.INTAKE)
+                new PivotIntakeCommand(IntakeStates.INTAKING),
+                new PivotShooterCommand(ShooterStates.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.deadline(
-                new SpinIntakeCommand(IntakeState.INTAKING),
+                new SpinIntakeCommand(IntakeStates.INTAKING),
                 new DriveToNoteCommand().withTimeout(4)
             )
         );
@@ -96,33 +96,31 @@ public class SequencedCommands {
 
     /**
      * Creates a command that shoots a note into the speaker automatically from the current position.
-     * 
      * @return the command
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
             Commands.parallel(
                 new CenterSpeakerCommand(),
-                new PivotShooterCommand(ShooterState.SPEAKER_CALCULATE)
+                new PivotShooterCommand(ShooterStates.SPEAKER_CALCULATE)
             ),
-            new ShootCommand(ShooterState.SPEAKER_CALCULATE)
+            new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );
     }
 
     /**
      * Creates a command that shoots notes immediately after picking them up and doesn't close the intake
-     * 
      * @return the command
      */
     public static Command getIntakeEjectCommand() {
         return Commands.sequence(
             Commands.parallel(
-                new PivotIntakeCommand(IntakeState.INTAKING),
-                new PivotShooterCommand(ShooterState.FRONT_EJECT)
+                new PivotIntakeCommand(IntakeStates.INTAKING),
+                new PivotShooterCommand(ShooterStates.FRONT_EJECT)
             ),    
             Commands.parallel(
-                new SpinIntakeCommand(IntakeState.INTAKING, false),
-                new ShootCommand(ShooterState.FRONT_EJECT)
+                new SpinIntakeCommand(IntakeStates.INTAKING, false),
+                new ShootCommand(ShooterStates.FRONT_EJECT)
             )
         );
     }

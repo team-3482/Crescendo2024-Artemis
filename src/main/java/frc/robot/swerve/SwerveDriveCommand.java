@@ -11,7 +11,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ControllerConstants;
-import frc.robot.constants.Constants.SwerveKinematics;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 
 /** A command used to take input from the driver and move the robot */
 public class SwerveDriveCommand extends Command {
@@ -32,16 +32,11 @@ public class SwerveDriveCommand extends Command {
 
     /**
     * Creates new Swerve Drive Command
-    * 
     * @param swerveSubsystem       - instance of swerve subsystem
-    * @param xSpeedFunction        - function that will return the driver input for
-    *                              the x direction
-    * @param ySpeedFunction        - function that will return the driver input for
-    *                              the y direction
-    * @param turningSpeedFunction  - function that will return the driver input for
-    *                              turing the robot
-    * @param fieldOrientedFunction - function that will return if the driver wants
-    *                              to be field Oriented or robot oriented
+    * @param xSpeedFunction        - function that will return the driver input for the x direction
+    * @param ySpeedFunction        - function that will return the driver input for the y direction
+    * @param turningSpeedFunction  - function that will return the driver input for turning the robot
+    * @param fieldOrientedFunction - function that will return if the driver wants to be field or robot oriented
     */
     public SwerveDriveCommand(Supplier<Double> xSpeedFunction,
         Supplier<Double> ySpeedFunction, Supplier<Double> turningSpeedFunction,
@@ -142,11 +137,6 @@ public class SwerveDriveCommand extends Command {
         return speeds;
     }
 
-    /**
-    * Makes the swerve modules stop when the command ends or is interrupted
-    * 
-    * @param interrupted
-    */
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
@@ -154,7 +144,6 @@ public class SwerveDriveCommand extends Command {
 
     /**
     * Returns false because this is a default command for the {@link SwerveSubsystem}
-    * 
     * @return false
     */
     @Override

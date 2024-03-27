@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.Positions;
-import frc.robot.constants.Constants.AutonConstants;
+import frc.robot.constants.Constants.AutonConstraints;
 import frc.robot.constants.Positions.PathfindingPosition;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
@@ -28,14 +28,13 @@ import frc.robot.swerve.SwerveSubsystem;
 /** A class that generates pathfinding commands. */
 public final class PathingCommands {
     private static final PathConstraints CONSTRAINTS = new PathConstraints(
-        AutonConstants.MAX_LINEAR_VELOCITY,
-        AutonConstants.MAX_LINEAR_ACCELERATION,
-        AutonConstants.MAX_ANGULAR_VELOCITY,
-        AutonConstants.MAX_ANGULAR_ACCELERATION);
+        AutonConstraints.MAX_LINEAR_VELOCITY,
+        AutonConstraints.MAX_LINEAR_ACCELERATION,
+        AutonConstraints.MAX_ANGULAR_VELOCITY,
+        AutonConstraints.MAX_ANGULAR_ACCELERATION);
     
     /**
      * This class should only be used for static getters. Do not initialize it.
-     * 
      * @throws Exception This class should not be initialized
      */
     private PathingCommands() throws Exception {
@@ -44,7 +43,6 @@ public final class PathingCommands {
 
     /**
      * Calculates a position using {@link Autobuilder#pathfindToPose()}
-     * 
      * @param targetPosition
      * @return the Pathfinding command or {@link Commands#none()} if no alliance is found
      */
@@ -66,7 +64,6 @@ public final class PathingCommands {
 
     /**
      * Calculates a position using {@link PathPlannerPath#bezierFromPoses(Pose2d...)}
-     * 
      * @param targetPosition
      * @return the Bezier command or {@link Commands#none()} if no alliance is found
      */

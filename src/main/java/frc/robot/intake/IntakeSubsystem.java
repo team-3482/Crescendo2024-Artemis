@@ -11,8 +11,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.IntakeConstants;
-import frc.robot.constants.Constants.IntakeConstants.IntakeState;
+import frc.robot.constants.PhysicalConstants.IntakeConstants;
+import frc.robot.constants.Constants.IntakeStates;
 
 public class IntakeSubsystem extends SubsystemBase {
     // Singleton Design Pattern
@@ -51,7 +51,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Sets the speeds of the top and bottom intaking motors.
-     * 
      * @param speed of the intake motors between -1.0 and 1.0
      */
     public void setIntakeSpeed(double speed) {
@@ -67,8 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Set pivot motors to a specific speed when position is within the bounds provided by
-     * {@link IntakeState#INTAKING} and {@link IntakeState#IDLE}
-     * 
+     * {@link IntakeStates#INTAKING} and {@link IntakeStates#IDLE}
      * @param speed between -1.0 and 1.0
      * @param safe stop when at the soft stops
      */
@@ -76,8 +74,8 @@ public class IntakeSubsystem extends SubsystemBase {
         if (safe) {
             double position = getPivotPosition();
             speed = 
-                (speed < 0 && Math.abs(IntakeState.INTAKING.getAngle() - position) <= 1) ||
-                (speed > 0 && Math.abs(IntakeState.IDLE.getAngle() - position) <= 1)
+                (speed < 0 && Math.abs(IntakeStates.INTAKING.getAngle() - position) <= 1) ||
+                (speed > 0 && Math.abs(IntakeStates.IDLE.getAngle() - position) <= 1)
                     ? 0 : speed;
         }
         leftPivotMotor.set(speed);
@@ -85,7 +83,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Set pivot motors to a specific speed safely (overloaded)
-     * 
      * @param speed between -1.0 and 1.0
      */
     public void setPivotSpeed(double speed) {
@@ -94,9 +91,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Gets the absolute position of the through bore encoder.
-     * 
      * @return position of the intake in degrees.
-     *  
      * @apiNote 0 is at hard stop when extended.
      */
     public double getPivotPosition() {

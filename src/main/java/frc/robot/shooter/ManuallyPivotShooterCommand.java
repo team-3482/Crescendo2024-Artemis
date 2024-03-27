@@ -15,7 +15,6 @@ public class ManuallyPivotShooterCommand extends Command {
 
     /**
     * Creates a new ManuallyPivotShooterCommand.
-    * 
     * @param leftSpeedSupplier speed from -1.0 to 1.0 to move the left motor
     * @param rightSpeedSupplier speed from -1.0 to 1.0 to move the right motor
     * @param swapSides swap suppliers and motors

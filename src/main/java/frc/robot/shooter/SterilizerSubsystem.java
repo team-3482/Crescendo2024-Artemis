@@ -14,7 +14,7 @@ import au.grapplerobotics.LaserCan;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.SterilizerConstants;
+import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
@@ -39,7 +39,6 @@ public class SterilizerSubsystem extends SubsystemBase {
     
     /**
      * Gets the distances of notes from each laser.
-     * 
      * @return measurements, back laser [0] and front laser [1]
      * @apiNote empty optional when the measurement is invalid.
      */
@@ -59,7 +58,6 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     /**
      * Checks the distances of {@link SterilizerSubsystem#getLaserMeasurements()} against the measurements for a note.
-     * 
      * @return has notes, back laser [0] and front laser [1]
      * @apiNote empty optional when the measurement is invalid.
      */
@@ -77,7 +75,6 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     /**
      * Checks if either of {@link SterilizerSubsystem#getHasNotes()} is true
-     * 
      * @return if either laser sees a note
      * @apiNote will still return false if both measurements are invalid
      */
@@ -89,7 +86,6 @@ public class SterilizerSubsystem extends SubsystemBase {
     
     /**
      * Spins the sterilizer at the given speed
-     * 
      * @param speed from -1.0 to 1.0
      */
     public void setSpeed(double speed) {

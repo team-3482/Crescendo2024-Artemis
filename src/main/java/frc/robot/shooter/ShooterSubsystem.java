@@ -23,8 +23,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.ShooterConstants;
-import frc.robot.constants.Constants.SwerveModuleConstants;
+import frc.robot.constants.PhysicalConstants.RobotConstants;
+import frc.robot.constants.PhysicalConstants.ShooterConstants;
+import frc.robot.constants.PhysicalConstants.SwerveModuleConfigs;
 import frc.robot.utilities.JSONManager;
 
 public class ShooterSubsystem extends SubsystemBase {    
@@ -48,10 +49,10 @@ public class ShooterSubsystem extends SubsystemBase {
     
     // Pivot
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-    private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
-    private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private TalonFX rightPivotMotor = new TalonFX(ShooterConstants.LEFT_PIVOT_MOTOR_ID, RobotConstants.SWERVE_CAN_BUS);
+    private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, RobotConstants.SWERVE_CAN_BUS);
+    private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
+    private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
 
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
@@ -124,9 +125,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * @deprecated This method should not be used. Set CANCoders zeroes in Phoenix Tuner X instead.
-     * 
      * Set the motor encoder's position to the pivot angle
-     * 
      * @param angle in degrees
      */
     @Deprecated
@@ -139,7 +138,6 @@ public class ShooterSubsystem extends SubsystemBase {
     
     /**
      * Goes to the position of the pivot using Motion Magic slot 0
-     * 
      * @param position in degrees
      */
     public void pivotGoToPosition(double position) {
@@ -155,7 +153,6 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Set the pivot speeds (last resort) between -1.0 and 1.0.
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
-     * 
      * @param speed for both motors
      * @param override the soft limits
      */
@@ -165,7 +162,6 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Set the pivot speeds (last resort) between -1.0 and 1.0.
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
-     * 
      * @param leftSpeed speed for the left motor
      * @param rightSpeed speed for the right motor
      * @param override the soft limits
@@ -186,7 +182,6 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * Gets the positions of the pivots using the CANCoders.
      * <p> Left [0] and right [1] </p>
-     * 
      * @return positions in degrees
      */
     public double[] getPivotPositions() {
@@ -202,7 +197,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * Gets the velocities of the shooter motors. Left is [0] and right is [1]
-     * 
      * @return velocities in RPM
      */
     public double[] getShootingVelocities() {
@@ -214,7 +208,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * Sets the velocities of the shooter motors. Left is [0] and right is [1]
-     * 
      * @param velocities between -1.0 and 1.0
      */
     public void setShootingVelocities(double[] velocities) {

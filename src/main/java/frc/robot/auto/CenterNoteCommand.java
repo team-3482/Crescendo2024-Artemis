@@ -9,10 +9,10 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.LimelightConstants;
 import frc.robot.constants.Constants.NoteConstants;
-import frc.robot.constants.Constants.OrbitConstants;
-import frc.robot.constants.Constants.SwerveKinematics;
+import frc.robot.constants.Constants.AprilTagConstants;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
@@ -52,7 +52,7 @@ public class CenterNoteCommand extends Command {
         if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
             end(true);
         }
-        this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
+        this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);

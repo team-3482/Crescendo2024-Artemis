@@ -39,7 +39,6 @@ public final class Positions {
         }
         /**
          * Gets the human-readable name of the position
-         * 
          * @return the name
          */
         public String getName() {
@@ -47,7 +46,6 @@ public final class Positions {
         }
         /**
          * Gets the integer location based on {@link DriverStation#getLocation()}
-         * 
          * @return the location
          */
         public int getLocation() {
@@ -55,7 +53,6 @@ public final class Positions {
         }
         /**
          * Gets an array of the {@link StartingPositions}
-         * 
          * @return the array
          */
         public static StartingPositions[] getStartingPositions() {

@@ -5,8 +5,8 @@
 package frc.robot.lights;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.LEDConstants;
-import frc.robot.constants.Constants.ShuffleboardTabConstants;
+import frc.robot.constants.Constants.ShuffleboardTabNames;
+import frc.robot.constants.PhysicalConstants.LEDConstants;
 import frc.robot.shooter.SterilizerSubsystem;
 
 import java.util.Map;
@@ -39,7 +39,7 @@ public class LEDSubsystem extends SubsystemBase {
     private LightState state;
     private Color previousColor;
 
-    private SimpleWidget SB_D_LED_WIDGET = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+    private SimpleWidget SB_D_LED_WIDGET = Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
         .add("LED Status", false);
     private GenericEntry SB_D_LED_ENTRY = SB_D_LED_WIDGET
         .withWidget(BuiltInWidgets.kBooleanBox)
@@ -85,7 +85,7 @@ public class LEDSubsystem extends SubsystemBase {
         }
     };
 
-    /** 
+    /**
      * Updates the light colors of the light strips
      */
     private void updateLights() {
@@ -110,7 +110,6 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Sets the state of the lights on the bot.
-     * 
      * @param state Desired {@link LightState}
      */
     public void setLightState(LightState state) {
@@ -121,7 +120,6 @@ public class LEDSubsystem extends SubsystemBase {
     /**
      * Sets the state of the lights on the bot. 
      * If ovverideCurrent is true, it will override current colors, otherwise it will only change colors if the current state is off
-     * 
      * @param state Desired {@link LightState}
      * @param overrideCurrentState Whether the lights should overide the current lightt state or not.
      */
@@ -133,7 +131,6 @@ public class LEDSubsystem extends SubsystemBase {
 
     /**
      * Reset the lights to the default {@link LightState}.
-     * 
      * @param commandInterrupted set warning lights instead if true
      */
     public void setCommandStopState(boolean commandInterrupted) {

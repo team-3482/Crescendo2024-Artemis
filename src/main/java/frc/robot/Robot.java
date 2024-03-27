@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.Constants.LimelightConstants;
-import frc.robot.constants.Constants.PhysicalConstants;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.utilities.JSONManager;
 import frc.robot.utilities.Telemetry;
@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        if (this.timer.hasElapsed(PhysicalConstants.TELEMETRY_LOOP_TIME)) {
+        if (this.timer.hasElapsed(RobotConstants.TELEMETRY_LOOP_TIME)) {
             this.timer.reset();
             Telemetry.getInstance().publish();
         }

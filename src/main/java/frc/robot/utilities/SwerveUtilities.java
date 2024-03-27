@@ -45,7 +45,6 @@ public class SwerveUtilities {
     /**
      * Team 254 implementation to fix Swerve Drive skew 
      * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8
-     * 
      * @param originalSpeeds Original Chasis speeds
      * @return Corrected chasis speeds
      */
@@ -65,7 +64,6 @@ public class SwerveUtilities {
 
     /**
      * Grab the starting position of the robot
-     * 
      * @param startingPosition override the alliance position-based starting position
      * @return the starting position
      */

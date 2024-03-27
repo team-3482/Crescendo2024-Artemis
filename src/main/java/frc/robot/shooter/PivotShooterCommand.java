@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.ShooterConstants;
-import frc.robot.constants.Constants.ShooterConstants.ShooterState;
+import frc.robot.constants.PhysicalConstants.ShooterConstants;
+import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.utilities.Telemetry;
@@ -17,14 +17,13 @@ import frc.robot.utilities.Telemetry;
 /** A command that moves the shooter pivot to a desired position. */
 public class PivotShooterCommand extends Command {
     private double shootingAngle;
-    private ShooterState state;
+    private ShooterStates state;
 
     /**
     * Creates a new PivotShooterCommand.
-    * 
     * @param state of the shooter to reach
     */
-    public PivotShooterCommand(ShooterState state) {
+    public PivotShooterCommand(ShooterStates state) {
         setName("PivotShooterCommand");
         // Use addRequirements() here to declare subsystem dependencies.
         this.state = state;

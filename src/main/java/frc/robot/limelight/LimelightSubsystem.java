@@ -11,7 +11,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.LimelightConstants;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
 
@@ -98,7 +98,6 @@ public class LimelightSubsystem extends SubsystemBase {
     /**
      * Gets the amount of April Tags in view
      * (using LimelightConstants.SHOOTER_LLight)
-     * 
      * @return amount of April Tags in view
      */
     public int getVisibleTags() {
@@ -107,7 +106,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
     /**
      * Gets the latency of the limelight to be used for odometry
-     * 
      * @return latency in seconds
      */
     public double getLatency(String limelight) {

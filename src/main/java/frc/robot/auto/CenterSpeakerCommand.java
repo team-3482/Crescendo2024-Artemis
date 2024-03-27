@@ -14,9 +14,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.LimelightConstants;
-import frc.robot.constants.Constants.OrbitConstants;
-import frc.robot.constants.Constants.SwerveKinematics;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.constants.Constants.AprilTagConstants;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
@@ -39,10 +39,10 @@ public class CenterSpeakerCommand extends Command {
         
         this.turningLimiter = new SlewRateLimiter(SwerveKinematics.TURNING_SLEW_RATE_LIMIT);
         this.pid = new PIDController(
-            OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KP,
-            OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            OrbitConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pid.setTolerance(Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
+            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KP,
+            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KI,
+            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KD);
+        this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
         this.pid.enableContinuousInput(0, 360);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
@@ -54,7 +54,7 @@ public class CenterSpeakerCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        this.errorRadians = OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
+        this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
         this.alliance = DriverStation.getAlliance();
         
@@ -78,11 +78,6 @@ public class CenterSpeakerCommand extends Command {
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
-    /**
-    * Makes the swerve modules stop when the command ends or is interrupted
-    * 
-    * @param interrupted
-    */
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
@@ -93,11 +88,11 @@ public class CenterSpeakerCommand extends Command {
     }
 
     /**
-    * Ends the command when the error is smaller than tolerance at {@link OrbitConstants}
+    * Ends the command when the error is smaller than tolerance at {@link AprilTagConstants}
     */
     @Override
     public boolean isFinished() {
-        return Math.abs(this.errorRadians) <= Units.degreesToRadians(OrbitConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
         // return this.pid.atSetpoint();
     }
 }

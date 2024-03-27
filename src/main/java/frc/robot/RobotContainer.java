@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.PathingCommands;
 import frc.robot.constants.Constants.ControllerConstants;
-import frc.robot.constants.Constants.IntakeConstants;
-import frc.robot.constants.Constants.ShuffleboardTabConstants;
-import frc.robot.constants.Constants.SterilizerConstants;
+import frc.robot.constants.Constants.ShuffleboardTabNames;
+import frc.robot.constants.PhysicalConstants.IntakeConstants;
+import frc.robot.constants.Constants.IntakeStates;
+import frc.robot.constants.PhysicalConstants.ShooterConstants;
+import frc.robot.constants.Constants.ShooterStates;
+import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.constants.Positions.PathfindingPosition;
-import frc.robot.constants.Constants.IntakeConstants.IntakeState;
-import frc.robot.constants.Constants.ShooterConstants;
-import frc.robot.constants.Constants.ShooterConstants.ShooterState;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
@@ -69,7 +69,7 @@ public class RobotContainer {
         configureOperatorBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be Commands.none()
-        Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
             .add("Auto Chooser", autoChooser)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withPosition(11, 0)
@@ -121,9 +121,9 @@ public class RobotContainer {
             
         // Shoot
         NamedCommands.registerCommand("Shoot SPEAKER",
-            new ShootCommand(ShooterState.SPEAKER));
+            new ShootCommand(ShooterStates.SPEAKER));
         NamedCommands.registerCommand("Shoot AMP",
-            new ShootCommand(ShooterState.AMP));
+            new ShootCommand(ShooterStates.AMP));
         
         // Other
         NamedCommands.registerCommand("IntakeEject NOEND",
@@ -159,8 +159,8 @@ public class RobotContainer {
         driveController.rightBumper()
             .onTrue(SequencedCommands.getIntakeCommand())
             .onFalse(Commands.parallel(
-                new PivotIntakeCommand(IntakeState.IDLE),
-                new PivotShooterCommand(ShooterState.SPEAKER))
+                new PivotIntakeCommand(IntakeStates.IDLE),
+                new PivotShooterCommand(ShooterStates.SPEAKER))
         );
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
@@ -197,13 +197,13 @@ public class RobotContainer {
 
         // Shoot SPEAKER
         operatorController.rightBumper().whileTrue(Commands.sequence(
-            new PivotShooterCommand(ShooterState.SPEAKER),
-            new ShootCommand(ShooterState.SPEAKER)
+            new PivotShooterCommand(ShooterStates.SPEAKER),
+            new ShootCommand(ShooterStates.SPEAKER)
         ));
         // Shoot AMP
         operatorController.leftBumper().whileTrue(Commands.sequence(
-            new PivotShooterCommand(ShooterState.AMP),
-            new ShootCommand(ShooterState.AMP)
+            new PivotShooterCommand(ShooterStates.AMP),
+            new ShootCommand(ShooterStates.AMP)
         ));
         // TODO Run SHOOTER automatically
         operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
@@ -220,7 +220,7 @@ public class RobotContainer {
         ));
         // Front eject (double rectangle)
         operatorController.back().onTrue(Commands.parallel(
-                new ShootCommand(ShooterState.FRONT_EJECT).withTimeout(2),
+                new ShootCommand(ShooterStates.FRONT_EJECT).withTimeout(2),
                 Commands.runOnce(() -> SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED))
             ))
             .onFalse(

@@ -5,7 +5,7 @@ package frc.robot.limelight;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.constants.Constants.LimelightConstants;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -484,7 +484,6 @@ public class LimelightHelpers {
 
     /**
      * Switch to getBotPose
-     * 
      * @param limelightName
      * @return
      */
@@ -495,7 +494,6 @@ public class LimelightHelpers {
 
     /**
      * Switch to getBotPose_wpiRed
-     * 
      * @param limelightName
      * @return
      */
@@ -506,7 +504,6 @@ public class LimelightHelpers {
 
     /**
      * Switch to getBotPose_wpiBlue
-     * 
      * @param limelightName
      * @return
      */
@@ -601,7 +598,6 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator
      * (addVisionMeasurement)
-     * 
      * @param limelightName
      * @return
      */
@@ -614,7 +610,6 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator
      * (addVisionMeasurement)
-     * 
      * @param limelightName
      * @return
      */
@@ -628,7 +623,6 @@ public class LimelightHelpers {
     /**
      * Gets the Pose2d for easy use with Odometry vision pose estimator
      * (addVisionMeasurement)
-     * 
      * @param limelightName
      * @return
      */

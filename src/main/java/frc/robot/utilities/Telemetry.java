@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.constants.Constants.LimelightConstants;
-import frc.robot.constants.Constants.ShooterConstants;
-import frc.robot.constants.Constants.ShuffleboardTabConstants;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.constants.PhysicalConstants.ShooterConstants;
+import frc.robot.constants.Constants.ShuffleboardTabNames;
 import frc.robot.constants.Positions.StartingPositions;
-import frc.robot.constants.Constants.TelemetryConstants.LoggingMode;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
@@ -56,12 +56,11 @@ public class Telemetry {
 
     /**
      * Prints the string to the console with a tag and timestamp.
-     * 
      * @param message to be printed to the console
      * @param logMode indicates which tag should be used in the console
      * @apiNote if {@link Telemetry#LOG_TIMESTAMPS} is null, it will never log timestamps
      */
-    public static void logMessage(String message, LoggingMode logMode) {
+    public static void logMessage(String message, LoggingTags logMode) {
         String messageTag = logMode.getTag() + " " +
             (LOG_TIMESTAMPS == null ? false : LOG_TIMESTAMPS.getBoolean(false)
                 ? "[" + D_FORMAT.format(Timer.getFPGATimestamp()) + " sec] ": "");
@@ -81,16 +80,15 @@ public class Telemetry {
             }
         }
 
-        logMessage(name + " ended " + _trailing, interrupted ? LoggingMode.ERROR : LoggingMode.INFO);
+        logMessage(name + " ended " + _trailing, interrupted ? LoggingTags.ERROR : LoggingTags.INFO);
     }
 
     /**
      * Prints the string to the console with a tag and timestamp and no error (overloaded)
-     * 
      * @param message to be printed to the console
      */
     public static void logMessage(String message) {
-        logMessage(message, LoggingMode.INFO);
+        logMessage(message, LoggingTags.INFO);
     }
 
     /** Runs {@link Telemetry#initialize()} once */
@@ -104,7 +102,7 @@ public class Telemetry {
         ShuffleboardTelemetry.initialize();
         
         // Telemetry layout
-        ShuffleboardLayout telemetryLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
+        ShuffleboardLayout telemetryLayout = Shuffleboard.getTab(ShuffleboardTabNames.UTILITIES)
             .getLayout("Swerve Subsystem", BuiltInLayouts.kList)
             .withProperties(Map.of("Label position", "TOP"))
             .withPosition(9, 0)
@@ -187,7 +185,7 @@ public class Telemetry {
             //     .withWidget(BuiltInWidgets.kCommand);
             
             // Shooter Subsystem
-            ShuffleboardLayout shooterSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
+            ShuffleboardLayout shooterSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabNames.UTILITIES)
                 .getLayout("Shooter Subsystem", BuiltInLayouts.kList)
                 .withProperties(Map.of("Label position", "TOP"))
                 .withPosition(3, 0)
@@ -220,7 +218,7 @@ public class Telemetry {
                 .withWidget(BuiltInWidgets.kCommand);
             
             // SwerveSubsystem layout for change starting position
-            ShuffleboardLayout swerveSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabConstants.PITTING)
+            ShuffleboardLayout swerveSubsystemLayout = Shuffleboard.getTab(ShuffleboardTabNames.UTILITIES)
                 .getLayout("Swerve Subsystem", BuiltInLayouts.kList)
                 .withProperties(Map.of("Label position", "TOP"))
                 .withPosition(6, 0)
@@ -255,7 +253,7 @@ public class Telemetry {
                 "http://" + LimelightConstants.SHOOTER_LLIGHT + ".local:5800/stream.mjpg",
                 HttpCameraKind.kMJPGStreamer);
             CameraServer.addCamera(limelightFrontFeed);
-            Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+            Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
                 .add("Front Limelight", limelightFrontFeed)
                 .withWidget(BuiltInWidgets.kCameraStream)
                 .withPosition(3, 1)
@@ -266,7 +264,7 @@ public class Telemetry {
                 "http://" + LimelightConstants.INTAKE_LLIGHT + ".local:5800/stream.mjpg",
                 HttpCameraKind.kMJPGStreamer);
             CameraServer.addCamera(limelightBackFeed);
-            Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+            Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
                 .add("Back Limelight", limelightBackFeed)
                 .withWidget(BuiltInWidgets.kCameraStream)
                 .withPosition(9, 1)
@@ -315,7 +313,7 @@ public class Telemetry {
         // TODO check loop times for LEDSubsystem.periodic()
 
         // IntakeSubsystem
-        private static GenericEntry DEFAULT_INTAKE_PIVOT_POSITION = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        private static GenericEntry DEFAULT_INTAKE_PIVOT_POSITION = Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
             .add("Intake Pivot", "")
             .withWidget(BuiltInWidgets.kTextView)
             .withPosition(9, 0)
@@ -323,7 +321,7 @@ public class Telemetry {
             .getEntry();
         
         // ShooterSubsystem
-        private static GenericEntry DEFAULT_SHOOTER_PIVOT_POSITIONS = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        private static GenericEntry DEFAULT_SHOOTER_PIVOT_POSITIONS = Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
             .add("Shooter Pivot", "")
             .withWidget(BuiltInWidgets.kTextView)
             .withPosition(6, 0)
@@ -331,7 +329,7 @@ public class Telemetry {
             .getEntry();
         
         // SwerveSubsystem
-        private static GenericEntry DEFAULT_GYRO_HEADING = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        private static GenericEntry DEFAULT_GYRO_HEADING = Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
             .add("Robot Heading", 0)
             .withWidget(BuiltInWidgets.kGyro)
             .withProperties(Map.of("Starting angle", 180, "Counter Clockwise", true))
@@ -341,14 +339,14 @@ public class Telemetry {
         public static SendableChooser<StartingPositions> PITTING_STARTING_POSITION;
         
         // LimelightSubsystem
-        private static GenericEntry DEFAULT_LIMELIGHT_TARGET_ID = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        private static GenericEntry DEFAULT_LIMELIGHT_TARGET_ID = Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
             .add("T ID", -1)
             .withWidget(BuiltInWidgets.kTextView)
             .withPosition(3, 0)
             .withSize(1, 1)
             .getEntry();
         
-        private static GenericEntry DEFAULT_LIMELIGHT_ODOMETRY = Shuffleboard.getTab(ShuffleboardTabConstants.DEFAULT)
+        private static GenericEntry DEFAULT_LIMELIGHT_ODOMETRY = Shuffleboard.getTab(ShuffleboardTabNames.DEFAULT)
             .add("Vision Odometry", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(4, 0)

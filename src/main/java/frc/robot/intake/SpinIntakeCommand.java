@@ -7,27 +7,26 @@ package frc.robot.intake;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.SterilizerConstants;
-import frc.robot.constants.Constants.IntakeConstants.IntakeState;
+import frc.robot.constants.Constants.IntakeStates;
+import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** A command to spin the rollers in the intake using the current {@link IntakeState}. */
+/** A command to spin the rollers in the intake using the current {@link IntakeStates}. */
 public class SpinIntakeCommand extends Command {
-    private IntakeState state;
+    private IntakeStates state;
     private boolean stopForNote;
 
     /**
      * Initializes a new SpinIntakeCommand
-     * 
      * @param state state of the intake
      * @param stopForNote stop the command when a note is in the sterilizer.
      * @apiNote if stofForNote is false, this subsystem will NOT run the sterilizer.
      * Use it in conjunction with {@link ShootCommmand}
      */
-    public SpinIntakeCommand(IntakeState state, boolean stopForNote) {
+    public SpinIntakeCommand(IntakeStates state, boolean stopForNote) {
         setName("IntakeCommand");
         this.state = state;
         this.stopForNote = stopForNote;
@@ -38,10 +37,9 @@ public class SpinIntakeCommand extends Command {
 
     /**
      * Initializes a new SpinIntakeCommand that stops for notes (overloaded)
-     * 
      * @param state state of the intake
      */
-    public SpinIntakeCommand(IntakeState state) {
+    public SpinIntakeCommand(IntakeStates state) {
         this(state, true);
     }
 
@@ -87,7 +85,6 @@ public class SpinIntakeCommand extends Command {
 
     /**
      * Will return false because the {@link SpinIntakeCommand#execute()} loop will end this command
-     * 
      * @return false
      */
     @Override

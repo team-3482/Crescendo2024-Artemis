@@ -20,10 +20,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.Constants.LimelightConstants;
-import frc.robot.constants.Constants.PhysicalConstants;
-import frc.robot.constants.Constants.SwerveKinematics;
-import frc.robot.constants.Constants.SwerveModuleConstants;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.constants.PhysicalConstants.RobotConstants;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
+import frc.robot.constants.PhysicalConstants.SwerveModuleConfigs;
 import frc.robot.limelight.LimelightHelpers;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.utilities.SwerveUtilities;
@@ -41,43 +41,43 @@ public class SwerveSubsystem extends SubsystemBase {
 
     // Instance of swerve modules, initalized with specific value
     private SwerveModule moduleOne = new SwerveModule(
-        SwerveModuleConstants.One.DRIVE,
-        SwerveModuleConstants.One.TURN,
-        SwerveModuleConstants.One.ENCODER,
-        SwerveModuleConstants.One.DRIVE_MOTOR_REVERSED,
-        SwerveModuleConstants.One.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.One.ABSOLUTE_ENCODER_REVERSED
+        SwerveModuleConfigs.One.DRIVE,
+        SwerveModuleConfigs.One.TURN,
+        SwerveModuleConfigs.One.ENCODER,
+        SwerveModuleConfigs.One.DRIVE_MOTOR_REVERSED,
+        SwerveModuleConfigs.One.TURNING_MOTOR_REVERSED,
+        SwerveModuleConfigs.One.ABSOLUTE_ENCODER_REVERSED
     );
 
     private SwerveModule moduleTwo = new SwerveModule(
-        SwerveModuleConstants.Two.DRIVE,
-        SwerveModuleConstants.Two.TURN,
-        SwerveModuleConstants.Two.ENCODER,
-        SwerveModuleConstants.Two.DRIVE_MOTOR_REVERSED,
-        SwerveModuleConstants.Two.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.Two.ABSOLUTE_ENCODER_REVERSED
+        SwerveModuleConfigs.Two.DRIVE,
+        SwerveModuleConfigs.Two.TURN,
+        SwerveModuleConfigs.Two.ENCODER,
+        SwerveModuleConfigs.Two.DRIVE_MOTOR_REVERSED,
+        SwerveModuleConfigs.Two.TURNING_MOTOR_REVERSED,
+        SwerveModuleConfigs.Two.ABSOLUTE_ENCODER_REVERSED
     );
 
     private SwerveModule moduleThree = new SwerveModule(
-        SwerveModuleConstants.Three.DRIVE,
-        SwerveModuleConstants.Three.TURN,
-        SwerveModuleConstants.Three.ENCODER,
-        SwerveModuleConstants.Three.DRIVE_MOTOR_REVERSED,
-        SwerveModuleConstants.Three.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.Three.ABSOLUTE_ENCODER_REVERSED
+        SwerveModuleConfigs.Three.DRIVE,
+        SwerveModuleConfigs.Three.TURN,
+        SwerveModuleConfigs.Three.ENCODER,
+        SwerveModuleConfigs.Three.DRIVE_MOTOR_REVERSED,
+        SwerveModuleConfigs.Three.TURNING_MOTOR_REVERSED,
+        SwerveModuleConfigs.Three.ABSOLUTE_ENCODER_REVERSED
     ); 
 
     private SwerveModule moduleFour = new SwerveModule(
-        SwerveModuleConstants.Four.DRIVE,
-        SwerveModuleConstants.Four.TURN,
-        SwerveModuleConstants.Four.ENCODER,
-        SwerveModuleConstants.Four.DRIVE_MOTOR_REVERSED,
-        SwerveModuleConstants.Four.TURNING_MOTOR_REVERSED,
-        SwerveModuleConstants.Four.ABSOLUTE_ENCODER_REVERSED
+        SwerveModuleConfigs.Four.DRIVE,
+        SwerveModuleConfigs.Four.TURN,
+        SwerveModuleConfigs.Four.ENCODER,
+        SwerveModuleConfigs.Four.DRIVE_MOTOR_REVERSED,
+        SwerveModuleConfigs.Four.TURNING_MOTOR_REVERSED,
+        SwerveModuleConfigs.Four.ABSOLUTE_ENCODER_REVERSED
     );
 
     // Instance of the Pigeon2 gyroscope on the specifc swerve CAN bus
-    private Pigeon2 gyro = new Pigeon2(SwerveModuleConstants.GRYO_ID, SwerveModuleConstants.SWERVE_CAN_BUS);
+    private Pigeon2 gyro = new Pigeon2(RobotConstants.GYRO_ID, RobotConstants.SWERVE_CAN_BUS);
 
     // Instance of the odometer to track robot position, initialized to starting position
     private SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(
@@ -105,7 +105,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 new PIDConstants(4.5, 0, 0),
                 new PIDConstants(4.5, 0, 0),
                 SwerveKinematics.PHYSICAL_MAX_MODULE_SPEED, // might need to change to an auton constant
-                Math.sqrt(Math.pow(PhysicalConstants.WHEEL_BASE, 2) + Math.pow(PhysicalConstants.WHEEL_BASE, 2)) / 2,
+                Math.sqrt(Math.pow(RobotConstants.WHEEL_BASE, 2) + Math.pow(RobotConstants.WHEEL_BASE, 2)) / 2,
                 new ReplanningConfig()),
             () -> {
                 var alliance = DriverStation.getAlliance();
@@ -149,7 +149,6 @@ public class SwerveSubsystem extends SubsystemBase {
     
     /**
     * Returns the current heading of the robot in degrees
-    * 
     * @return current heading of the robot
     */
     public double getHeading() {
@@ -168,7 +167,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /**
     * Returns the current rotation information of the robot
-    * 
     * @return current rotation of the robot
     */
     public Rotation2d getRotation2d() {
@@ -214,7 +212,6 @@ public class SwerveSubsystem extends SubsystemBase {
   
     /**
     * Resets the odometry of the robot
-    * 
     * @param pose to reset to
     */
     public void setPose(Pose2d pose) {
@@ -234,7 +231,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /**
      * Get whether or not the odometry has recently updated using vision
-     * 
      * @return vision odometry
      */
     public boolean usingLimelightOdometry() {
@@ -254,7 +250,6 @@ public class SwerveSubsystem extends SubsystemBase {
     /**
      * Calculates the necessary updates for the odometer.
      * @see https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
-     * 
      * @return whether or not it updated
      */
     private boolean updateOdometryUsingVision() {
@@ -344,7 +339,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /**
      * Sets the destired states to the correct swerve modules
-     * 
      * @param desiredStates - states to be relayed to the swerve modules
      */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -359,7 +353,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     /**
      * Get desired states 
-     * 
      * @return states
      */
     public SwerveModuleState[] getDesiredStates() {

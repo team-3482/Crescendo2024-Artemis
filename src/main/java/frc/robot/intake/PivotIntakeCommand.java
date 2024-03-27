@@ -7,15 +7,15 @@ package frc.robot.intake;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.Constants.IntakeConstants;
-import frc.robot.constants.Constants.IntakeConstants.IntakeState;
+import frc.robot.constants.PhysicalConstants.IntakeConstants;
+import frc.robot.constants.Constants.IntakeStates;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.utilities.Telemetry;
 
 /** A command to move the intake to a specific position. */
 public class PivotIntakeCommand extends Command {
-    private IntakeState state;
+    private IntakeStates state;
     private PIDController pid;
     private boolean up;
 
@@ -24,10 +24,9 @@ public class PivotIntakeCommand extends Command {
 
     /**
      * Initializes a new PivotIntakeCommand
-     * 
      * @param state of the intake
      */
-    public PivotIntakeCommand(IntakeState state) {
+    public PivotIntakeCommand(IntakeStates state) {
         setName("PivotIntakeCommand");
         this.state = state;
         
