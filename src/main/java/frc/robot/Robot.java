@@ -68,11 +68,7 @@ public class Robot extends TimedRobot {
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
-    public void disabledInit() {
-        // Save shooter pivot positions
-        // double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
-        // JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
-    }
+    public void disabledInit() {}
 
     @Override
     public void disabledPeriodic() {}

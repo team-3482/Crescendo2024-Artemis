@@ -19,13 +19,10 @@ import frc.robot.auto.PathingCommands;
 import frc.robot.constants.Constants.ControllerConstants;
 import frc.robot.constants.Constants.ShuffleboardTabNames;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
-import frc.robot.constants.Constants.IntakeStates;
-import frc.robot.constants.PhysicalConstants.ShooterConstants;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.constants.Positions.PathfindingPosition;
 import frc.robot.intake.IntakeSubsystem;
-import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ManuallyPivotShooterCommand;
@@ -35,7 +32,6 @@ import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveDriveCommand;
 import frc.robot.swerve.SwerveSubsystem;
-import frc.robot.utilities.JSONManager;
 import frc.robot.utilities.SequencedCommands;
 import frc.robot.utilities.Telemetry;
 
@@ -78,7 +74,6 @@ public class RobotContainer {
 
     /** Creates instances of each subsystem so periodic runs */
     private void initializeSubsystems() {
-        // JSONManager.getInstance();
         LEDSubsystem.getInstance();
         LimelightSubsystem.getInstance();
         SwerveSubsystem.getInstance();
@@ -182,12 +177,6 @@ public class RobotContainer {
             () -> -operatorController.getLeftY(),
             () -> -operatorController.getRightY(),
             false
-        ));
-        operatorController.leftStick().onTrue(Commands.runOnce(
-            () -> ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[1])
-        ));
-        operatorController.rightStick().onTrue(Commands.runOnce(
-            () -> ShooterSubsystem.getInstance().resetPivotPosition(ShooterConstants.PIVOT_ANGLE_LIMITS[0])
         ));
 
         // Cancel all scheduled commands and turn off LEDs

@@ -59,10 +59,6 @@ public class ShooterSubsystem extends SubsystemBase {
         
         configureMotionMagic();
         configureShootingPID();
-        
-        // double[] positions = JSONManager.getInstance().getShooterPivotPositions();
-        // leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
-        // rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
     }
 
     /**
@@ -76,7 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         // Sets the gear ratio from the motor to the mechanism (pivot)
-        feedbackConfigs.SensorToMechanismRatio = 1;
+        feedbackConfigs.SensorToMechanismRatio = (double) 1 / ShooterConstants.MOTOR_TO_PIVOT_RATIO;
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
         // motorOutputConfigs.DutyCycleNeutralDeadband = 0.001;
@@ -120,30 +116,20 @@ public class ShooterSubsystem extends SubsystemBase {
         rightPID.setFF(ShooterConstants.kFF);
         rightPID.setOutputRange(-1, 1);
     }
-
-    /**
-     * @deprecated This method should not be used. Set CANCoders zeroes in Phoenix Tuner X instead.
-     * Set the motor encoder's position to the pivot angle
-     * @param angle in degrees
-     */
-    @Deprecated
-    public void resetPivotPosition(double angle) {
-        // JSONManager.getInstance().saveShooterPivotPositions(angle);
-        // double position = Units.degreesToRotations(angle) * ShooterConstants.MOTOR_TO_PIVOT_RATIO;
-        // leftPivotMotor.setPosition(position);
-        // rightPivotMotor.setPosition(position);
-    }
     
     /**
      * Goes to the position of the pivot using Motion Magic slot 0
      * @param position in degrees
+     * @apiNote The position is clamped by {@link ShooterConstants#PIVOT_ANGLE_LIMITS}
      */
     public void pivotGoToPosition(double position) {
         position = MathUtil.clamp(position, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
+
         MotionMagicVoltage control = motionMagicVoltage
-        // Select Slot 0 for Motion Magic (should be done by default)
+            // Select Slot 0 for Motion Magic (should be done by default)
             .withSlot(0)
-            .withPosition(Units.degreesToRotations(position));
+            .withPosition(Units.degreesToRotations(position) * ShooterConstants.MOTOR_TO_PIVOT_RATIO);
+        
         rightPivotMotor.setControl(control);
         leftPivotMotor.setControl(control);
     }
@@ -184,8 +170,8 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double[] getPivotPositions() {
         return new double[]{
-            Units.rotationsToDegrees(leftCANcoder.getAbsolutePosition().getValueAsDouble()),
-            Units.rotationsToDegrees(rightCANcoder.getAbsolutePosition().getValueAsDouble())
+            Units.rotationsToDegrees(leftCANcoder.getPosition().getValueAsDouble()),
+            Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble())
         };
     }
 
@@ -224,9 +210,8 @@ public class ShooterSubsystem extends SubsystemBase {
         //     "left vel : " + d.format(vel[0]) + " right vel : "
         //     + d.format(vel[1])
         // );
+
         double[] pos = getPivotPositions();
         System.out.println("Left : " + (int) pos[0] + " Right : " + (int) pos[1]);
-        // System.out.println("Left : " + Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble())
-        //     + " Right : " + Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble()));
     }
 }
