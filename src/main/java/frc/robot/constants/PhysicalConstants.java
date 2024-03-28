@@ -116,6 +116,16 @@ public final class PhysicalConstants {
         public static final double MOTION_MAGIC_JERK = 1600;
     }
 
+    /** Constants for climb/elevator */ 
+    public static final class ClimbConstants {
+        /** left motor can id */ 
+        public static final int LEFT_MOTOR_ID = 0;
+        /** right motor can id */ 
+        public static final int RIGHT_MOTOR_ID = 0;
+        /** speed for motors */ 
+        public static final double SPEED = 0.4;
+    }
+
     /** Constants for limelight-related data */
     public static final class LimelightConstants {
         /** Spams "Bad LL 2D/3D Pose Data" when no data is coming from the NetworkTableInstance for LL */
