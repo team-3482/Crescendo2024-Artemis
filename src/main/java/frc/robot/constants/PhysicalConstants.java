@@ -86,7 +86,7 @@ public final class PhysicalConstants {
         public static final int RIGHT_CANCODER_ID = 23;
         
         // Pivot Stuff
-        public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
+        // public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
         /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
         public static final double[] PIVOT_ANGLE_LIMITS = new double[]{35, 65};
         /** Allowed pivot error for the pivot rotation in degrees */
@@ -95,9 +95,9 @@ public final class PhysicalConstants {
         // Motion Magic
         public static final class SLOT_0_CONFIGS {
             /** Volts added to overcome friction */
-            public static final double kS = 0.12;
+            public static final double kS = 1;
             /** Volts added for a target velocity */
-            public static final double kV = 0.06; // Target velocity of 100 rps at 0.12 kV
+            public static final double kV = 0.5; // Target velocity of 100 rps at 0.12 kV
             public static final double kP = 1.2;
             public static final double kI = 0;
             public static final double kD = 0.1;
@@ -109,11 +109,11 @@ public final class PhysicalConstants {
         public static final double kFF = 0.000265;
 
         /** Cruise velocity in rps */
-        public static final int CRUISE_SPEED = 80;
+        public static final double CRUISE_SPEED = 2.5;
         /** Acceleration in rps/s */
-        public static final int CRUISE_ACCELERATION = 80;
+        public static final double CRUISE_ACCELERATION = 0.5;
         /** Jerk in rps/s^2 (0.1 seconds) */
-        public static final int MOTION_MAGIC_JERK = 1600;
+        public static final double MOTION_MAGIC_JERK = 10;
     }
 
     /** Constants for limelight-related data */

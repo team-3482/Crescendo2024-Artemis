@@ -28,7 +28,6 @@ public class LEDSubsystem extends SubsystemBase {
         }
         return instance;
     }
-    
 
     // LED Buffer
     private AddressableLEDBuffer ledBuffer;
@@ -70,17 +69,16 @@ public class LEDSubsystem extends SubsystemBase {
     @Override
     public void periodic() { 
         // Updates the color effect and gets the chosen color
-        if(this.state.interval != Double.POSITIVE_INFINITY) {
+        if (this.state.interval != Double.POSITIVE_INFINITY) {
             double timestamp = Timer.getFPGATimestamp();
             if (timestamp - this.lastLedUpdate >= this.state.interval) {
                 this.state.cycleColors();
                 this.lastLedUpdate = timestamp;
-                this.updateLights();
             }
         }
 
         // Updates the lights only if the light state changes
-        if(!this.state.getColor().equals(this.previousColor)){
+        if (!this.state.getColor().equals(this.previousColor)) {
             updateLights();
         }
     };
@@ -98,7 +96,7 @@ public class LEDSubsystem extends SubsystemBase {
             SB_D_LED_WIDGET.withProperties(Map.of("colorWhenTrue", color.getHexadecimal()));
             SB_D_LED_ENTRY.setBoolean(true);
         }
-
+        
         for (int i = 0; i < this.ledBuffer.getLength(); i++) {
             this.ledBuffer.setRGB(i, color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -124,7 +122,7 @@ public class LEDSubsystem extends SubsystemBase {
      * @param overrideCurrentState Whether the lights should overide the current lightt state or not.
      */
     public void setLightState(LightState state, boolean overrideCurrentState){
-        if (overrideCurrentState || (!overrideCurrentState && this.state == LightState.OFF)) {
+        if (overrideCurrentState || (!overrideCurrentState && this.state.equals(LightState.OFF))) {
             this.state = state;
         }
     }

@@ -50,7 +50,7 @@ public class SterilizerSubsystem extends SubsystemBase {
             backMm != null && backMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
                 OptionalInt.of(backMm.distance_mm) : OptionalInt.empty(),
             frontMm != null && frontMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
-                OptionalInt.of(backMm.distance_mm) : OptionalInt.empty()
+                OptionalInt.of(frontMm.distance_mm) : OptionalInt.empty()
         };
 
         return measurements;
@@ -101,7 +101,6 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //System.out.println("Has Note : " + hasNote());
         if (hasNote()) {
             LEDSubsystem.getInstance().setLightState(LightState.HOLDING_NOTE, false);
         } 

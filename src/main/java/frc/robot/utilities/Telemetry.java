@@ -194,7 +194,7 @@ public class Telemetry {
             shooterSubsystemLayout.add("Force Save Position",
                 Commands.runOnce(() -> {
                     double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
-                    JSONManager.getInstance().saveShooterPivotPositions(pos[0], pos[1]);
+                    // JSONManager.getInstance().saveShooterPivotPositions(pos[0], pos[1]);
                 }).ignoringDisable(true).withName("Save Data"))
                 .withPosition(0, 0)
                 .withWidget(BuiltInWidgets.kCommand);

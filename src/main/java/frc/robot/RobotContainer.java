@@ -78,7 +78,7 @@ public class RobotContainer {
 
     /** Creates instances of each subsystem so periodic runs */
     private void initializeSubsystems() {
-        JSONManager.getInstance();
+        // JSONManager.getInstance();
         LEDSubsystem.getInstance();
         LimelightSubsystem.getInstance();
         SwerveSubsystem.getInstance();
@@ -157,11 +157,13 @@ public class RobotContainer {
         
         driveController.leftBumper().onTrue(new CenterSpeakerCommand());
         driveController.rightBumper()
-            .onTrue(SequencedCommands.getIntakeCommand())
-            .onFalse(Commands.parallel(
-                new PivotIntakeCommand(IntakeStates.IDLE),
-                new PivotShooterCommand(ShooterStates.SPEAKER))
-        );
+            .whileTrue(new PivotShooterCommand(ShooterStates.SPEAKER));
+        // driveController.rightBumper()
+        //     .onTrue(SequencedCommands.getIntakeCommand())
+        //     .onFalse(Commands.parallel(
+        //         new PivotIntakeCommand(IntakeStates.IDLE),
+        //         new PivotShooterCommand(ShooterStates.SPEAKER))
+        // );
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands

@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
-import frc.robot.shooter.ShooterSubsystem;
-import frc.robot.utilities.JSONManager;
 import frc.robot.utilities.Telemetry;
 
 /**
@@ -72,8 +70,8 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         // Save shooter pivot positions
-        double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
-        JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
+        // double[] positions = ShooterSubsystem.getInstance().getPivotPositions();
+        // JSONManager.getInstance().saveShooterPivotPositions(positions[0], positions[1]);
     }
 
     @Override

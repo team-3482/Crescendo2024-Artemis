@@ -25,7 +25,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
-import frc.robot.utilities.JSONManager;
 
 public class ShooterSubsystem extends SubsystemBase {    
     // Singleton Design Pattern
@@ -61,9 +60,9 @@ public class ShooterSubsystem extends SubsystemBase {
         configureMotionMagic();
         configureShootingPID();
         
-        double[] positions = JSONManager.getInstance().getShooterPivotPositions();
-        leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
-        rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
+        // double[] positions = JSONManager.getInstance().getShooterPivotPositions();
+        // leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
+        // rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
     }
 
     /**
@@ -77,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         // Sets the gear ratio from the motor to the mechanism (pivot)
-        feedbackConfigs.SensorToMechanismRatio = 0;
+        feedbackConfigs.SensorToMechanismRatio = 1;
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
         // motorOutputConfigs.DutyCycleNeutralDeadband = 0.001;
@@ -99,11 +98,11 @@ public class ShooterSubsystem extends SubsystemBase {
         
         // Motor-specific configurations
         motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Right motor not inverted
-        feedbackConfigs.FeedbackRemoteSensorID = ShooterConstants.RIGHT_CANCODER_ID;
+        feedbackConfigs.FeedbackRemoteSensorID = this.rightCANcoder.getDeviceID();
         this.rightPivotMotor.getConfigurator().apply(configuration);
         
         motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Left motor inverted
-        feedbackConfigs.FeedbackRemoteSensorID = ShooterConstants.LEFT_CANCODER_ID;
+        feedbackConfigs.FeedbackRemoteSensorID = this.leftCANcoder.getDeviceID();
         this.leftPivotMotor.getConfigurator().apply(configuration);
     }
 
@@ -143,8 +142,8 @@ public class ShooterSubsystem extends SubsystemBase {
         position = MathUtil.clamp(position, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
         MotionMagicVoltage control = motionMagicVoltage
         // Select Slot 0 for Motion Magic (should be done by default)
-        .withSlot(0)
-        .withPosition(Units.degreesToRotations(position * ShooterConstants.MOTOR_TO_PIVOT_RATIO));
+            .withSlot(0)
+            .withPosition(Units.degreesToRotations(position));
         rightPivotMotor.setControl(control);
         leftPivotMotor.setControl(control);
     }
@@ -185,13 +184,9 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double[] getPivotPositions() {
         return new double[]{
-            Units.rotationsToDegrees(leftCANcoder.getPosition().getValueAsDouble()),
-            Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble())
+            Units.rotationsToDegrees(leftCANcoder.getAbsolutePosition().getValueAsDouble()),
+            Units.rotationsToDegrees(rightCANcoder.getAbsolutePosition().getValueAsDouble())
         };
-        // return new double[]{
-        //     Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO),
-        //     Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble() / ShooterConstants.MOTOR_TO_PIVOT_RATIO)
-        // };
     }
 
     /**
@@ -229,7 +224,9 @@ public class ShooterSubsystem extends SubsystemBase {
         //     "left vel : " + d.format(vel[0]) + " right vel : "
         //     + d.format(vel[1])
         // );
-        // System.out.println("Left : " + (int) Units.rotationsToDegrees(leftCANcoder.getPosition().getValueAsDouble()) +
-        //     " Right : " + (int) Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble()));
+        double[] pos = getPivotPositions();
+        System.out.println("Left : " + (int) pos[0] + " Right : " + (int) pos[1]);
+        // System.out.println("Left : " + Units.rotationsToDegrees(leftPivotMotor.getPosition().getValueAsDouble())
+        //     + " Right : " + Units.rotationsToDegrees(rightPivotMotor.getPosition().getValueAsDouble()));
     }
 }
