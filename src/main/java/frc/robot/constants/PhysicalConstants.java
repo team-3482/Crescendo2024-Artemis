@@ -118,14 +118,11 @@ public final class PhysicalConstants {
         public static final double MOTION_MAGIC_JERK = 1600;
     }
 
-    /** Constants for climb/elevator */ 
-    public static final class ClimbConstants {
-        /** left motor can id */ 
+    /** Constants for Elevator motors */ 
+    public static final class ElevatorConstants {
         public static final int LEFT_MOTOR_ID = 0;
-        /** right motor can id */ 
         public static final int RIGHT_MOTOR_ID = 0;
-        /** speed for motors */ 
-        public static final double SPEED = 0.4;
+        public static final double MOTOR_SPEED = 0.25;
     }
 
     /** Constants for limelight-related data */

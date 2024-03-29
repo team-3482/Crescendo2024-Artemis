@@ -20,27 +20,31 @@ public class ElevatorSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private CANSparkMax leftClimbMotor = new CANSparkMax(PhysicalConstants.ClimbConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkMax rightClimbMotor = new CANSparkMax(PhysicalConstants.ClimbConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-    private double climbSpeed = 0; 
+    private CANSparkMax rightClimbMotor = new CANSparkMax(PhysicalConstants.ElevatorConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkMax leftClimbMotor = new CANSparkMax(PhysicalConstants.ElevatorConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
 
-    /** Creates a new ExampleSubsystem. */
+    /** Creates a new ElevatorSubsystem. Moves the climb mechanism. */
     public ElevatorSubsystem() {
-        super("ClimbSubsystem");
-    }
+        super("ElevatorSubsystem");
 
-    public void setClimbSpeed(double speed){
-        climbSpeed = speed;
-    }
-
-    @Override
-    public void periodic() {
-        rightClimbMotor.set(climbSpeed);
         leftClimbMotor.follow(rightClimbMotor, true);
     }
+    
+    /**
+     * Sets the speed of the motors to move the climb mechanism
+     * @param speed from -1.0 to 1.0
+     */
+    public void setSpeed(double speed){
+        rightClimbMotor.set(speed);
+    }
+    
+    /**
+     * Stops the motors that move the climb mechanism (overloaded)
+     */
+    public void setSpeed(){
+        setSpeed(0);
+    }
 
     @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
-    }
+    public void periodic() {}
 }

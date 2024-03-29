@@ -79,6 +79,7 @@ public class RobotContainer {
         IntakeSubsystem.getInstance();
         SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
+        // ElevatorSubsystem.getInstance();
         Telemetry.getInstance();
     }
 
