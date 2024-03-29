@@ -12,10 +12,10 @@ import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 public final class Constants {
     /** Stores all shooter configuration related data */
     public static enum ShooterStates {
-        FRONT_EJECT(false, false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 600.0, 0.0),
-        INTAKE(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0],  null, null),
-        AMP(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[1], 435.0, 10.0),
-        SPEAKER(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[1], 1500.0, 75.0),
+        FRONT_EJECT(false, false, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], 600.0, 0.0),
+        INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0],  null, null),
+        AMP(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 435.0, 10.0),
+        SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 1500.0, 75.0),
         SPEAKER_CALCULATE(true, true, true, null, 1800.0, 75.0),
         MANUAL(false, false, false, null, SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
         ;

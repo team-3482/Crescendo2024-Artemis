@@ -79,11 +79,11 @@ public class ShooterSubsystem extends SubsystemBase {
         
         // Set Motion Magic gains in slot0
         Slot0Configs slot0Configs = configuration.Slot0;
-        slot0Configs.kS = ShooterConstants.SLOT_0_CONFIGS.kS;
-        slot0Configs.kV = ShooterConstants.SLOT_0_CONFIGS.kV;
-        slot0Configs.kP = ShooterConstants.SLOT_0_CONFIGS.kP;
-        slot0Configs.kI = ShooterConstants.SLOT_0_CONFIGS.kI;
-        slot0Configs.kD = ShooterConstants.SLOT_0_CONFIGS.kD;
+        slot0Configs.kS = ShooterConstants.slot0Configs.kS;
+        slot0Configs.kV = ShooterConstants.slot0Configs.kV;
+        slot0Configs.kP = ShooterConstants.slot0Configs.kP;
+        slot0Configs.kI = ShooterConstants.slot0Configs.kI;
+        slot0Configs.kD = ShooterConstants.slot0Configs.kD;
         
         // Set acceleration and vcruise velocity
         MotionMagicConfigs motionMagicConfigs = configuration.MotionMagic;
@@ -106,13 +106,13 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     private void configureShootingPID() {
         // Left shooter
-        leftPID.setP(ShooterConstants.kP_SHOOTING);
-        leftPID.setFF(ShooterConstants.kFF_SHOOTING);
+        leftPID.setP(ShooterConstants.Shooting.kP_SHOOTING);
+        leftPID.setFF(ShooterConstants.Shooting.kFF_SHOOTING);
         leftPID.setOutputRange(-1, 1);
         
         // Right shooter
-        rightPID.setP(ShooterConstants.kP_SHOOTING);
-        rightPID.setFF(ShooterConstants.kFF_SHOOTING);
+        rightPID.setP(ShooterConstants.Shooting.kP_SHOOTING);
+        rightPID.setFF(ShooterConstants.Shooting.kFF_SHOOTING);
         rightPID.setOutputRange(-1, 1);
     }
     
@@ -121,10 +121,10 @@ public class ShooterSubsystem extends SubsystemBase {
      * @deprecated MotionMagic is broken with CANCoder's innacurate velocities (vibration).
      * Use {@link ShooterSubsystem#setPivotSpeed(double, boolean)} instead.
      * @param position in degrees
-     * @apiNote The position is clamped by {@link ShooterConstants#PIVOT_ANGLE_LIMITS}
+     * @apiNote The position is clamped by {@link ShooterConstants#ANGLE_LIMITS}
      */
     public void pivotGoToPosition(double position) {
-        position = MathUtil.clamp(position, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
+        position = MathUtil.clamp(position, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
 
         MotionMagicVoltage control = motionMagicVoltage
             // Select Slot 0 for Motion Magic (should be done by default)
@@ -145,10 +145,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setPivotSpeed(double leftSpeed, double rightSpeed, boolean override) {
         if (!override) {
             double[] positions = getPivotPositions();
-            leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-                (leftSpeed > 0 && positions[0] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : leftSpeed;
-            rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.PIVOT_ANGLE_LIMITS[0]) ||
-                (rightSpeed > 0 && positions[1] >= ShooterConstants.PIVOT_ANGLE_LIMITS[1]) ? 0 : rightSpeed;
+            leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
+                (leftSpeed > 0 && positions[0] >= ShooterConstants.Pivot.ANGLE_LIMITS[1]) ? 0 : leftSpeed;
+            rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
+                (rightSpeed > 0 && positions[1] >= ShooterConstants.Pivot.ANGLE_LIMITS[1]) ? 0 : rightSpeed;
             }
         
         rightPivotMotor.set(rightSpeed);

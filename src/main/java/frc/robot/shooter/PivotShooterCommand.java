@@ -20,7 +20,7 @@ import frc.robot.utilities.Telemetry;
 public class PivotShooterCommand extends Command {
     private double shootingAngle;
     private ShooterStates state;
-    private ProfiledPIDController pid;
+    private ProfiledPIDController ppid;
 
     /**
     * Creates a new PivotShooterCommand.
@@ -30,8 +30,8 @@ public class PivotShooterCommand extends Command {
         setName("PivotShooterCommand");
         // Use addRequirements() here to declare subsystem dependencies.
         this.state = state;
-        this.pid = new ProfiledPIDController(ShooterConstants.kP_PIVOT, 0, 0,
-            new TrapezoidProfile.Constraints(30, 30)
+        this.ppid = new ProfiledPIDController(ShooterConstants.Pivot.kP_PIVOT, 0, 0,
+            new TrapezoidProfile.Constraints(ShooterConstants.Pivot.MAX_VEL, ShooterConstants.Pivot.MAX_ACCEL)
         );
 
         addRequirements(ShooterSubsystem.getInstance());
@@ -41,7 +41,7 @@ public class PivotShooterCommand extends Command {
     @Override
     public void initialize() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
-        this.pid.reset(pivotPositions[0]);
+        this.ppid.reset(pivotPositions[0]);
 
         if(!this.state.getCalculateAngle()) {
             this.shootingAngle = this.state.getAngle();
@@ -89,8 +89,8 @@ public class PivotShooterCommand extends Command {
     public void execute() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
         ShooterSubsystem.getInstance().setPivotSpeed(
-            this.pid.calculate(pivotPositions[0], this.shootingAngle),
-            this.pid.calculate(pivotPositions[1], this.shootingAngle),
+            this.ppid.calculate(pivotPositions[0], this.shootingAngle),
+            this.ppid.calculate(pivotPositions[1], this.shootingAngle),
             true
         );
     }
@@ -109,7 +109,7 @@ public class PivotShooterCommand extends Command {
     @Override
     public boolean isFinished() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
-        return Math.abs(pivotPositions[0] - this.shootingAngle) <= ShooterConstants.ALLOWED_PIVOT_ERROR
-            && Math.abs(pivotPositions[1] - this.shootingAngle) <= ShooterConstants.ALLOWED_PIVOT_ERROR;
+        return Math.abs(pivotPositions[0] - this.shootingAngle) <= ShooterConstants.Pivot.ALLOWED_ERROR
+            && Math.abs(pivotPositions[1] - this.shootingAngle) <= ShooterConstants.Pivot.ALLOWED_ERROR;
     }
 }

@@ -85,15 +85,17 @@ public final class PhysicalConstants {
         public static final int LEFT_CANCODER_ID = 22;
         public static final int RIGHT_CANCODER_ID = 23;
         
-        // Pivot Stuff
-        // public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
-        /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
-        public static final double[] PIVOT_ANGLE_LIMITS = new double[]{35, 65};
-        /** Allowed pivot error for the pivot rotation in degrees */
-        public static final double ALLOWED_PIVOT_ERROR = 0.5;
+        /** Motor configurations for the shooting wheels */
+        public static final class Shooting {
+            /** P of PID for the Shooter wheeels */
+            public static final double kP_SHOOTING = 0.001;
+            /** Feed forward for the Shooter wheels */
+            public static final double kFF_SHOOTING = 0.000265;
+        }
 
-        // Motion Magic
-        public static final class SLOT_0_CONFIGS {
+        // Pivot Stuff
+        /** Motion magic configurations for pivot motors */
+        public static final class slot0Configs {
             /** Volts added to overcome friction */
             public static final double kS = 0.12;
             /** Volts added for a target velocity */
@@ -103,12 +105,19 @@ public final class PhysicalConstants {
             public static final double kD = 0.1;
         }
 
-        /** PID for the Shooter wheeels */
-        public static final double kP_SHOOTING = 0.001;
-        /** Feed forward for the Shooter wheels */
-        public static final double kFF_SHOOTING = 0.000265;
-        /** PID for the pivot motors */
-        public static final double kP_PIVOT = 0.05;
+        /** Motor onfigurations for moving the pivot */
+        public static final class Pivot {
+            // public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
+            /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
+            public static final double[] ANGLE_LIMITS = new double[]{35, 65};
+            /** Allowed pivot error for the pivot rotation in degrees */
+            public static final double ALLOWED_ERROR = 0.5;
+            /** P of PPID for the pivot motors */
+            public static final double kP_PIVOT = 0.05;
+            // Constraints for TrapezoidProfile for the pivot motors
+            public static final double MAX_VEL = 30;
+            public static final double MAX_ACCEL = 30;
+        }
 
         /** Cruise velocity in rps */
         public static final double CRUISE_SPEED = 80;
@@ -152,10 +161,10 @@ public final class PhysicalConstants {
     public static final class SwerveKinematics {
         /** Distance between wheel positions */
         public static final SwerveDriveKinematics DRIVE_KINEMATICS = new SwerveDriveKinematics(
-                new Translation2d(RobotConstants.WHEEL_BASE / 2, -RobotConstants.TRACK_WIDTH / 2),
-                new Translation2d(RobotConstants.WHEEL_BASE / 2, RobotConstants.TRACK_WIDTH / 2),
-                new Translation2d(-RobotConstants.WHEEL_BASE / 2, -RobotConstants.TRACK_WIDTH / 2),
-                new Translation2d(-RobotConstants.WHEEL_BASE / 2, RobotConstants.TRACK_WIDTH / 2));
+            new Translation2d(RobotConstants.WHEEL_BASE / 2, -RobotConstants.TRACK_WIDTH / 2),
+            new Translation2d(RobotConstants.WHEEL_BASE / 2, RobotConstants.TRACK_WIDTH / 2),
+            new Translation2d(-RobotConstants.WHEEL_BASE / 2, -RobotConstants.TRACK_WIDTH / 2),
+            new Translation2d(-RobotConstants.WHEEL_BASE / 2, RobotConstants.TRACK_WIDTH / 2));
 
         /** Multiplied by the value given by the slew rate limiter for turning */
         public static final double TURNING_SPEED_COEFFIECENT = Math.PI;
