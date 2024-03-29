@@ -10,12 +10,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants;
 
-public class ClimbSubsystem extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase {
     // Singleton Design Pattern
-    private static ClimbSubsystem instance;
-    public static ClimbSubsystem getInstance() {
+    private static ElevatorSubsystem instance;
+    public static ElevatorSubsystem getInstance() {
         if(instance == null) {
-            instance = new ClimbSubsystem();
+            instance = new ElevatorSubsystem();
         }
         return instance;
     }
@@ -25,7 +25,7 @@ public class ClimbSubsystem extends SubsystemBase {
     private double climbSpeed = 0; 
 
     /** Creates a new ExampleSubsystem. */
-    public ClimbSubsystem() {
+    public ElevatorSubsystem() {
         super("ClimbSubsystem");
     }
 
