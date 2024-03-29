@@ -14,9 +14,8 @@ public final class Constants {
     public static enum ShooterStates {
         FRONT_EJECT(false, false, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0], 600.0, 0.0),
         INTAKE(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[0],  null, null),
-        // SAFETY_1(false, true, true, 45.0, 1500.0, 25.0),
-        AMP(false, true, false, 65.0, 435.0, 10.0),
-        SPEAKER(false, true, false, 65.0, 1500.0, 75.0),
+        AMP(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[1], 435.0, 10.0),
+        SPEAKER(false, true, false, ShooterConstants.PIVOT_ANGLE_LIMITS[1], 1500.0, 75.0),
         SPEAKER_CALCULATE(true, true, true, null, 1800.0, 75.0),
         MANUAL(false, false, false, null, SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
         ;

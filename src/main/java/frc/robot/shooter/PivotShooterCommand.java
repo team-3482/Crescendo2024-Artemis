@@ -6,6 +6,8 @@ package frc.robot.shooter;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
@@ -18,6 +20,7 @@ import frc.robot.utilities.Telemetry;
 public class PivotShooterCommand extends Command {
     private double shootingAngle;
     private ShooterStates state;
+    private ProfiledPIDController pid;
 
     /**
     * Creates a new PivotShooterCommand.
@@ -27,6 +30,9 @@ public class PivotShooterCommand extends Command {
         setName("PivotShooterCommand");
         // Use addRequirements() here to declare subsystem dependencies.
         this.state = state;
+        this.pid = new ProfiledPIDController(ShooterConstants.kP_PIVOT, 0, 0,
+            new TrapezoidProfile.Constraints(30, 30)
+        );
 
         addRequirements(ShooterSubsystem.getInstance());
     }
@@ -34,9 +40,11 @@ public class PivotShooterCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        this.pid.reset(pivotPositions[0]);
+
         if(!this.state.getCalculateAngle()) {
             this.shootingAngle = this.state.getAngle();
-            ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
             LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
             return;
         }
@@ -78,14 +86,21 @@ public class PivotShooterCommand extends Command {
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        ShooterSubsystem.getInstance().setPivotSpeed(
+            this.pid.calculate(pivotPositions[0], this.shootingAngle),
+            this.pid.calculate(pivotPositions[1], this.shootingAngle),
+            true
+        );
+    }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
         ShooterSubsystem.getInstance().canShoot = !interrupted;
-        
+
         Telemetry.logCommandEnd(getName(), interrupted, "goal " + Telemetry.D_FORMAT.format(this.shootingAngle));
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
