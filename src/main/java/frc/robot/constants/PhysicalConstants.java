@@ -86,11 +86,11 @@ public final class PhysicalConstants {
         public static final int RIGHT_CANCODER_ID = 23;
         
         // Pivot Stuff
-        public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
+        // public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
         /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
         public static final double[] PIVOT_ANGLE_LIMITS = new double[]{35, 65};
         /** Allowed pivot error for the pivot rotation in degrees */
-        public static final double ALLOWED_PIVOT_ERROR = 0.50;
+        public static final double ALLOWED_PIVOT_ERROR = 0.5;
 
         // Motion Magic
         public static final class SLOT_0_CONFIGS {
@@ -104,9 +104,11 @@ public final class PhysicalConstants {
         }
 
         /** PID for the Shooter wheeels */
-        public static final double kP = 0.001;
+        public static final double kP_SHOOTING = 0.001;
         /** Feed forward for the Shooter wheels */
-        public static final double kFF = 0.000265;
+        public static final double kFF_SHOOTING = 0.000265;
+        /** PID for the pivot motors */
+        public static final double kP_PIVOT = 0.05;
 
         /** Cruise velocity in rps */
         public static final double CRUISE_SPEED = 80;

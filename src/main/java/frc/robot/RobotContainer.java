@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.PathingCommands;
 import frc.robot.constants.Constants.ControllerConstants;
 import frc.robot.constants.Constants.ShuffleboardTabNames;
@@ -150,7 +149,9 @@ public class RobotContainer {
         // Burger
         driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         
-        driveController.leftBumper().onTrue(new CenterSpeakerCommand());
+        // driveController.leftBumper().onTrue(new CenterSpeakerCommand());
+        driveController.leftBumper()
+            .whileTrue(new PivotShooterCommand(ShooterStates.INTAKE));
         driveController.rightBumper()
             .whileTrue(new PivotShooterCommand(ShooterStates.SPEAKER));
         // driveController.rightBumper()
