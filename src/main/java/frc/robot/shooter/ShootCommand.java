@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
@@ -20,6 +21,7 @@ public class ShootCommand extends Command {
     private boolean reachedRPM;
     private ShooterStates state;
     private boolean invertSpin;
+    private boolean finished;
 
     /**
     * Creates a new ShootCommand.
@@ -37,9 +39,10 @@ public class ShootCommand extends Command {
     @Override
     public void initialize() {
         if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
-            end(true);
+            CommandScheduler.getInstance().cancel(this);
         }
-
+        this.finished = false;
+        
         this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
                 false : true;
@@ -70,10 +73,10 @@ public class ShootCommand extends Command {
         
         if (hasNote[0].isEmpty() && hasNote[1].isEmpty()) {
             Timer.delay(1.5);
-            end(false);
+            this.finished = true;
         }
         else if (!hasNote[0].get() && !hasNote[1].get()) {
-            end(false);
+            this.finished = true;
         }
         else {
             Timer.delay(0.25);
@@ -90,12 +93,8 @@ public class ShootCommand extends Command {
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    /**
-     * Always returns false because the command will end itself
-     * @return false
-     */
     @Override
     public boolean isFinished() {
-        return false;
+        return this.finished;
     }
 }

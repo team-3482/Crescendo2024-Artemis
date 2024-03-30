@@ -75,7 +75,7 @@ public class IntakeSubsystem extends SubsystemBase {
             double position = getPivotPosition();
             speed = 
                 (speed < 0 && Math.abs(IntakeStates.INTAKING.getAngle() - position) <= 1) ||
-                (speed > 0 && Math.abs(IntakeStates.IDLE.getAngle() - position) <= 1)
+                (speed > 0 && IntakeStates.IDLE.getAngle() - position <= 1)
                     ? 0 : speed;
         }
         leftPivotMotor.set(speed);

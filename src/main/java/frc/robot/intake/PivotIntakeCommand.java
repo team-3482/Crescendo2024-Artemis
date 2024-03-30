@@ -30,12 +30,8 @@ public class PivotIntakeCommand extends Command {
         setName("PivotIntakeCommand");
         this.state = state;
         
-        this.up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
-        
-        this.pid = new PIDController(
-            this.up ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN,
-            0, 0
-        );
+        // Set at initialization
+        this.pid = new PIDController(0, 0, 0);
         this.pid.setTolerance(this.state.getTolerance());
         this.pid.enableContinuousInput(0, 2 * Math.PI);
 
@@ -46,6 +42,8 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public void initialize() {
+        this.up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
+        this.pid.setP(this.up ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN);
         this.pid.reset();
         // this.brokenEncoderTimer.restart();
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
@@ -54,15 +52,16 @@ public class PivotIntakeCommand extends Command {
     @Override
     public void execute() {
         double speed;
+        double position = IntakeSubsystem.getInstance().getPivotPosition();
         if (this.up) {
             // this.brokenEncoderIsItDown = false;
             speed = this.pid.calculate(
-                Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
+                Units.degreesToRadians(position),
                 Units.degreesToRadians(this.state.getAngle()));
         }
         else {
             speed = this.pid.calculate(
-                Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
+                Units.degreesToRadians(position),
                 Units.degreesToRadians(this.state.getAngle()));
             // this.brokenEncoderIsItDown = true;
         }

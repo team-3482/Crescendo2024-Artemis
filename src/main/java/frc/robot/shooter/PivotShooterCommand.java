@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.lights.LEDSubsystem;
@@ -51,7 +52,7 @@ public class PivotShooterCommand extends Command {
         
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent()) {
-            end(true);
+            CommandScheduler.getInstance().cancel(this);
             return;
         }
 
@@ -75,7 +76,7 @@ public class PivotShooterCommand extends Command {
         // // Checks if the angle is within the current bounds, if not, ends the command 
         // double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
         // if (this.shootingAngle != clamped) {
-        //     end(true);
+        //     CommandScheduler.getInstance().cancel(this);
         //     return;
         // }
 

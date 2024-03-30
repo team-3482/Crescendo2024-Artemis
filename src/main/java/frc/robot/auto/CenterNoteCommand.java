@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.NoteConstants;
 import frc.robot.constants.Constants.AprilTagConstants;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
@@ -50,7 +51,7 @@ public class CenterNoteCommand extends Command {
     public void initialize() {
         // End the Command if it starts without seeing a note
         if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
-            end(true);
+            CommandScheduler.getInstance().cancel(this);
         }
         this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();

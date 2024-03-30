@@ -48,7 +48,7 @@ public final class PhysicalConstants {
         /** Speed at which to run the intake motors */
         public static final double INTAKE_SPEED = 0.25;
         /** PID Proportional to use when moving the intake up */
-        public static final double PIVOT_PID_P_UP = 0.075;
+        public static final double PIVOT_PID_P_UP = 0.11;
         /** PID Proportional to use when moving the intake down */
         public static final double PIVOT_PID_P_DOWN = 0.075;
         /** Constant speed to use to retract the intake from 0 to 1.0*/
@@ -65,9 +65,9 @@ public final class PhysicalConstants {
         /** How fast the motor should spin to move the note. Between 0 and 1.0 */
         public static final double FEEDING_SPEED = 0.65;
         /** How fast the motor should spin to adjust the note. Between 0 and 1.0 */
-        public static final double ADJUSTING_SPEED = 0.25;
+        public static final double ADJUSTING_SPEED = 0.1;
         /** The laser value when a note is at the furthest point from the laser in the sterilizer in millimeters */
-        public static final double NOTE_DISTANCE_LASER = 150;
+        public static final double NOTE_DISTANCE_LASER = 200;
     }
 
     /**
@@ -109,14 +109,14 @@ public final class PhysicalConstants {
         public static final class Pivot {
             // public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
             /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
-            public static final double[] ANGLE_LIMITS = new double[]{35, 65};
+            public static final double[] ANGLE_LIMITS = new double[]{35, 63};
             /** Allowed pivot error for the pivot rotation in degrees */
             public static final double ALLOWED_ERROR = 0.5;
             /** P of PPID for the pivot motors */
-            public static final double kP_PIVOT = 0.05;
+            public static final double kP_PIVOT = 0.08;
             // Constraints for TrapezoidProfile for the pivot motors
-            public static final double MAX_VEL = 30;
-            public static final double MAX_ACCEL = 30;
+            public static final double MAX_VEL = 60;
+            public static final double MAX_ACCEL = 40;
         }
 
         /** Cruise velocity in rps */

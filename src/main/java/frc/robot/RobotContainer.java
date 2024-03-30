@@ -14,14 +14,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.PathingCommands;
 import frc.robot.constants.Constants.ControllerConstants;
+import frc.robot.constants.Constants.IntakeStates;
 import frc.robot.constants.Constants.ShuffleboardTabNames;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.constants.Positions.PathfindingPosition;
 import frc.robot.intake.IntakeSubsystem;
+import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ManuallyPivotShooterCommand;
@@ -150,17 +153,12 @@ public class RobotContainer {
         // Burger
         driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         
-        // driveController.leftBumper().onTrue(new CenterSpeakerCommand());
-        driveController.leftBumper()
-            .whileTrue(new PivotShooterCommand(ShooterStates.INTAKE));
+        driveController.leftBumper().onTrue(new CenterSpeakerCommand());
         driveController.rightBumper()
-            .whileTrue(new PivotShooterCommand(ShooterStates.SPEAKER));
-        // driveController.rightBumper()
-        //     .onTrue(SequencedCommands.getIntakeCommand())
-        //     .onFalse(Commands.parallel(
-        //         new PivotIntakeCommand(IntakeStates.IDLE),
-        //         new PivotShooterCommand(ShooterStates.SPEAKER))
-        // );
+            .onTrue(SequencedCommands.getIntakeCommand());
+            // .onFalse(Commands.parallel(
+            //     new PivotIntakeCommand(IntakeStates.IDLE),
+            //     new PivotShooterCommand(ShooterStates.SPEAKER)));
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands
@@ -212,16 +210,7 @@ public class RobotContainer {
             () -> IntakeSubsystem.getInstance().setIntakeSpeed(0)
         ));
         // Front eject (double rectangle)
-        operatorController.back().onTrue(Commands.parallel(
-                new ShootCommand(ShooterStates.FRONT_EJECT).withTimeout(2),
-                Commands.runOnce(() -> SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED))
-            ))
-            .onFalse(
-                Commands.runOnce(() -> {
-                    ShooterSubsystem.getInstance().setShootingVelocities();
-                    SterilizerSubsystem.getInstance().setSpeed();;
-                })
-            );
+        operatorController.back().whileTrue(new ShootCommand(ShooterStates.FRONT_EJECT));
         // Move sterilizer forward (burger)
         operatorController.start().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED),

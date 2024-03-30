@@ -18,6 +18,7 @@ import frc.robot.utilities.Telemetry;
 public class SpinIntakeCommand extends Command {
     private IntakeStates state;
     private boolean stopForNote;
+    private boolean finished;
 
     /**
      * Initializes a new SpinIntakeCommand
@@ -45,6 +46,7 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public void initialize() {
+        this.finished = false;
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
@@ -69,8 +71,8 @@ public class SpinIntakeCommand extends Command {
         else if (hasNotes[0] && !hasNotes[1]) {
             SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.ADJUSTING_SPEED);
         }
-        else if (hasNotes[0] && hasNotes[1]) {
-            end(false);
+        else if (hasNotes[1]) {
+            this.finished = true;
         }
     }
 
@@ -83,13 +85,8 @@ public class SpinIntakeCommand extends Command {
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    /**
-     * Will return false because the {@link SpinIntakeCommand#execute()} loop will end this command
-     * @return false
-     */
     @Override
     public boolean isFinished() {
-        // return this.stopForNote && SterilizerSubsystem.getInstance().hasNote();
-        return false;
+        return this.finished;
     }
 }
