@@ -8,8 +8,10 @@ import java.util.Optional;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -28,7 +30,7 @@ public class CenterSpeakerCommand extends Command {
     // Instances of Rate Limiters to ensure that the robot moves smoothly
     private final SlewRateLimiter turningLimiter;
     /** Turning {@link PIDController}, uses DEGREES for calculations */
-    private PIDController pid;
+    private ProfiledPIDController pid;
     /** Used for {@link CenterSpeakerCommand#isFinished()} */
     private double errorRadians;
     /** Used to avoid repeated calls to DS API */
@@ -38,10 +40,11 @@ public class CenterSpeakerCommand extends Command {
         setName("CenterSpeakerCommand");
         
         this.turningLimiter = new SlewRateLimiter(AprilTagConstants.TURNING_SLEW_RATE_LIMIT);
-        this.pid = new PIDController(
+        this.pid = new ProfiledPIDController(
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KD);
+            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KD, 
+            new TrapezoidProfile.Constraints(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_SPEED,AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_ACCELERATION));
         this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
         this.pid.enableContinuousInput(0, 360);
         
@@ -60,7 +63,7 @@ public class CenterSpeakerCommand extends Command {
         }
 
         this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
-        this.pid.reset();
+        this.pid.reset(this.errorRadians);
         this.alliance = DriverStation.getAlliance();
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
@@ -86,7 +89,6 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        this.pid.close();
         
         Telemetry.logCommandEnd(getName(), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);

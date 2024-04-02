@@ -157,6 +157,9 @@ public final class Constants {
             public static final double KP = 1.5;
             public static final double KI = 0;
             public static final double KD = 0;
+
+            public static final double MAX_SPEED = 3 * Math.PI;
+            public static final double MAX_ACCELERATION = 3 * Math.PI;
         }
 
         public static final double TURNING_SLEW_RATE_LIMIT = 2 * Math.PI;
