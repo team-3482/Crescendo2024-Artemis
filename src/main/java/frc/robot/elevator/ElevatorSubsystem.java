@@ -13,10 +13,17 @@ import frc.robot.constants.PhysicalConstants;
 public class ElevatorSubsystem extends SubsystemBase {
     // Singleton Design Pattern
     private static ElevatorSubsystem instance;
+    private static Object mutex = new Object();
+
     public static ElevatorSubsystem getInstance() {
-        if(instance == null) {
-            instance = new ElevatorSubsystem();
-        }
+        ElevatorSubsystem result = instance;
+		if (result == null) {
+			synchronized (mutex) {
+				result = instance;
+				if (result == null)
+					instance = result = new ElevatorSubsystem();
+			}
+		}
         return instance;
     }
 

@@ -16,11 +16,18 @@ import frc.robot.constants.PhysicalConstants.LimelightConstants;
 public class LimelightSubsystem extends SubsystemBase {
 
     // Singleton Design Pattern
-    private static LimelightSubsystem instance;
+    private static volatile LimelightSubsystem instance;
+    private static Object mutex = new Object();
 
     public static LimelightSubsystem getInstance() {
-        if (instance == null) {
-            instance = new LimelightSubsystem();
+        LimelightSubsystem result = instance;
+        if (result == null) {
+            synchronized (mutex) {
+				result = instance;
+				if (result == null) {
+					instance = result = new LimelightSubsystem();
+                }
+            }
         }
         return instance;
     }

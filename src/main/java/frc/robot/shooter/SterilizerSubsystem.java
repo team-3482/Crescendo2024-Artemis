@@ -21,11 +21,17 @@ import frc.robot.lights.LEDSubsystem.LightState;
 
 public class SterilizerSubsystem extends SubsystemBase {
     // Singleton Design Pattern
-    private static SterilizerSubsystem instance;
+    private static volatile SterilizerSubsystem instance;
+    private static Object mutex = new Object();
     public static SterilizerSubsystem getInstance() {
-        if(instance == null) {
-            instance = new SterilizerSubsystem();
-        }
+        SterilizerSubsystem result = instance;
+		if (result == null) {
+			synchronized (mutex) {
+				result = instance;
+				if (result == null)
+					instance = result = new SterilizerSubsystem();
+			}
+		}
         return instance;
     }
 
