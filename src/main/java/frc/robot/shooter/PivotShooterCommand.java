@@ -75,19 +75,13 @@ public class PivotShooterCommand extends Command {
         // Calculates angle from bot distance to speaker height
         this.shootingAngle = Units.radiansToDegrees(Math.atan((point.getZ() - RobotConstants.SHOOTER_PIVOT_HEIGHT) / dist));
         
-        Telemetry.logMessage("Bot Position: (" + botpose.getX() + "," + botpose.getY()+")");
-        Telemetry.logMessage("Speaker Position: (" + point.getX() + "," + point.getY()+"," + point.getZ()+")");
-        Telemetry.logMessage("Distance: " + dist);
-        Telemetry.logMessage("Shooting Angle " + this.shootingAngle);
+        // Telemetry.logMessage("Bot Position: (" + botpose.getX() + "," + botpose.getY()+")");
+        // Telemetry.logMessage("Speaker Position: (" + point.getX() + "," + point.getY()+"," + point.getZ()+")");
+        // Telemetry.logMessage("Distance: " + dist);
+        // Telemetry.logMessage("Shooting Angle " + this.shootingAngle);
         
         // Checks if the angle is within the current bounds, if not, ends the command 
-        double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
-        if (this.shootingAngle != clamped) {
-            CommandScheduler.getInstance().cancel(this);
-            return;
-        }
-
-        CommandScheduler.getInstance().cancel(this);
+        this.shootingAngle = MathUtil.clamp(this.shootingAngle, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }

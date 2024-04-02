@@ -154,12 +154,12 @@ public final class Constants {
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 2;
-            public static final double KP = 1.5;
+            public static final double KP = 1;
             public static final double KI = 0;
             public static final double KD = 0;
 
-            public static final double MAX_SPEED = 3 * Math.PI;
-            public static final double MAX_ACCELERATION = 3 * Math.PI;
+            public static final double MAX_SPEED = 4 * Math.PI;
+            public static final double MAX_ACCELERATION = 10 * Math.PI;
         }
 
         public static final double TURNING_SLEW_RATE_LIMIT = 2 * Math.PI;

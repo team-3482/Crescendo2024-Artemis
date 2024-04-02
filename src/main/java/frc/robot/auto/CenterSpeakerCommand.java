@@ -30,7 +30,7 @@ public class CenterSpeakerCommand extends Command {
     // Instances of Rate Limiters to ensure that the robot moves smoothly
     private final SlewRateLimiter turningLimiter;
     /** Turning {@link PIDController}, uses DEGREES for calculations */
-    private ProfiledPIDController pid;
+    private ProfiledPIDController ppid;
     /** Used for {@link CenterSpeakerCommand#isFinished()} */
     private double errorRadians;
     /** Used to avoid repeated calls to DS API */
@@ -40,13 +40,17 @@ public class CenterSpeakerCommand extends Command {
         setName("CenterSpeakerCommand");
         
         this.turningLimiter = new SlewRateLimiter(AprilTagConstants.TURNING_SLEW_RATE_LIMIT);
-        this.pid = new ProfiledPIDController(
+        this.ppid = new ProfiledPIDController(
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KI,
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KD, 
-            new TrapezoidProfile.Constraints(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_SPEED,AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_ACCELERATION));
-        this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
-        this.pid.enableContinuousInput(0, 360);
+            new TrapezoidProfile.Constraints(
+                AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_SPEED,
+                AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_ACCELERATION
+            )
+        );
+        this.ppid.setTolerance(Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
+        this.ppid.enableContinuousInput(0, 360);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
@@ -62,8 +66,9 @@ public class CenterSpeakerCommand extends Command {
             CommandScheduler.getInstance().cancel(this);
         }
 
-        this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
-        this.pid.reset(this.errorRadians);
+        this.errorRadians = Units.degreesToRadians(
+            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
+        this.ppid.reset(this.errorRadians);
         this.alliance = DriverStation.getAlliance();
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
@@ -76,8 +81,9 @@ public class CenterSpeakerCommand extends Command {
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
+        this.errorRadians = this.errorRadians > 0 ? this.errorRadians - Units.degreesToRadians(3) : this.errorRadians;
         
-        double turningSpeed = pid.calculate(this.errorRadians, 0);
+        double turningSpeed = ppid.calculate(this.errorRadians, 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * AprilTagConstants.TURNING_SPEED_COEFFIECENT;
         
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, 
