@@ -36,11 +36,17 @@ import frc.robot.swerve.SwerveSubsystem;
 public class Telemetry {
     // Singleton Design Pattern
     private static Telemetry instance;
+    private static Object mutex = new Object();
 
     public static Telemetry getInstance() {
-        if (instance == null) {
-            instance = new Telemetry();
-        }
+        Telemetry result = instance;
+		if (result == null) {
+			synchronized (mutex) {
+				result = instance;
+				if (result == null)
+					instance = result = new Telemetry();
+			}
+		}
         return instance;
     }
 
