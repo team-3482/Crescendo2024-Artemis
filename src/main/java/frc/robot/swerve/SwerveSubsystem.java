@@ -30,7 +30,7 @@ import frc.robot.utilities.SwerveUtilities;
 import frc.robot.utilities.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static volatile SwerveSubsystem instance;
     private static Object mutex = new Object();
 

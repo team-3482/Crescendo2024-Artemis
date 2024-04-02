@@ -15,7 +15,7 @@ import frc.robot.constants.PhysicalConstants.LimelightConstants;
 
 public class LimelightSubsystem extends SubsystemBase {
 
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static volatile LimelightSubsystem instance;
     private static Object mutex = new Object();
 

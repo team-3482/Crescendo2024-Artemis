@@ -20,7 +20,7 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
 public class SterilizerSubsystem extends SubsystemBase {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static volatile SterilizerSubsystem instance;
     private static Object mutex = new Object();
     public static SterilizerSubsystem getInstance() {

@@ -16,7 +16,7 @@ import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.Constants.IntakeStates;
 
 public class IntakeSubsystem extends SubsystemBase {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static volatile IntakeSubsystem instance;
     private static Object mutex = new Object();
 

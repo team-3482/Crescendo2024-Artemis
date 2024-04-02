@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class LEDSubsystem extends SubsystemBase {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static volatile LEDSubsystem instance;
     private static Object mutex = new Object();
 

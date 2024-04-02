@@ -28,7 +28,7 @@ import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {    
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static volatile ShooterSubsystem instance;
     private static Object mutex = new Object();
     public static ShooterSubsystem getInstance() {

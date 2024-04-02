@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static ElevatorSubsystem instance;
     private static Object mutex = new Object();
 

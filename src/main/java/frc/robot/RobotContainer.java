@@ -39,7 +39,7 @@ import frc.robot.utilities.SequencedCommands;
 import frc.robot.utilities.Telemetry;
 
 public class RobotContainer {
-    // Singleton design pattern
+    // Thread-safe singleton design pattern
     private static RobotContainer instance;
     public static RobotContainer getInstance() {
         if (instance == null) {

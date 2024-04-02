@@ -7,7 +7,7 @@ package frc.robot.utilities;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ExampleSubsystem extends SubsystemBase {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static ExampleSubsystem instance;
     public static ExampleSubsystem getInstance() {
         if(instance == null) {

@@ -34,7 +34,7 @@ import frc.robot.swerve.SwerveSubsystem;
 
 /** A class used to manage all telemetry components */
 public class Telemetry {
-    // Singleton Design Pattern
+    // Thread-safe singleton design pattern
     private static Telemetry instance;
     private static Object mutex = new Object();
 
