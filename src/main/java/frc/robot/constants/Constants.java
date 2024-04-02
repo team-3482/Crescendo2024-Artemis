@@ -153,11 +153,14 @@ public final class Constants {
         /** PID constants for controlling the turning speed during centering */
         public static final class TURNING_SPEED_PID_CONTROLLER {
             /** Tolerance for the PID controller in degrees */
-            public static final double TOLERANCE = 1;
-            public static final double KP = 1.2;
+            public static final double TOLERANCE = 2;
+            public static final double KP = 1.5;
             public static final double KI = 0;
             public static final double KD = 0;
         }
+
+        public static final double TURNING_SLEW_RATE_LIMIT = 2 * Math.PI;
+        public static final double TURNING_SPEED_COEFFIECENT = 3 * Math.PI;
     }
 
     /** Constants for autos that use the intake limelight */

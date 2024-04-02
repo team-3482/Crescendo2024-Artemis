@@ -16,7 +16,7 @@ public final class PhysicalConstants {
     /** Constants of physical attributes of the robot */
     public static final class RobotConstants {
         /** Height of the pivot shaft above the floor */
-        public static final double SHOOTER_PIVOT_HEIGHT = 0;
+        public static final double SHOOTER_PIVOT_HEIGHT = 0.45;
         /** Y (not sure if left-right or front-back) distance between wheels in meters */
         public static final double TRACK_WIDTH = Units.inchesToMeters(21.5);
         /** X (not sure if left-right or front-back) distance between wheels in meters */

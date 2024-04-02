@@ -76,6 +76,9 @@ public class RobotContainer {
 
     /** Creates instances of each subsystem so periodic runs */
     private void initializeSubsystems() {
+        Telemetry.getInstance();
+        Timer.delay(2.5);
+        
         LEDSubsystem.getInstance();
         LimelightSubsystem.getInstance();
         SwerveSubsystem.getInstance();
@@ -83,8 +86,6 @@ public class RobotContainer {
         SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
         // ElevatorSubsystem.getInstance();
-        Timer.delay(2.5);
-        Telemetry.getInstance();
     }
 
     /** Register all NamedCommands for PathPlanner use */

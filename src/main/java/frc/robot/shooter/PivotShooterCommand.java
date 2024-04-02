@@ -6,15 +6,22 @@ package frc.robot.shooter;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
+import frc.robot.constants.Positions;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
+import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
 /** A command that moves the shooter pivot to a desired position. */
@@ -57,32 +64,32 @@ public class PivotShooterCommand extends Command {
         }
 
         // // Calculating shooter angles based off current bot position
-        // Translation3d point = ShooterConstants.SPEAKER_LOCATIONS.get(DriverStation.getAlliance().get());
-        // Pose2d botpose = SwerveSubsystem.getInstance().getPose();
+        Translation3d point = Positions.SPEAKER_TARGETS.get(DriverStation.getAlliance().get());
+        Pose2d botpose = SwerveSubsystem.getInstance().getPose();
 
-        // // Calculates horizontal distance to speaker
-        // double dist = Math.sqrt(
-        //     Math.pow(point.getX() - botpose.getX(), 2) + 
-        //     Math.pow(point.getY() - botpose.getY(), 2)
-        // );
-        // // Calculates angle from bot distance to speaker height
-        // this.shootingAngle = Units.radiansToDegrees(Math.atan((point.getZ() - PhysicalConstants.SHOOTER_PIVOT_HEIGHT) / dist));
+        // Calculates horizontal distance to speaker
+        double dist = Math.sqrt(
+            Math.pow(point.getX() - botpose.getX(), 2) + 
+            Math.pow(point.getY() - botpose.getY(), 2)
+        );
+        // Calculates angle from bot distance to speaker height
+        this.shootingAngle = Units.radiansToDegrees(Math.atan((point.getZ() - RobotConstants.SHOOTER_PIVOT_HEIGHT) / dist));
         
-        // // Telemetry.logMessage("Bot Position: (" + botpose.getX() + "," + botpose.getY()+")");
-        // // Telemetry.logMessage("Speaker Position: (" + point.getX() + "," + point.getY()+"," + point.getZ()+")");
-        // // Telemetry.logMessage("Distance: " + dist);
-        // // Telemetry.logMessage("Shooting Angle " + this.shootingAngle);
+        Telemetry.logMessage("Bot Position: (" + botpose.getX() + "," + botpose.getY()+")");
+        Telemetry.logMessage("Speaker Position: (" + point.getX() + "," + point.getY()+"," + point.getZ()+")");
+        Telemetry.logMessage("Distance: " + dist);
+        Telemetry.logMessage("Shooting Angle " + this.shootingAngle);
         
-        // // Checks if the angle is within the current bounds, if not, ends the command 
-        // double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.PIVOT_ANGLE_LIMITS[0], ShooterConstants.PIVOT_ANGLE_LIMITS[1]);
-        // if (this.shootingAngle != clamped) {
-        //     CommandScheduler.getInstance().cancel(this);
-        //     return;
-        // }
+        // Checks if the angle is within the current bounds, if not, ends the command 
+        double clamped = MathUtil.clamp(this.shootingAngle, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
+        if (this.shootingAngle != clamped) {
+            CommandScheduler.getInstance().cancel(this);
+            return;
+        }
 
-        // ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
+        CommandScheduler.getInstance().cancel(this);
         
-        // LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

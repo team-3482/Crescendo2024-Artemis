@@ -14,9 +14,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import frc.robot.constants.Constants.AprilTagConstants;
-import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
@@ -37,7 +37,7 @@ public class CenterSpeakerCommand extends Command {
     public CenterSpeakerCommand() {
         setName("CenterSpeakerCommand");
         
-        this.turningLimiter = new SlewRateLimiter(SwerveKinematics.TURNING_SLEW_RATE_LIMIT);
+        this.turningLimiter = new SlewRateLimiter(AprilTagConstants.TURNING_SLEW_RATE_LIMIT);
         this.pid = new PIDController(
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KP,
             AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KI,
@@ -54,6 +54,11 @@ public class CenterSpeakerCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        // End the Command if it starts without seeing an AprilTag
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
+            CommandScheduler.getInstance().cancel(this);
+        }
+
         this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
         this.pid.reset();
         this.alliance = DriverStation.getAlliance();
@@ -64,13 +69,13 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public void execute() {
         // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
-        if (LimelightSubsystem.getInstance().getTargetID() != (alliance.get() == Alliance.Red ? 7 : 4)) return;
+        if (LimelightSubsystem.getInstance().getTargetID() != (alliance.get() == Alliance.Red ? 4 : 7)) return;
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
         
         double turningSpeed = pid.calculate(this.errorRadians, 0);
-        turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        turningSpeed = turningLimiter.calculate(turningSpeed) * AprilTagConstants.TURNING_SPEED_COEFFIECENT;
         
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, 
             MathUtil.clamp(turningSpeed, -1.0, 1.0));
@@ -93,6 +98,5 @@ public class CenterSpeakerCommand extends Command {
     @Override
     public boolean isFinished() {
         return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
-        // return this.pid.atSetpoint();
     }
 }

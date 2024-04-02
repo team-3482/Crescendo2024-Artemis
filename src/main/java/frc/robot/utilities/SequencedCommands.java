@@ -100,10 +100,8 @@ public class SequencedCommands {
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
-            Commands.parallel(
-                new CenterSpeakerCommand(),
-                new PivotShooterCommand(ShooterStates.SPEAKER_CALCULATE)
-            ),
+            new CenterSpeakerCommand(),
+            new PivotShooterCommand(ShooterStates.SPEAKER_CALCULATE),
             new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );
     }

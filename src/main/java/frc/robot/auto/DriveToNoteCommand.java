@@ -4,6 +4,8 @@
 
 package frc.robot.auto;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -87,6 +89,7 @@ public class DriveToNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return SterilizerSubsystem.getInstance().hasNote();
+        Optional<Boolean> secondLaser = SterilizerSubsystem.getInstance().getHasNotes()[1];
+        return secondLaser.isPresent() && secondLaser.get();
     }
 }
