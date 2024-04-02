@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        if (this.timer.hasElapsed(RobotConstants.TELEMETRY_LOOP_TIME)) {
+        if (Telemetry.initialized && this.timer.hasElapsed(RobotConstants.TELEMETRY_LOOP_TIME)) {
             this.timer.reset();
             Telemetry.getInstance().publish();
         }
