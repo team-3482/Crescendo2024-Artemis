@@ -19,6 +19,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -59,6 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
         
         configureMotionMagic();
         configureShootingPID();
+
+        setStatusFrames();
     }
 
     /**
@@ -216,5 +219,25 @@ public class ShooterSubsystem extends SubsystemBase {
         // double[] pos = getPivotPositions();
         // System.out.println("Left : " + Telemetry.D_FORMAT.format(leftPivotMotor.getRotorPosition().getValueAsDouble())
         //     + " Right : " + Telemetry.D_FORMAT.format(rightPivotMotor.getRotorPosition().getValueAsDouble()));
+    }
+
+    private void setStatusFrames() {
+        // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
+        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 200);
+        // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        
+        // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
+        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 200);
+        // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }
 }

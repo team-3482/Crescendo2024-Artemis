@@ -3,6 +3,7 @@ package frc.robot.swerve;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -61,6 +62,8 @@ public class SwerveModule {
 
         // Makes the values continuous, so that 0 == 360 degrees
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);
+
+        setStatusFrames();
     }
 
     /**
@@ -108,7 +111,6 @@ public class SwerveModule {
   
     /**
     * Returns the current position of the swerve module
-    *
     * @return current state of the swerve module
     */
     public SwerveModulePosition getPosition() {
@@ -147,21 +149,25 @@ public class SwerveModule {
         this.driveMotor.set(0);
         this.turningMotor.set(0);
     }
-      
-    /**
-    * Gets the voltage of the driving motor
-    *
-    * @return drive voltage
-    */
-    public double getDriveVoltage() {
-        return this.driveMotor.getBusVoltage() * this.driveMotor.getAppliedOutput();
-    }
-      
-    /** Gets the voltage of the turning motor
-    *
-    * @return turn voltage
-    */
-    public double getTurnVoltage() {
-        return this.turningMotor.getBusVoltage() * this.turningMotor.getAppliedOutput();
+
+    private void setStatusFrames() {
+        // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 20);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        
+        // turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        // turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        
     }
 }

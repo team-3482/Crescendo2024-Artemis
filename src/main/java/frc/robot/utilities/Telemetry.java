@@ -102,7 +102,7 @@ public class Telemetry {
         
         // Telemetry layout
         ShuffleboardLayout telemetryLayout = Shuffleboard.getTab(ShuffleboardTabNames.UTILITIES)
-            .getLayout("Swerve Subsystem", BuiltInLayouts.kList)
+            .getLayout("Telemetry", BuiltInLayouts.kList)
             .withProperties(Map.of("Label position", "TOP"))
             .withPosition(0, 0)
             .withSize(3, 6);

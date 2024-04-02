@@ -30,7 +30,7 @@ public class LimelightSubsystem extends SubsystemBase {
         super("LimelightSubsystem");
         
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        // Target 4 when blue or when no alliance is found, or 7 otherwise
+        // Target 7 when blue or when no alliance is found, or 7 otherwise
         LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
             alliance.isPresent() && alliance.get() == Alliance.Red ? 7 : 4
         );

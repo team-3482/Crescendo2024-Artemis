@@ -64,7 +64,7 @@ public final class Positions {
     public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
         Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
             Map.entry(3, new Pose2d(new Translation2d(0.75, 6.66), Rotation2d.fromDegrees(60))),
-            Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(180))),
+            Map.entry(2, new Pose2d(new Translation2d(1.34, 5.55), Rotation2d.fromDegrees(0))),
             Map.entry(1, new Pose2d(new Translation2d(0.75, 4.45), Rotation2d.fromDegrees(300))))),
         Map.entry(DriverStation.Alliance.Red, Map.ofEntries(
             Map.entry(3, new Pose2d(new Translation2d(15.8, 6.66), Rotation2d.fromDegrees(60))),

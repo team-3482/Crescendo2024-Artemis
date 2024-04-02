@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkFlex;
 import au.grapplerobotics.LaserCan;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
@@ -35,6 +36,8 @@ public class SterilizerSubsystem extends SubsystemBase {
     /** Creates a new SterilizerSubsystem. LaserCAN is configured in the GrappleHook app */
     public SterilizerSubsystem() {
         super("SterilizerSubsystem");
+
+        setStatusFrames();
     }
     
     /**
@@ -49,6 +52,7 @@ public class SterilizerSubsystem extends SubsystemBase {
         OptionalInt[] measurements = new OptionalInt[]{
             backMm != null && backMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
                 OptionalInt.of(backMm.distance_mm) : OptionalInt.empty(),
+            // OptionalInt.empty()
             frontMm != null && frontMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
                 OptionalInt.of(frontMm.distance_mm) : OptionalInt.empty()
         };
@@ -103,5 +107,16 @@ public class SterilizerSubsystem extends SubsystemBase {
     public void periodic() {
         LEDSubsystem.getInstance().setLightState(
             (hasNote() ? LightState.HOLDING_NOTE : LightState.OFF), false);
+    }
+
+    private void setStatusFrames() {
+        // feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
+        feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
+        feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        // feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }
 }

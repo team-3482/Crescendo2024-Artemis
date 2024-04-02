@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,7 +41,6 @@ import frc.robot.utilities.Telemetry;
 public class RobotContainer {
     // Singleton design pattern
     private static RobotContainer instance;
-
     public static RobotContainer getInstance() {
         if (instance == null) {
             instance = new RobotContainer();
@@ -83,6 +83,7 @@ public class RobotContainer {
         SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
         // ElevatorSubsystem.getInstance();
+        Timer.delay(2.5);
         Telemetry.getInstance();
     }
 
@@ -155,10 +156,10 @@ public class RobotContainer {
         
         driveController.leftBumper().onTrue(new CenterSpeakerCommand());
         driveController.rightBumper()
-            .onTrue(SequencedCommands.getIntakeCommand());
-            // .onFalse(Commands.parallel(
-            //     new PivotIntakeCommand(IntakeStates.IDLE),
-            //     new PivotShooterCommand(ShooterStates.SPEAKER)));
+            .onTrue(SequencedCommands.getIntakeCommand())
+            .onFalse(Commands.parallel(
+                new PivotIntakeCommand(IntakeStates.IDLE),
+                new PivotShooterCommand(ShooterStates.SPEAKER)));
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands

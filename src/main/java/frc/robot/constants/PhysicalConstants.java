@@ -190,7 +190,7 @@ public final class PhysicalConstants {
         public static final double FINE_CONTROL_COEFFICENT = 0.25;
 
         /** x and y speed set by the directional pad in meters per second */
-        public static final double D_PAD_SPEED = 0.25; // Previously 1
+        public static final double D_PAD_SPEED = 1;
 
         /** PID constants used for controlling the turning position of the swerve modules */
         public static final class TURNING_PID_CONTROLLER {
