@@ -57,7 +57,8 @@ public class Telemetry {
      * @apiNote If {@link Telemetry#initialize()} has not run, this will be {@code null} </p>
      */
     private static GenericEntry LOG_TIMESTAMPS = null;
-    // private static boolean LOG_TIMESTAMPS = false;
+
+    public static boolean initialized = false;
 
     /**
      * Prints the string to the console with a tag and timestamp.
@@ -117,6 +118,8 @@ public class Telemetry {
             .withPosition(0, 0)
             .withSize(3, 1)
             .getEntry();
+        
+        initialized = true;
     }
 
     /** Publishes telemetry classes */
