@@ -21,10 +21,18 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class LEDSubsystem extends SubsystemBase {
     // Singleton Design Pattern
-    private static LEDSubsystem instance;
+    private static volatile LEDSubsystem instance;
+    private static Object mutex = new Object();
+
     public static LEDSubsystem getInstance() {
-        if(instance == null) {
-            instance = new LEDSubsystem();
+        LEDSubsystem result = instance;
+
+        if(result == null) {
+            synchronized (mutex) {
+				result = instance;
+				if (result == null)
+					instance = result = new LEDSubsystem();
+			}
         }
         return instance;
     }

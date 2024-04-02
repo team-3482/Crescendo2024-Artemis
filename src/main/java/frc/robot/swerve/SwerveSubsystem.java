@@ -31,11 +31,18 @@ import frc.robot.utilities.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Singleton Design Pattern
-    private static SwerveSubsystem instance;
+    private static volatile SwerveSubsystem instance;
+    private static Object mutex = new Object();
+
     public static SwerveSubsystem getInstance() {
-        if(instance == null) {
-            instance = new SwerveSubsystem();
-        }
+        SwerveSubsystem result = instance;
+		if (result == null) {
+			synchronized (mutex) {
+				result = instance;
+				if (result == null)
+					instance = result = new SwerveSubsystem();
+			}
+		}
         return instance;
     }
 

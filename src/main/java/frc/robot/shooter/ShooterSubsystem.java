@@ -29,10 +29,17 @@ import frc.robot.constants.PhysicalConstants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {    
     // Singleton Design Pattern
-    private static ShooterSubsystem instance;
+    private static volatile ShooterSubsystem instance;
+    private static Object mutex = new Object();
     public static ShooterSubsystem getInstance() {
-        if(instance == null) {
-            instance = new ShooterSubsystem();
+        ShooterSubsystem result = instance;
+        if(result == null) {
+            synchronized (mutex) {
+				result = instance;
+				if (result == null){
+					instance = result = new ShooterSubsystem();
+                }
+			}
         }
         return instance;
     }

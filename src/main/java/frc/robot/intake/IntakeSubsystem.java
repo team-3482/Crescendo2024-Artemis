@@ -17,11 +17,19 @@ import frc.robot.constants.Constants.IntakeStates;
 
 public class IntakeSubsystem extends SubsystemBase {
     // Singleton Design Pattern
-    private static IntakeSubsystem instance;
+    private static volatile IntakeSubsystem instance;
+    private static Object mutex = new Object();
 
     public static IntakeSubsystem getInstance() {
-        if (instance == null) {
-            instance = new IntakeSubsystem();
+        IntakeSubsystem result = instance;
+
+        if (result == null) {
+			synchronized (mutex) {
+				result = instance;
+				if (result == null) {
+					instance = result = new IntakeSubsystem();
+                }
+            }
         }
         return instance;
     }
