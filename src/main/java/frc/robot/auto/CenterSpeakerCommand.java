@@ -6,12 +6,8 @@ package frc.robot.auto;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -27,30 +23,25 @@ import frc.robot.utilities.Telemetry;
 
 /** An command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
 public class CenterSpeakerCommand extends Command {
-    // Instances of Rate Limiters to ensure that the robot moves smoothly
-    private final SlewRateLimiter turningLimiter;
     /** Turning {@link PIDController}, uses DEGREES for calculations */
-    private ProfiledPIDController ppid;
+    private PIDController pid;
     /** Used for {@link CenterSpeakerCommand#isFinished()} */
     private double errorRadians;
     /** Used to avoid repeated calls to DS API */
     private Optional<Alliance> alliance;
+    private double turningSpeed;
 
     public CenterSpeakerCommand() {
         setName("CenterSpeakerCommand");
-        
-        this.turningLimiter = new SlewRateLimiter(AprilTagConstants.TURNING_SLEW_RATE_LIMIT);
-        this.ppid = new ProfiledPIDController(
-            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KP,
-            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.KD, 
-            new TrapezoidProfile.Constraints(
-                AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_SPEED,
-                AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.MAX_ACCELERATION
-            )
+
+        this.pid = new PIDController(
+            AprilTagConstants.PPID.KP_HIGH,
+            AprilTagConstants.PPID.KI,
+            AprilTagConstants.PPID.KD,
+            (double) 1 / 30
         );
-        this.ppid.setTolerance(Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
-        this.ppid.enableContinuousInput(0, 360);
+        // this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE));
+        this.pid.enableContinuousInput(0, 360);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class
         // modifying its data at a single time
@@ -65,10 +56,21 @@ public class CenterSpeakerCommand extends Command {
         if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
             CommandScheduler.getInstance().cancel(this);
         }
-
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
-        this.ppid.reset(this.errorRadians);
+        
+        if (Math.abs(Units.radiansToDegrees(this.errorRadians)) >= 15) {
+            this.pid.setP(AprilTagConstants.PPID.KP_HIGH);
+        }
+        else if (Math.abs(Units.radiansToDegrees(this.errorRadians)) >= 5) {
+            this.pid.setP(AprilTagConstants.PPID.KP_LOW);
+        }
+        else {
+            this.pid.setP(AprilTagConstants.PPID.KP_LOWEST);
+        }
+
+        this.pid.reset();
+        
         this.alliance = DriverStation.getAlliance();
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
@@ -81,20 +83,17 @@ public class CenterSpeakerCommand extends Command {
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
-        this.errorRadians = this.errorRadians > 0 ? this.errorRadians - Units.degreesToRadians(3) : this.errorRadians;
-        
-        double turningSpeed = ppid.calculate(this.errorRadians, 0);
-        turningSpeed = turningLimiter.calculate(turningSpeed) * AprilTagConstants.TURNING_SPEED_COEFFIECENT;
-        
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, 
-            MathUtil.clamp(turningSpeed, -1.0, 1.0));
-        
+
+        this.turningSpeed = this.pid.calculate(this.errorRadians, 0) * AprilTagConstants.TURNING_SPEED_COEFFIECENT;
+
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, this.turningSpeed);
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
     }
 
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
+        this.pid.close();
         
         Telemetry.logCommandEnd(getName(), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
@@ -105,6 +104,6 @@ public class CenterSpeakerCommand extends Command {
     */
     @Override
     public boolean isFinished() {
-        return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE);
     }
 }

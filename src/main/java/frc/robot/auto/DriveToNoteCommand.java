@@ -35,10 +35,10 @@ public class DriveToNoteCommand extends Command {
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
 
         this.pidController = new PIDController(
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+            NoteConstants.PID.KP,
+            NoteConstants.PID.KI,
+            NoteConstants.PID.KD);
+        this.pidController.setTolerance(NoteConstants.PID.TOLERANCE);
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(SwerveSubsystem.getInstance());

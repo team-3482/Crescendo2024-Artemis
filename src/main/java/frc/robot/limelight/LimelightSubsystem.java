@@ -118,7 +118,7 @@ public class LimelightSubsystem extends SubsystemBase {
      */
     public double getLatency(String limelight) {
         return LimelightHelpers.getLatency_Pipeline(limelight) / 1000
-                - LimelightHelpers.getLatency_Capture(limelight) / 1000;
+            - LimelightHelpers.getLatency_Capture(limelight) / 1000;
     }
 
     @Override

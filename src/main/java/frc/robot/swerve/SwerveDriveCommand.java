@@ -102,9 +102,11 @@ public class SwerveDriveCommand extends Command {
         }
         // Multiplies by fine control to limit the speeds
         double fineControlCoefficent = fineControl? SwerveKinematics.FINE_CONTROL_COEFFICENT : 1.0;
-        chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond * fineControlCoefficent, 
+        chassisSpeeds = new ChassisSpeeds(
+            chassisSpeeds.vxMetersPerSecond * fineControlCoefficent, 
             chassisSpeeds.vyMetersPerSecond * fineControlCoefficent,
-            chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent);
+            chassisSpeeds.omegaRadiansPerSecond * fineControlCoefficent
+        );
         // Converts the chassis speeds to module states and sets them as the desired
         // ones for the modules
         SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);

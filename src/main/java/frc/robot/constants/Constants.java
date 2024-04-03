@@ -64,8 +64,8 @@ public final class Constants {
          */
         public double[] getRPMs(boolean invert) {
             return new double[]{
-                this.highRPM * (this.spin && !invert ? (double) 2 / 3 : 1),
-                this.highRPM * (this.spin && invert ? (double) 2 / 3 : 1)
+                this.highRPM * (this.spin && !invert ? (double) 1 : 1),
+                this.highRPM * (this.spin && invert ? (double) 1 : 1)
             };
         }
         /**
@@ -74,6 +74,14 @@ public final class Constants {
          */
         public double getAllowedError() {
             return this.allowedError;
+        }
+
+        /**
+         * Set the RPM goal
+         * @param rpm
+         */
+        public void setHighRPM(double rpm) {
+            this.highRPM = rpm;
         }
     }
     
@@ -151,19 +159,18 @@ public final class Constants {
     /** Constants for autos that use the shooter limelight */
     public static final class AprilTagConstants {
         /** PID constants for controlling the turning speed during centering */
-        public static final class TURNING_SPEED_PID_CONTROLLER {
+        public static final class PPID {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 2;
-            public static final double KP = 1;
+            public static final double KP_HIGH = 1.4;
+            public static final double KP_LOW = 2;
+            public static final double KP_LOWEST = 10;
             public static final double KI = 0;
             public static final double KD = 0;
-
-            public static final double MAX_SPEED = 4 * Math.PI;
-            public static final double MAX_ACCELERATION = 10 * Math.PI;
         }
 
-        public static final double TURNING_SLEW_RATE_LIMIT = 2 * Math.PI;
-        public static final double TURNING_SPEED_COEFFIECENT = 3 * Math.PI;
+        public static final double TURNING_SPEED_COEFFIECENT = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
+        public static final double TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
     }
 
     /** Constants for autos that use the intake limelight */
@@ -179,7 +186,7 @@ public final class Constants {
         public static final double CENTERING_TIMEOUT = 1.5;
 
         /** PID constants for controlling the turning speed during centering */
-        public static final class TURNING_SPEED_PID_CONTROLLER {
+        public static final class PID {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 5;
             public static final double KP = 0.6;

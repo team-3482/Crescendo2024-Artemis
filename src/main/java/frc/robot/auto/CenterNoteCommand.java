@@ -37,10 +37,10 @@ public class CenterNoteCommand extends Command {
         
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
         this.pid = new PIDController(
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pid.setTolerance(Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE));
+            NoteConstants.PID.KP,
+            NoteConstants.PID.KI,
+            NoteConstants.PID.KD);
+        this.pid.setTolerance(Units.degreesToRadians(NoteConstants.PID.TOLERANCE));
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(SwerveSubsystem.getInstance());
@@ -53,7 +53,7 @@ public class CenterNoteCommand extends Command {
         if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
             CommandScheduler.getInstance().cancel(this);
         }
-        this.errorRadians = AprilTagConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE + 1;
+        this.errorRadians = AprilTagConstants.PPID.TOLERANCE + 1;
         this.pid.reset();
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
@@ -89,6 +89,6 @@ public class CenterNoteCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.errorRadians <= Units.degreesToRadians(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        return this.errorRadians <= Units.degreesToRadians(NoteConstants.PID.TOLERANCE);
     }
 }
