@@ -305,6 +305,11 @@ public class SwerveSubsystem extends SubsystemBase {
             this.odometer.setVisionMeasurementStdDevs(
                 VecBuilder.fill(xyStds, degStds, Units.degreesToRadians(degStds))
             );
+            limelightBotpose = new Pose2d(
+                limelightBotpose.getTranslation(),
+                Rotation2d.fromDegrees(getHeading())
+            );
+
             this.odometer.addVisionMeasurement(
                 limelightBotpose, 
                 Timer.getFPGATimestamp() - rawLimelightData[6] / 1000.0

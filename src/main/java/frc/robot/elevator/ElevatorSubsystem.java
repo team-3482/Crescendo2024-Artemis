@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
      * @param speed from -1.0 to 1.0
      */
     public void setSpeed(double speed) {
-        leftClimbMotor.set(speed);
+        rightClimbMotor.set(speed);
     }
     
     /**

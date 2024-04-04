@@ -6,7 +6,6 @@ package frc.robot.elevator;
 
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 
 /** A command that moves the shooter pivot to a desired position. */
 public class MoveElevatorCommand extends Command {
@@ -43,14 +42,9 @@ public class MoveElevatorCommand extends Command {
             speed = 0;
         }
         else {
-            speed = posSpeed - negSpeed;
-        }
-        
-        if (Math.abs(speed) >= 0.5) {
-            speed = Math.signum(speed) * ElevatorConstants.MOVING_SPEED;
-        }
-        else {
-            speed = 0;
+            // speed = Math.signum(posSpeed - negSpeed) * ElevatorConstants.MOVING_SPEED;
+            speed = (posSpeed - negSpeed) * 0.25;
+            speed = speed <= -0.20 ? -0.5 : speed;
         }
 
         ElevatorSubsystem.getInstance().setSpeed(speed);

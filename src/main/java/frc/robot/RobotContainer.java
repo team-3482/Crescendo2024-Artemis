@@ -24,7 +24,6 @@ import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.constants.Positions.PathfindingPosition;
 import frc.robot.elevator.ElevatorSubsystem;
-import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
@@ -217,10 +216,10 @@ public class RobotContainer {
             () -> SterilizerSubsystem.getInstance().setSpeed()
         ));
 
-        ElevatorSubsystem.getInstance().setDefaultCommand(new MoveElevatorCommand(
-            () -> operatorController.getRightTriggerAxis(),
-            () -> operatorController.getLeftTriggerAxis()
-        ));
+        // ElevatorSubsystem.getInstance().setDefaultCommand(new MoveElevatorCommand(
+        //     () -> operatorController.getRightTriggerAxis(),
+        //     () -> operatorController.getLeftTriggerAxis()
+        // ));
         
         // Move the pivot manually (last resort, not recommended)
         operatorController.povUp().whileTrue(Commands.runEnd(
