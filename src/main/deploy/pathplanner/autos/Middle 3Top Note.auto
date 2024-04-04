@@ -6,13 +6,19 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot SPEAKER"
+                  "name": "Rev Up CALCULATE"
                 }
               },
               {
@@ -20,30 +26,11 @@
                 "data": {
                   "name": "Collect Note NOCENTER"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pathfind SPEAKER_MIDDLE"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "FixNote"
-                }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot SPEAKER"
+                  "name": "Shoot CALCULATE"
                 }
               }
             ]
@@ -52,7 +39,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle - Bottom Note"
+            "pathName": "Middle - M-T Note"
           }
         },
         {
@@ -62,35 +49,28 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Collect Note NOCENTER"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pathfind SPEAKER_MIDDLE"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "FixNote"
+                  "name": "Rev Up CALCULATE"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot SPEAKER"
+                  "name": "Collect Note NOCENTER"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot CALCULATE"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top - Outside Community"
           }
         }
       ]

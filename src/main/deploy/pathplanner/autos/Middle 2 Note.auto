@@ -6,44 +6,25 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
           "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot SPEAKER"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
                   "name": "Collect Note NOCENTER"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pathfind SPEAKER_MIDDLE"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "FixNote"
-                }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot SPEAKER"
+                  "name": "Shoot CALCULATE"
                 }
               }
             ]
