@@ -53,8 +53,7 @@ public class MoveElevatorCommand extends Command {
             speed = 0;
         }
 
-        System.out.println(speed);
-        // ElevatorSubsystem.getInstance().setSpeed(speed);
+        ElevatorSubsystem.getInstance().setSpeed(speed);
     }
 
     // Called once the command ends or is interrupted.

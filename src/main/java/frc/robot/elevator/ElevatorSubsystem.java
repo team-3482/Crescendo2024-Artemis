@@ -36,7 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         super("ElevatorSubsystem");
 
         leftClimbMotor.follow(rightClimbMotor, true);
-        
+
         setStatusFrames();
     }
     
@@ -44,8 +44,8 @@ public class ElevatorSubsystem extends SubsystemBase {
      * Sets the speed of the motors to move the climb mechanism
      * @param speed from -1.0 to 1.0
      */
-    public void setSpeed(double speed){
-        rightClimbMotor.set(speed);
+    public void setSpeed(double speed) {
+        leftClimbMotor.set(speed);
     }
     
     /**
