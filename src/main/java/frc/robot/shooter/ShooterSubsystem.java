@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
+import frc.robot.constants.PrimeNumbers;
 
 public class ShooterSubsystem extends SubsystemBase {    
     // Thread-safe singleton design pattern
@@ -251,19 +252,19 @@ public class ShooterSubsystem extends SubsystemBase {
     private void setStatusFrames() {
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 200);
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
         
         // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
         // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 200);
         // rightShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }
