@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
+import frc.robot.constants.PrimeNumbers;
 import frc.robot.constants.Constants.IntakeStates;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -145,39 +146,39 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private void setStatusFrames() {
         // leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
 
         // rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // rightPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
 
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
 
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }
 }

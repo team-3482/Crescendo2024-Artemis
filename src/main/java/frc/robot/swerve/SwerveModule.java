@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.SwerveKinematics;
+import frc.robot.constants.PrimeNumbers;
 
 public class SwerveModule {
     // Instances of the drivng and turning motor for the module
@@ -155,18 +156,18 @@ public class SwerveModule {
         // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
         driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 20);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
         
         // turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
         
     }

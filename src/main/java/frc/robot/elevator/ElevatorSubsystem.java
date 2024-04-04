@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
+import frc.robot.constants.PrimeNumbers;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Thread-safe singleton design pattern
@@ -60,21 +61,21 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private void setStatusFrames() {
         // leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
-        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
-        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PrimeNumbers.getNextPrimeNumber());
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
         
         // rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
-        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
-        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
-        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PrimeNumbers.getNextPrimeNumber());
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }
 }
