@@ -4,38 +4,54 @@
 
 package frc.robot.constants;
 
+import java.util.Optional;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
 import frc.robot.constants.PhysicalConstants.SwerveKinematics;
+import frc.robot.swerve.SwerveSubsystem;
 
 /** Constants used throughout the code that are not categorized in other constants files. */
 public final class Constants {
     /** Stores all shooter configuration related data */
     public static enum ShooterStates {
-        FRONT_EJECT(false, false, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], 750.0, 25.0),
-        INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0],  null, null),
-        AMP(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 435.0, 10.0),
-        SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 1500.0, 75.0),
-        SPEAKER_CALCULATE(true, true, true, null, 1800.0, 75.0),
-        MANUAL(false, false, false, null, SPEAKER_CALCULATE.getRPMs(false)[1], 100.0)
+        FRONT_EJECT(false, false, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], 25.0, 750.0),
+        INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], null, null),
+        AMP(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 10.0, 435.0),
+        SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 75.0, 1500.0),
+        SPEAKER_CALCULATE(true, true, true, null, 75.0, 1800.0, 2200.0),
+        MANUAL(false, false, false, null, 100.0, 1800.0)
         ;
 
         boolean calculateAngle;
         boolean autoEndShooting;
         boolean spin;
         Double positionAngle;
-        Double highRPM;
+        Double[] rpms;
         Double allowedError;
 
+        /**
+         * Creates a new ShooterState
+         * @param calculateAngle
+         * @param autoEndShooting
+         * @param spin
+         * @param angle
+         * @param allowedError
+         * @param RPMS - Put lower RPM first and higher second
+         */
         private ShooterStates(boolean calculateAngle, boolean autoEndShooting, boolean spin,
-            Double angle, Double highRPM, Double allowedError) {
+            Double angle, Double allowedError, Double... RPMS) {
             this.calculateAngle = calculateAngle;
             this.autoEndShooting = autoEndShooting;
             this.spin = spin;
             this.positionAngle = angle;
-            this.highRPM = highRPM;
             this.allowedError = allowedError;
+            this.rpms = RPMS;
         }
+
         /**
          * Whether or not to automatically calculate shooting angles
          * @return calculateAngle
@@ -43,6 +59,7 @@ public final class Constants {
         public boolean getCalculateAngle() {
             return this.calculateAngle;
         }
+
         /**
          * Whether or not to stop the sterilizer when no note is detected
          * @return autoEndShooting
@@ -50,6 +67,7 @@ public final class Constants {
         public boolean getAutoEndShooting() {
             return this.autoEndShooting;
         }
+
         /**
          * The angle the shooter should be at for this state
          * @return the angle
@@ -57,31 +75,48 @@ public final class Constants {
         public double getAngle() {
             return this.positionAngle;
         }
+
         /**
          * The RPMs for this state
          * @param invert inverts highRPM in [0] and [1]
          * @return the RPMs
          */
         public double[] getRPMs(boolean invert) {
+            double _rpms = this.rpms[0];
+
+            if (this.calculateAngle) {
+                Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    Translation3d point = Positions.SPEAKER_TARGETS.get(DriverStation.getAlliance().get());
+                    Pose2d botpose = SwerveSubsystem.getInstance().getPose();
+                    
+                    // Calculates horizontal distance to speaker
+                    double dist = Math.sqrt(
+                        Math.pow(point.getX() - botpose.getX(), 2) +
+                        Math.pow(point.getY() - botpose.getY(), 2)
+                    );
+
+                    if (dist <= 1.5) {
+                        _rpms = this.rpms[0];
+                    }
+                    else {
+                        _rpms = this.rpms[1];
+                    }
+                }
+            }
+
             return new double[]{
-                this.highRPM * (this.spin && !invert ? (double) 1 : 1),
-                this.highRPM * (this.spin && invert ? (double) 1 : 1)
+                _rpms * (this.spin && !invert ? (double) 1 : 1),
+                _rpms * (this.spin && invert ? (double) 1 : 1)
             };
         }
+
         /**
          * The tolerance for this state's angle
          * @return the allowed error
          */
         public double getAllowedError() {
             return this.allowedError;
-        }
-
-        /**
-         * Set the RPM goal
-         * @param rpm
-         */
-        public void setHighRPM(double rpm) {
-            this.highRPM = rpm;
         }
     }
     

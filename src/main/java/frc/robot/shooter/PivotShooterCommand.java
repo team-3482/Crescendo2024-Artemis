@@ -63,7 +63,7 @@ public class PivotShooterCommand extends Command {
             return;
         }
 
-        // // Calculating shooter angles based off current bot position
+        // Calculating shooter angles based off current bot position
         Translation3d point = Positions.SPEAKER_TARGETS.get(DriverStation.getAlliance().get());
         Pose2d botpose = SwerveSubsystem.getInstance().getPose();
 
@@ -72,20 +72,9 @@ public class PivotShooterCommand extends Command {
             Math.pow(point.getX() - botpose.getX(), 2) +
             Math.pow(point.getY() - botpose.getY(), 2)
         );
-
-        if (dist <= 1.5) {
-            this.state.setHighRPM(1500);
-        }
-        else {
-            this.state.setHighRPM(2000);
-        }
+        
         // Calculates angle from bot distance to speaker height
         this.shootingAngle = Units.radiansToDegrees(Math.atan((point.getZ() - RobotConstants.SHOOTER_PIVOT_HEIGHT) / dist));
-        
-        // Telemetry.logMessage("Bot Position: (" + botpose.getX() + "," + botpose.getY()+")");
-        // Telemetry.logMessage("Speaker Position: (" + point.getX() + "," + point.getY()+"," + point.getZ()+")");
-        // Telemetry.logMessage("Distance: " + dist);
-        // Telemetry.logMessage("Shooting Angle " + this.shootingAngle);
         
         // Checks if the angle is within the current bounds, if not, ends the command 
         this.shootingAngle = MathUtil.clamp(this.shootingAngle, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);

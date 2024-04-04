@@ -18,9 +18,11 @@ import frc.robot.utilities.Telemetry;
 
 /** A command that spins the large wheels of the shooter at the desired speed. */
 public class ShootCommand extends Command {
-    private boolean reachedRPM;
     private ShooterStates state;
     private boolean invertSpin;
+    /** Move the sterilizer once speeds are within error and stop checking them */
+    private boolean reachedRPM;
+    /** End the command loop using the execute() body */
     private boolean finished;
 
     /**
@@ -43,7 +45,7 @@ public class ShootCommand extends Command {
             return;
         }
         this.finished = false;
-        
+
         this.invertSpin = !this.state.getCalculateAngle()
             || SwerveSubsystem.getInstance().getHeading() < 180 ?
                 false : true;

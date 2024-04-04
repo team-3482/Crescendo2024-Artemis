@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.shooter;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.utilities.Telemetry;
@@ -11,6 +10,7 @@ import frc.robot.utilities.Telemetry;
 /** A command that spins the large wheels of the shooter at the desired speed. */
 public class RevUpCommand extends Command {
     private double[] rpms;
+    private ShooterStates state;
 
     /**
      * Creates a new RevUpCommand.
@@ -20,6 +20,7 @@ public class RevUpCommand extends Command {
     public RevUpCommand(double velocity) {
         setName("RevUpCommand");
         this.rpms = new double[]{velocity, velocity};
+        this.state = null;
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance().getShootingRequirement());
     }
@@ -31,12 +32,19 @@ public class RevUpCommand extends Command {
     * @param state the shooter state to get RPMs from
     */
     public RevUpCommand(ShooterStates state) {
-        this(state.getRPMs(false)[0] * 0.8);
+        setName("RevUpCommand");
+        this.state = state;
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(ShooterSubsystem.getInstance().getShootingRequirement());
     }
     
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        if (this.state != null) {
+            double[] _rpms = this.state.getRPMs(false);
+            this.rpms = new double[]{_rpms[1], _rpms[1]};
+        }
         ShooterSubsystem.getInstance().setShootingVelocities(this.rpms);
     }
 

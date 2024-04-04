@@ -205,7 +205,7 @@ public class RobotContainer {
         ));
         // Rev up both motors to 1000 RPM
         operatorController.a()
-            .onTrue(new RevUpCommand(1000))
+            .whileTrue(new RevUpCommand(1250))
             .onFalse(Commands.run(() -> ShooterSubsystem.getInstance().setShootingVelocities()));
         
         // Front eject (double rectangle)
