@@ -6,7 +6,6 @@ package frc.robot.intake;
 
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.IntakeStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
@@ -34,7 +33,12 @@ public class SpinIntakeCommand extends Command {
         this.stopForNote = stopForNote;
 
         // Don't require anything because this command is run in parallel multiple times
-        // addRequirements(IntakeSubsystem.getInstance(), SterilizerSubsystem.getInstance());
+        if (stopForNote) {
+            addRequirements(IntakeSubsystem.getInstance().getIntakingRequirement(), SterilizerSubsystem.getInstance());
+        }
+        else {
+            addRequirements(IntakeSubsystem.getInstance().getIntakingRequirement());
+        }
     }
 
     /**
@@ -71,7 +75,6 @@ public class SpinIntakeCommand extends Command {
         }
         else if (hasNotes[0] && !hasNotes[1]) {
             SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.ADJUSTING_SPEED);
-            // Timer.delay(0.5);
         }
         else if (hasNotes[1]) {
             this.finished = true;

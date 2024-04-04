@@ -6,9 +6,10 @@ package frc.robot.elevator;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.PhysicalConstants;
+import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Thread-safe singleton design pattern
@@ -27,14 +28,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private CANSparkMax rightClimbMotor = new CANSparkMax(PhysicalConstants.ElevatorConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
-    private CANSparkMax leftClimbMotor = new CANSparkMax(PhysicalConstants.ElevatorConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkMax rightClimbMotor = new CANSparkMax(ElevatorConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+    private CANSparkMax leftClimbMotor = new CANSparkMax(ElevatorConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
 
     /** Creates a new ElevatorSubsystem. Moves the climb mechanism. */
     public ElevatorSubsystem() {
         super("ElevatorSubsystem");
 
         leftClimbMotor.follow(rightClimbMotor, true);
+        
+        setStatusFrames();
     }
     
     /**
@@ -54,4 +57,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {}
+
+    private void setStatusFrames() {
+        // leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        // leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        
+        // rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 32767);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 32767);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        // rightClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+    }
 }

@@ -37,7 +37,7 @@ public class PivotIntakeCommand extends Command {
 
         // this.brokenEncoderIsItDown = false;
 
-        addRequirements(IntakeSubsystem.getInstance());
+        addRequirements(IntakeSubsystem.getInstance().getPivotRequirement());
     }
 
     @Override

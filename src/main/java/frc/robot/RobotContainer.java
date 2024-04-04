@@ -20,16 +20,18 @@ import frc.robot.auto.PathingCommands;
 import frc.robot.constants.Constants.ControllerConstants;
 import frc.robot.constants.Constants.IntakeStates;
 import frc.robot.constants.Constants.ShuffleboardTabNames;
-import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.constants.Positions.PathfindingPosition;
+import frc.robot.elevator.ElevatorSubsystem;
+import frc.robot.elevator.MoveElevatorCommand;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ManuallyPivotShooterCommand;
 import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.SterilizerSubsystem;
@@ -85,7 +87,7 @@ public class RobotContainer {
         IntakeSubsystem.getInstance();
         SterilizerSubsystem.getInstance();
         ShooterSubsystem.getInstance();
-        // ElevatorSubsystem.getInstance();
+        ElevatorSubsystem.getInstance();
     }
 
     /** Register all NamedCommands for PathPlanner use */
@@ -93,38 +95,28 @@ public class RobotContainer {
         // Pathing
         // NOTE use Pathplanner paths to return to speaker
         
-        // NamedCommands.registerCommand("Pathfind AMP",
-        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.AMP).schedule()
-        // ));
-        // NamedCommands.registerCommand("Pathfind SPEAKER_TOP",
-        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_TOP).schedule()
-        // ));
-        // NamedCommands.registerCommand("Pathfind SPEAKER_MIDDLE",
-        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_MIDDLE).schedule()
-        // ));
-        // NamedCommands.registerCommand("Pathfind SPEAKER_BOTTOM",
-        //     Commands.runOnce(() -> PathingCommands.getPathfindCommand(PathfindingPosition.SPEAKER_BOTTOM).schedule()
-        // ));
-        // NamedCommands.registerCommand("Bezier SPEAKER",
-        //     PathingCommands.getBezierCommand(PathfindingPosition.SPEAKER));
-        // NamedCommands.registerCommand("Bezier AMP",
-        //     PathingCommands.getBezierCommand(PathfindingPosition.AMP));
-
         // Intake
-        NamedCommands.registerCommand("FixNote", // TODO do this automatically
-            Commands.run(() -> SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.ADJUSTING_SPEED))
-                .withTimeout(1));
-        NamedCommands.registerCommand("Collect Note",
+        NamedCommands.registerCommand("Collect Note CENTER",
             SequencedCommands.getCollectNoteCommand());
         NamedCommands.registerCommand("Collect Note NOCENTER",
             SequencedCommands.getAutonCollectNoteCommand());
-            
+
         // Shoot
         NamedCommands.registerCommand("Shoot SPEAKER",
             new ShootCommand(ShooterStates.SPEAKER));
         NamedCommands.registerCommand("Shoot AMP",
             new ShootCommand(ShooterStates.AMP));
+        NamedCommands.registerCommand("Shoot CALCULATE",
+            SequencedCommands.getAutoSpeakerShootCommand());
         
+        // Rev Up
+        NamedCommands.registerCommand("Rev Up SPEAKER",
+            new RevUpCommand(ShooterStates.SPEAKER));
+            NamedCommands.registerCommand("Rev Up AMP",
+            new RevUpCommand(ShooterStates.AMP));
+        NamedCommands.registerCommand("Rev Up CALCULATE",
+            new RevUpCommand(ShooterStates.SPEAKER_CALCULATE));
+
         // Other
         NamedCommands.registerCommand("IntakeEject NOEND",
             SequencedCommands.getIntakeEjectCommand());
@@ -160,7 +152,8 @@ public class RobotContainer {
             .onTrue(SequencedCommands.getIntakeCommand())
             .onFalse(Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
-                new PivotShooterCommand(ShooterStates.SPEAKER)));
+                new PivotShooterCommand(ShooterStates.SPEAKER)
+            ));
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
         // Line-up / Pathfinding commands
@@ -170,7 +163,6 @@ public class RobotContainer {
         driveController.a().whileTrue(Commands.runOnce(
             () -> PathingCommands.getPathfindCommand(PathfindingPosition.AMP).schedule()
         ));
-        // driveController.a().whileTrue(PathingCommands.getPathfindCommand(PathfindingPosition.SAFETY_1));
     }
 
     /** Configures the button bindings of the driver controller */
@@ -184,39 +176,50 @@ public class RobotContainer {
         // Cancel all scheduled commands and turn off LEDs
         operatorController.b().onTrue(Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
+            // In case it interrupts the RevUpCommand
             ShooterSubsystem.getInstance().setShootingVelocities();
             LEDSubsystem.getInstance().setCommandStopState(false);
         }));
 
         // Shoot SPEAKER
-        operatorController.rightBumper().whileTrue(Commands.sequence(
+        operatorController.rightBumper().whileTrue(Commands.parallel(
             new PivotShooterCommand(ShooterStates.SPEAKER),
             new ShootCommand(ShooterStates.SPEAKER)
         ));
         // Shoot AMP
-        operatorController.leftBumper().whileTrue(Commands.sequence(
+        operatorController.leftBumper().whileTrue(Commands.parallel(
             new PivotShooterCommand(ShooterStates.AMP),
             new ShootCommand(ShooterStates.AMP)
         ));
-        // TODO Run SHOOTER automatically
         operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());
         
-        // Reverse sterilizer (0.2 speed)
+        // Reverse sterilizer (0.25 speed) and intake (0.25 speed)
         operatorController.y().whileTrue(Commands.runEnd(
-            () -> SterilizerSubsystem.getInstance().setSpeed(-SterilizerConstants.ADJUSTING_SPEED),
-            () -> SterilizerSubsystem.getInstance().setSpeed()
+            () -> {
+                SterilizerSubsystem.getInstance().setSpeed(-0.25);
+                IntakeSubsystem.getInstance().setIntakeSpeed(-0.25);
+            },
+            () -> {
+                SterilizerSubsystem.getInstance().setSpeed();
+                IntakeSubsystem.getInstance().setIntakeSpeed();
+            }
         ));
-        // Reverse intake (0.5 speed)
-        operatorController.a().whileTrue(Commands.runEnd(
-            () -> IntakeSubsystem.getInstance().setIntakeSpeed(-IntakeConstants.INTAKE_SPEED / 2),
-            () -> IntakeSubsystem.getInstance().setIntakeSpeed(0)
-        ));
+        // Rev up both motors to 1000 RPM
+        operatorController.a()
+            .onTrue(new RevUpCommand(1000))
+            .onFalse(Commands.run(() -> ShooterSubsystem.getInstance().setShootingVelocities()));
+        
         // Front eject (double rectangle)
         operatorController.back().whileTrue(new ShootCommand(ShooterStates.FRONT_EJECT));
         // Move sterilizer forward (burger)
         operatorController.start().whileTrue(Commands.runEnd(
             () -> SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED),
             () -> SterilizerSubsystem.getInstance().setSpeed()
+        ));
+
+        ElevatorSubsystem.getInstance().setDefaultCommand(new MoveElevatorCommand(
+            () -> operatorController.getRightTriggerAxis(),
+            () -> operatorController.getLeftTriggerAxis()
         ));
         
         // Move the pivot manually (last resort, not recommended)

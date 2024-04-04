@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.Constants.IntakeStates;
@@ -33,6 +34,9 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         return instance;
     }
+
+    private SubsystemBase pivotRequirement = new SubsystemBase("Intake - Pivot Requirement") {};
+    private SubsystemBase intakingRequirement = new SubsystemBase("Intake - Intaking Requirement") {};
 
     /** Leader for the intake pivot */
     private CANSparkFlex leftPivotMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
@@ -101,6 +105,13 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /**
+     * Set pivot motors to 0 (overloaded)
+     */
+    public void setPivotSpeed() {
+        setPivotSpeed(0);
+    }
+
+    /**
      * Gets the absolute position of the through bore encoder.
      * @return position of the intake in degrees.
      * @apiNote 0 is at hard stop when extended.
@@ -111,6 +122,22 @@ public class IntakeSubsystem extends SubsystemBase {
         if (position > 350)
             position = 0;
         return position;
+    }
+
+    /**
+     * Returns a subsystem to be used with Command requirements
+     * @return pivot subsystem
+     */
+    public Subsystem getPivotRequirement() {
+        return this.pivotRequirement;
+    }
+
+    /**
+     * Returns a subsystem to be used with Command requirements
+     * @return intaking subsystem
+     */
+    public Subsystem getIntakingRequirement() {
+        return this.intakingRequirement;
     }
 
     @Override

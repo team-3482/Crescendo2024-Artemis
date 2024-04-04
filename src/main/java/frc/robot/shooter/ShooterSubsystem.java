@@ -23,6 +23,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
@@ -43,6 +44,9 @@ public class ShooterSubsystem extends SubsystemBase {
         }
         return instance;
     }
+
+    private SubsystemBase pivotRequirement = new SubsystemBase("Shooter - Pivot Requirement") {};
+    private SubsystemBase shootingRequirement = new SubsystemBase("Shooter - Shooting Requirement") {};
 
     /** This is used after a pivot command to be sure the robot can chain a shooting command */
     public boolean canShoot = false;
@@ -212,6 +216,22 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void setShootingVelocities() {
         setShootingVelocities(new double[2]);
+    }
+
+    /**
+     * Returns a subsystem to be used with Command requirements
+     * @return pivot subsystem
+     */
+    public Subsystem getPivotRequirement() {
+        return this.pivotRequirement;
+    }
+
+    /**
+     * Returns a subsystem to be used with Command requirements
+     * @return shooting subsystem
+     */
+    public Subsystem getShootingRequirement() {
+        return this.shootingRequirement;
     }
 
     @Override

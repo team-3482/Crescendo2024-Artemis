@@ -42,8 +42,8 @@ public class SequencedCommands {
             new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
-                new SpinIntakeCommand(IntakeStates.INTAKING), 
-                new DriveToNoteCommand().withTimeout(5)
+                new SpinIntakeCommand(IntakeStates.INTAKING),
+                new DriveToNoteCommand().withTimeout(3.5)
             ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
@@ -64,9 +64,9 @@ public class SequencedCommands {
                 new PivotShooterCommand(ShooterStates.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
-            Commands.deadline(
+            Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
-                new DriveToNoteCommand().withTimeout(4)
+                new DriveToNoteCommand().withTimeout(3)
             ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
@@ -87,7 +87,7 @@ public class SequencedCommands {
                 new PivotShooterCommand(ShooterStates.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
-            Commands.deadline(
+            Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
                 new DriveToNoteCommand().withTimeout(4)
             )
@@ -111,15 +111,12 @@ public class SequencedCommands {
      * @return the command
      */
     public static Command getIntakeEjectCommand() {
-        return Commands.sequence(
-            Commands.parallel(
-                new PivotIntakeCommand(IntakeStates.INTAKING),
-                new PivotShooterCommand(ShooterStates.FRONT_EJECT)
-            ),    
-            Commands.parallel(
-                new SpinIntakeCommand(IntakeStates.INTAKING, false),
-                new ShootCommand(ShooterStates.FRONT_EJECT)
-            )
+        return Commands.parallel(
+            new PivotIntakeCommand(IntakeStates.INTAKING),
+            new PivotShooterCommand(ShooterStates.FRONT_EJECT),
+
+            new SpinIntakeCommand(IntakeStates.INTAKING, false),
+            new ShootCommand(ShooterStates.FRONT_EJECT)
         );
     }
 }

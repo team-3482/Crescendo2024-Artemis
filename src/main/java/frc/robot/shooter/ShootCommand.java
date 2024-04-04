@@ -32,7 +32,7 @@ public class ShootCommand extends Command {
         setName("ShootCommand");
         this.state = state;
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(ShooterSubsystem.getInstance(), SterilizerSubsystem.getInstance());
+        addRequirements(ShooterSubsystem.getInstance().getShootingRequirement(), SterilizerSubsystem.getInstance());
     }
     
     // Called when the command is initially scheduled.
@@ -40,6 +40,7 @@ public class ShootCommand extends Command {
     public void initialize() {
         if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
             CommandScheduler.getInstance().cancel(this);
+            return;
         }
         this.finished = false;
         

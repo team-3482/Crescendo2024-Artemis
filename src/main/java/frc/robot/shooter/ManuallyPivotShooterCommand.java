@@ -24,13 +24,14 @@ public class ManuallyPivotShooterCommand extends Command {
         this.leftSpeedSupplier = leftSpeedSupplier;
         this.rightSpeedSupplier = rightSpeedSupplier;
         this.swapSides = swapSides;
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(ShooterSubsystem.getInstance());
+        // Default commands need to require their subsystem.
+        addRequirements(ShooterSubsystem.getInstance()
+        , ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {    }
+    public void initialize() {}
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override

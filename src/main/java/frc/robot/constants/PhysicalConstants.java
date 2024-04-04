@@ -129,9 +129,9 @@ public final class PhysicalConstants {
 
     /** Constants for Elevator motors */ 
     public static final class ElevatorConstants {
-        public static final int LEFT_MOTOR_ID = 0;
-        public static final int RIGHT_MOTOR_ID = 0;
-        public static final double MOTOR_SPEED = 0.25;
+        public static final int LEFT_MOTOR_ID = 24;
+        public static final int RIGHT_MOTOR_ID = 25;
+        public static final double MOVING_SPEED = 0.25;
     }
 
     /** Constants for limelight-related data */

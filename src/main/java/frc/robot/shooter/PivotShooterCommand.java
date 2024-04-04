@@ -42,7 +42,7 @@ public class PivotShooterCommand extends Command {
             new TrapezoidProfile.Constraints(ShooterConstants.Pivot.MAX_VEL, ShooterConstants.Pivot.MAX_ACCEL)
         );
 
-        addRequirements(ShooterSubsystem.getInstance());
+        addRequirements(ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
     // Called when the command is initially scheduled.
