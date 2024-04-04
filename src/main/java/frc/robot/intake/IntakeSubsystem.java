@@ -171,13 +171,13 @@ public class IntakeSubsystem extends SubsystemBase {
         topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
 
-        // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
-        // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
-        // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 32767);
+        bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 32767);
+        // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
+        // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20);
+        bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 32767);
+        bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 32767);
+        // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }
 }
