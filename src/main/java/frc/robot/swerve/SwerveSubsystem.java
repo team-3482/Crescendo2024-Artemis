@@ -261,7 +261,7 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     private boolean updateOdometryUsingVision() {
         // TODO use LL vision with lower trust
-        if (true) return false;
+        // if (true) return false;
         // Translation X, Y, Z
         // Rotation Roll, Pitch, Yaw
         // Total Latency (cl + tl)
