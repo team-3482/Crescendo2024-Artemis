@@ -5,6 +5,7 @@
 package frc.robot.shooter;
 
 import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** A command that moves the shooter pivot to a desired position. */
@@ -25,7 +26,7 @@ public class ManuallyPivotShooterCommand extends Command {
         this.rightSpeedSupplier = rightSpeedSupplier;
         this.swapSides = swapSides;
         // Default commands need to require their subsystem.
-        addRequirements(ShooterSubsystem.getInstance());
+        addRequirements(ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
     // Called when the command is initially scheduled.

@@ -31,15 +31,15 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void robotInit() {
-        // Instantiate our RobotContainer. This will perform all our button bindings,
-        // and put our autonomous chooser on the dashboard.
-        RobotContainer.getInstance();
-
         // Port forward all required LL ports. Necessary for robot connections over ethernet (eg. at comp)
         for (int port = 5800; port <= 5807; port++) {
             PortForwarder.add(port, LimelightConstants.INTAKE_LLIGHT + ".local", port);
-            PortForwarder.add(port, LimelightConstants.SHOOTER_LLIGHT + ".local", port);
+            PortForwarder.add(port + 10, LimelightConstants.SHOOTER_LLIGHT + ".local", port);
         }
+
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our autonomous chooser on the dashboard.
+        RobotContainer.getInstance();
 
         // Telemetry
         this.timer = new Timer();

@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.PrimeNumbers;
@@ -142,7 +143,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return pivot subsystem
      */
-    public PivotRequirement getPivotRequirement() {
+    public Subsystem getPivotRequirement() {
         return this.pivotRequirement;
     }
 
@@ -150,7 +151,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return intaking subsystem
      */
-    public IntakingRequirement getIntakingRequirement() {
+    public Subsystem getIntakingRequirement() {
         return this.intakingRequirement;
     }
 

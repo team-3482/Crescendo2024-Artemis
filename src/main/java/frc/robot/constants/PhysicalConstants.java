@@ -113,10 +113,10 @@ public final class PhysicalConstants {
             /** Allowed pivot error for the pivot rotation in degrees */
             public static final double ALLOWED_ERROR = 0.5;
             /** P of PPID for the pivot motors */
-            public static final double kP_PIVOT = 0.05;
+            public static final double kP_PIVOT = 0.08;
             // Constraints for TrapezoidProfile for the pivot motors
-            public static final double MAX_VEL = 20;
-            public static final double MAX_ACCEL = 20;
+            public static final double MAX_VEL = 60;
+            public static final double MAX_ACCEL = 40;
         }
 
         /** Cruise velocity in rps */

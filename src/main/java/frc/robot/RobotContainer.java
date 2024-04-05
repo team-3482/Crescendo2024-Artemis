@@ -166,7 +166,7 @@ public class RobotContainer {
 
     /** Configures the button bindings of the driver controller */
     private void configureOperatorBindings() {
-        ShooterSubsystem.getInstance().setDefaultCommand(new ManuallyPivotShooterCommand(
+        ShooterSubsystem.getInstance().getPivotRequirement().setDefaultCommand(new ManuallyPivotShooterCommand(
             () -> -operatorController.getLeftY(),
             () -> -operatorController.getRightY(),
             false

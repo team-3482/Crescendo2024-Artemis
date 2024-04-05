@@ -23,6 +23,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
@@ -172,9 +173,6 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param override the soft limits
      */
     public void setPivotSpeed(double leftSpeed, double rightSpeed, boolean override) {
-        if (leftSpeed != 0 || rightSpeed != 0) {
-            System.out.println("pivot speed " + leftSpeed + " | " + rightSpeed);
-        }
         if (!override) {
             double[] positions = getPivotPositions();
             leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
@@ -254,7 +252,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return pivot subsystem
      */
-    public PivotRequirement getPivotRequirement() {
+    public Subsystem getPivotRequirement() {
         return this.pivotRequirement;
     }
 
@@ -262,7 +260,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return shooting subsystem
      */
-    public ShootingRequirement getShootingRequirement() {
+    public Subsystem getShootingRequirement() {
         return this.shootingRequirement;
     }
 
