@@ -12,22 +12,15 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Collect Note NOCENTER"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot CALCULATE"
-                }
-              }
-            ]
+            "name": "Collect Note NOCENTER"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot CALCULATE"
           }
         },
         {

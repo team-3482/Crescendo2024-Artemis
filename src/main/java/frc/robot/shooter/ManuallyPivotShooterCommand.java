@@ -25,8 +25,7 @@ public class ManuallyPivotShooterCommand extends Command {
         this.rightSpeedSupplier = rightSpeedSupplier;
         this.swapSides = swapSides;
         // Default commands need to require their subsystem.
-        addRequirements(ShooterSubsystem.getInstance()
-        , ShooterSubsystem.getInstance().getPivotRequirement());
+        addRequirements(ShooterSubsystem.getInstance());
     }
     
     // Called when the command is initially scheduled.

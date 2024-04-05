@@ -89,7 +89,7 @@ public class SequencedCommands {
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
-                new DriveToNoteCommand().withTimeout(4)
+                new DriveToNoteCommand()
             )
         );
     }
@@ -100,7 +100,7 @@ public class SequencedCommands {
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
-            new CenterSpeakerCommand(),
+            new CenterSpeakerCommand().withTimeout(1),
             new PivotShooterCommand(ShooterStates.SPEAKER_CALCULATE),
             new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );

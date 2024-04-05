@@ -22,7 +22,7 @@ public final class Constants {
         INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], null, null),
         AMP(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 10.0, 435.0),
         SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 75.0, 1500.0),
-        SPEAKER_CALCULATE(true, true, true, null, 75.0, 1800.0, 2200.0),
+        SPEAKER_CALCULATE(true, true, true, null, 100.0, 1800.0, 2200.0),
         MANUAL(false, false, false, null, 100.0, 1800.0)
         ;
 
@@ -122,7 +122,7 @@ public final class Constants {
     
     /** Stores all intake configuration related data */
     public static enum IntakeStates {
-        INTAKING(0, 1, IntakeConstants.INTAKE_SPEED),
+        INTAKING(0, 2.5, IntakeConstants.INTAKE_SPEED),
         /** The hardware stop angle for the intake when it is idle in degrees*/
         IDLE(150, 5, 0)
         ;
@@ -196,10 +196,10 @@ public final class Constants {
         /** PID constants for controlling the turning speed during centering */
         public static final class PPID {
             /** Tolerance for the PID controller in degrees */
-            public static final double TOLERANCE = 2;
-            public static final double KP_HIGH = 1.4;
-            public static final double KP_LOW = 2;
-            public static final double KP_LOWEST = 10;
+            public static final double TOLERANCE = 3;
+            public static final double KP_HIGH = 1;
+            public static final double KP_LOW = 1.5;
+            public static final double KP_LOWEST = 3.5;
             public static final double KI = 0;
             public static final double KD = 0;
         }

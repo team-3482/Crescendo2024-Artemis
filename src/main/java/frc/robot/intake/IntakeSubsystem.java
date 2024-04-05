@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.PrimeNumbers;
@@ -36,8 +35,22 @@ public class IntakeSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private SubsystemBase pivotRequirement = new SubsystemBase("Intake - Pivot Requirement") {};
-    private SubsystemBase intakingRequirement = new SubsystemBase("Intake - Intaking Requirement") {};
+    private class PivotRequirement extends SubsystemBase {
+        public PivotRequirement() {
+            setName("Intake - Pivot Requirement");
+        }
+    }
+
+    private class IntakingRequirement extends SubsystemBase {
+        public IntakingRequirement() {
+            setName("Intake - Intaking Requirement");
+        }
+    }
+
+    // private SubsystemBase pivotRequirement = new SubsystemBase("Intake - Pivot Requirement") {};
+    private PivotRequirement pivotRequirement = new PivotRequirement();
+    // private SubsystemBase intakingRequirement = new SubsystemBase("Intake - Intaking Requirement") {};
+    private IntakingRequirement intakingRequirement = new IntakingRequirement();
 
     /** Leader for the intake pivot */
     private CANSparkFlex leftPivotMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
@@ -129,7 +142,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return pivot subsystem
      */
-    public Subsystem getPivotRequirement() {
+    public PivotRequirement getPivotRequirement() {
         return this.pivotRequirement;
     }
 
@@ -137,7 +150,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return intaking subsystem
      */
-    public Subsystem getIntakingRequirement() {
+    public IntakingRequirement getIntakingRequirement() {
         return this.intakingRequirement;
     }
 
@@ -167,8 +180,8 @@ public class IntakeSubsystem extends SubsystemBase {
         topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
         topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
-        topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
         topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // topIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
 
@@ -177,7 +190,7 @@ public class IntakeSubsystem extends SubsystemBase {
         bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
         // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50);
         // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20);
-        bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
         bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
         // bottomIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
     }

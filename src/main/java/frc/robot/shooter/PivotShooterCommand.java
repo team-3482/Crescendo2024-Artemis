@@ -49,7 +49,7 @@ public class PivotShooterCommand extends Command {
     @Override
     public void initialize() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
-        this.ppid.reset(pivotPositions[0]);
+        this.ppid.reset((pivotPositions[0] + pivotPositions[1]) / 2);
 
         if(!this.state.getCalculateAngle()) {
             this.shootingAngle = this.state.getAngle();

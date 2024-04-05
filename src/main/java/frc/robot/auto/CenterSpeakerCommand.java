@@ -40,7 +40,7 @@ public class CenterSpeakerCommand extends Command {
             AprilTagConstants.PPID.KD,
             (double) 1 / 30
         );
-        // this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE));
+        this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE));
         this.pid.enableContinuousInput(0, 360);
         
         // Adds the swerve subsyetm to requirements to ensure that it is the only class

@@ -73,9 +73,8 @@ public class ShootCommand extends Command {
         SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
         
         if (!this.state.getAutoEndShooting()) return;
-        
-        if (hasNote[0].isEmpty() && hasNote[1].isEmpty()) {
-            Timer.delay(1.5);
+        if (hasNote[0].isEmpty() || hasNote[1].isEmpty()) {
+            Timer.delay(1);
             this.finished = true;
         }
         else if (!hasNote[0].get() && !hasNote[1].get()) {

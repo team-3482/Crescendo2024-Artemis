@@ -16,7 +16,7 @@ public final class PhysicalConstants {
     /** Constants of physical attributes of the robot */
     public static final class RobotConstants {
         /** Height of the pivot shaft above the floor */
-        public static final double SHOOTER_PIVOT_HEIGHT = 0.45;
+        public static final double SHOOTER_PIVOT_HEIGHT = 0.5;
         /** Y (not sure if left-right or front-back) distance between wheels in meters */
         public static final double TRACK_WIDTH = Units.inchesToMeters(21.5);
         /** X (not sure if left-right or front-back) distance between wheels in meters */
@@ -113,10 +113,10 @@ public final class PhysicalConstants {
             /** Allowed pivot error for the pivot rotation in degrees */
             public static final double ALLOWED_ERROR = 0.5;
             /** P of PPID for the pivot motors */
-            public static final double kP_PIVOT = 0.08;
+            public static final double kP_PIVOT = 0.05;
             // Constraints for TrapezoidProfile for the pivot motors
-            public static final double MAX_VEL = 60;
-            public static final double MAX_ACCEL = 40;
+            public static final double MAX_VEL = 20;
+            public static final double MAX_ACCEL = 20;
         }
 
         /** Cruise velocity in rps */
@@ -190,7 +190,7 @@ public final class PhysicalConstants {
         public static final double FINE_CONTROL_COEFFICENT = 0.25;
 
         /** x and y speed set by the directional pad in meters per second */
-        public static final double D_PAD_SPEED = 1;
+        public static final double D_PAD_SPEED = 0.75;
 
         /** PID constants used for controlling the turning position of the swerve modules */
         public static final class TURNING_PID_CONTROLLER {

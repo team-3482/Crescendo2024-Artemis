@@ -23,7 +23,6 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
@@ -46,8 +45,20 @@ public class ShooterSubsystem extends SubsystemBase {
         return instance;
     }
 
-    private SubsystemBase pivotRequirement = new SubsystemBase("Shooter - Pivot Requirement") {};
-    private SubsystemBase shootingRequirement = new SubsystemBase("Shooter - Shooting Requirement") {};
+    private class PivotRequirement extends SubsystemBase {
+        public PivotRequirement() {
+            setName("Shooter - Pivot Requirement");
+        }
+    }
+
+    private class ShootingRequirement extends SubsystemBase {
+        public ShootingRequirement() {
+            setName("Shooter - Shooting Requirement");
+        }
+    }
+
+    private PivotRequirement pivotRequirement = new PivotRequirement();
+    private ShootingRequirement shootingRequirement = new ShootingRequirement();
 
     /** This is used after a pivot command to be sure the robot can chain a shooting command */
     public boolean canShoot = false;
@@ -64,6 +75,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private TalonFX leftPivotMotor = new TalonFX(ShooterConstants.RIGHT_PIVOT_MOTOR_ID, RobotConstants.SWERVE_CAN_BUS);
     private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
     private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
+
+    private double[] previousCANCoder;
+    private double[] previousRotor;
 
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
@@ -158,6 +172,9 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param override the soft limits
      */
     public void setPivotSpeed(double leftSpeed, double rightSpeed, boolean override) {
+        if (leftSpeed != 0 || rightSpeed != 0) {
+            System.out.println("pivot speed " + leftSpeed + " | " + rightSpeed);
+        }
         if (!override) {
             double[] positions = getPivotPositions();
             leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
@@ -191,6 +208,20 @@ public class ShooterSubsystem extends SubsystemBase {
             Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble())
         };
     }
+    
+    /**
+     * Checks if the change in the rotor positions and CANcoder positions is in the same direction.
+     * @return consistent change for both rotors and CANcoders
+     */
+    public boolean consistentPositionChange() {
+        double[] currentCANCoder = getPivotPositions();
+        double[] currentRotor = new double[]{
+            leftPivotMotor.getRotorPosition().getValueAsDouble(),
+            rightPivotMotor.getRotorPosition().getValueAsDouble()
+        };
+        return Math.signum(currentCANCoder[0] - previousCANCoder[0]) == Math.signum(currentRotor[0] - previousRotor[0])
+            && Math.signum(currentCANCoder[1] - previousCANCoder[1]) == Math.signum(currentRotor[1] - previousRotor[1]);
+    }
 
     /**
      * Gets the velocities of the shooter motors. Left is [0] and right is [1]
@@ -223,7 +254,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return pivot subsystem
      */
-    public Subsystem getPivotRequirement() {
+    public PivotRequirement getPivotRequirement() {
         return this.pivotRequirement;
     }
 
@@ -231,12 +262,20 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns a subsystem to be used with Command requirements
      * @return shooting subsystem
      */
-    public Subsystem getShootingRequirement() {
+    public ShootingRequirement getShootingRequirement() {
         return this.shootingRequirement;
     }
 
     @Override
     public void periodic() {
+        previousCANCoder = getPivotPositions();
+        previousRotor = new double[]{
+            leftPivotMotor.getRotorPosition().getValueAsDouble(),
+            rightPivotMotor.getRotorPosition().getValueAsDouble()
+        };
+
+        // System.out.println(consistentPositionChange());
+
         // DecimalFormat d = new DecimalFormat("#.##");
         // double[] vel = getShootingVelocities();
         // System.out.println(

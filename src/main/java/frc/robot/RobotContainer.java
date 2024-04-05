@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -96,9 +98,9 @@ public class RobotContainer {
         
         // Intake
         NamedCommands.registerCommand("Collect Note CENTER",
-            SequencedCommands.getCollectNoteCommand());
+            SequencedCommands.getCollectNoteCommand().withTimeout(7.5));
         NamedCommands.registerCommand("Collect Note NOCENTER",
-            SequencedCommands.getAutonCollectNoteCommand());
+            SequencedCommands.getCollectNoteCommandNoCenter().withTimeout(5));
 
         // Shoot
         NamedCommands.registerCommand("Shoot SPEAKER",
@@ -146,9 +148,9 @@ public class RobotContainer {
         // Burger
         driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
         
-        driveController.leftBumper().onTrue(new CenterSpeakerCommand());
+        driveController.leftBumper().onTrue(new CenterSpeakerCommand().withTimeout(1));
         driveController.rightBumper()
-            .onTrue(SequencedCommands.getIntakeCommand())
+            .whileTrue(SequencedCommands.getIntakeCommand())
             .onFalse(Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
                 new PivotShooterCommand(ShooterStates.SPEAKER)
@@ -206,7 +208,10 @@ public class RobotContainer {
         // Rev up both motors to 1000 RPM
         operatorController.a()
             .whileTrue(new RevUpCommand(1250))
-            .onFalse(Commands.run(() -> ShooterSubsystem.getInstance().setShootingVelocities()));
+            .onFalse(Commands.run(
+                () -> ShooterSubsystem.getInstance().setShootingVelocities(),
+                ShooterSubsystem.getInstance().getShootingRequirement()
+            ));
         
         // Front eject (double rectangle)
         operatorController.back().whileTrue(new ShootCommand(ShooterStates.FRONT_EJECT));
