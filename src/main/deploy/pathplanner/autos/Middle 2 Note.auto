@@ -12,9 +12,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Collect Note NOCENTER"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Collect Note CENTER"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Rev Up CALCULATE"
+                }
+              }
+            ]
           }
         },
         {

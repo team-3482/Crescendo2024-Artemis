@@ -49,6 +49,7 @@ public class PivotShooterCommand extends Command {
     @Override
     public void initialize() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        
         this.ppid.reset((pivotPositions[0] + pivotPositions[1]) / 2);
 
         if(!this.state.getCalculateAngle()) {
@@ -56,7 +57,7 @@ public class PivotShooterCommand extends Command {
             LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
             return;
         }
-        
+
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent()) {
             CommandScheduler.getInstance().cancel(this);

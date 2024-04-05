@@ -181,7 +181,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 (leftSpeed > 0 && positions[0] >= ShooterConstants.Pivot.ANGLE_LIMITS[1]) ? 0 : leftSpeed;
             rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
                 (rightSpeed > 0 && positions[1] >= ShooterConstants.Pivot.ANGLE_LIMITS[1]) ? 0 : rightSpeed;
-            }
+        }
         
         rightPivotMotor.set(rightSpeed);
         leftPivotMotor.set(leftSpeed);
