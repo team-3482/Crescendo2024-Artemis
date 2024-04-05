@@ -129,7 +129,7 @@ public class LEDSubsystem extends SubsystemBase {
      * @param state Desired {@link LightState}
      * @param overrideCurrentState Whether the lights should overide the current lightt state or not.
      */
-    public void setLightState(LightState state, boolean overrideCurrentState){
+    public void setLightState(LightState state, boolean overrideCurrentState) {
         if (overrideCurrentState || (!overrideCurrentState && this.state.equals(LightState.OFF))) {
             this.state = state;
         }

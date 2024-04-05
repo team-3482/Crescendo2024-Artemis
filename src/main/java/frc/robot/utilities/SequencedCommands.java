@@ -11,6 +11,7 @@ import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 
 /** A class that stores command chains for use elsewhere */
@@ -100,7 +101,8 @@ public class SequencedCommands {
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
-            new CenterSpeakerCommand().withTimeout(1),
+            new RevUpCommand(ShooterStates.SPEAKER_CALCULATE),
+            new CenterSpeakerCommand().withTimeout(1.5),
             new PivotShooterCommand(ShooterStates.SPEAKER_CALCULATE),
             new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );

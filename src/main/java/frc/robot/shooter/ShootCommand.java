@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
@@ -40,10 +39,6 @@ public class ShootCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (this.state.getCalculateAngle() && !ShooterSubsystem.getInstance().canShoot) {
-            CommandScheduler.getInstance().cancel(this);
-            return;
-        }
         this.finished = false;
 
         this.invertSpin = !this.state.getCalculateAngle()

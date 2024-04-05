@@ -38,7 +38,7 @@ public class ShooterSubsystem extends SubsystemBase {
         if(result == null) {
             synchronized (mutex) {
 				result = instance;
-				if (result == null){
+				if (result == null) {
 					instance = result = new ShooterSubsystem();
                 }
 			}
@@ -60,9 +60,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private PivotRequirement pivotRequirement = new PivotRequirement();
     private ShootingRequirement shootingRequirement = new ShootingRequirement();
-
-    /** This is used after a pivot command to be sure the robot can chain a shooting command */
-    public boolean canShoot = false;
 
     // Shooting wheels
     private CANSparkFlex rightShooter = new CANSparkFlex(ShooterConstants.RIGHT_SHOOTER_MOTOR_ID, MotorType.kBrushless);
@@ -209,6 +206,7 @@ public class ShooterSubsystem extends SubsystemBase {
     
     /**
      * Checks if the change in the rotor positions and CANcoder positions is in the same direction.
+     * @deprecated Doesn't work
      * @return consistent change for both rotors and CANcoders
      */
     public boolean consistentPositionChange() {
@@ -266,11 +264,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        previousCANCoder = getPivotPositions();
-        previousRotor = new double[]{
-            leftPivotMotor.getRotorPosition().getValueAsDouble(),
-            rightPivotMotor.getRotorPosition().getValueAsDouble()
-        };
+        // previousCANCoder = getPivotPositions();
+        // previousRotor = new double[]{
+        //     leftPivotMotor.getRotorPosition().getValueAsDouble(),
+        //     rightPivotMotor.getRotorPosition().getValueAsDouble()
+        // };
 
         // System.out.println(consistentPositionChange());
 

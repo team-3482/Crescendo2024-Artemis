@@ -52,7 +52,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     /**
      * Stops the motors that move the climb mechanism (overloaded)
      */
-    public void setSpeed(){
+    public void setSpeed() {
         setSpeed(0);
     }
 

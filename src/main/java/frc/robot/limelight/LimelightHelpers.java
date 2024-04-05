@@ -383,7 +383,7 @@ public class LimelightHelpers {
         return name;
     }
 
-    private static Pose3d toPose3D(double[] inData){
+    private static Pose3d toPose3D(double[] inData) {
         if(inData.length < 6)
         {
             // Added so that we can actually read the console when LL isn't plugged in
@@ -398,7 +398,7 @@ public class LimelightHelpers {
                     Units.degreesToRadians(inData[5])));
     }
 
-    private static Pose2d toPose2D(double[] inData){
+    private static Pose2d toPose2D(double[] inData) {
         if(inData.length < 6)
         {
             // Added so that we can actually read the console when LL isn't plugged in

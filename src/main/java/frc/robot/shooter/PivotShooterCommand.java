@@ -90,7 +90,7 @@ public class PivotShooterCommand extends Command {
         ShooterSubsystem.getInstance().setPivotSpeed(
             this.ppid.calculate(pivotPositions[0], this.shootingAngle),
             this.ppid.calculate(pivotPositions[1], this.shootingAngle),
-            true
+            false
         );
     }
 
@@ -98,7 +98,6 @@ public class PivotShooterCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
-        ShooterSubsystem.getInstance().canShoot = !interrupted;
 
         Telemetry.logCommandEnd(getName(), interrupted, "goal " + Telemetry.D_FORMAT.format(this.shootingAngle));
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
