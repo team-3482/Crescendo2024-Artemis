@@ -29,7 +29,7 @@ import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.shooter.ManuallyPivotShooterCommand;
-import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.PivotShooterMMCommand;
 import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 import frc.robot.shooter.ShooterSubsystem;
@@ -151,7 +151,7 @@ public class RobotContainer {
             .whileTrue(SequencedCommands.getIntakeCommand())
             .onFalse(Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
-                new PivotShooterCommand(ShooterStates.SPEAKER)
+                new PivotShooterMMCommand(ShooterStates.SPEAKER)
             ));
         driveController.y().onTrue(SequencedCommands.getCollectNoteCommand());
         
@@ -171,6 +171,9 @@ public class RobotContainer {
             () -> -operatorController.getRightY(),
             false
         ));
+        operatorController.rightStick().onTrue(
+            Commands.run(() -> ShooterSubsystem.getInstance().setRotorPositions())
+        );
 
         // Cancel all scheduled commands and turn off LEDs
         operatorController.b().onTrue(Commands.runOnce(() -> {
@@ -182,12 +185,12 @@ public class RobotContainer {
 
         // Shoot SPEAKER
         operatorController.rightBumper().whileTrue(Commands.parallel(
-            new PivotShooterCommand(ShooterStates.SPEAKER),
+            new PivotShooterMMCommand(ShooterStates.SPEAKER),
             new ShootCommand(ShooterStates.SPEAKER)
         ));
         // Shoot AMP
         operatorController.leftBumper().whileTrue(Commands.parallel(
-            new PivotShooterCommand(ShooterStates.AMP),
+            new PivotShooterMMCommand(ShooterStates.AMP),
             new ShootCommand(ShooterStates.AMP)
         ));
         operatorController.x().onTrue(SequencedCommands.getAutoSpeakerShootCommand());

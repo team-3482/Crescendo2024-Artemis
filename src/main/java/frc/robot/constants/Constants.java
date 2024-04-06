@@ -21,8 +21,8 @@ public final class Constants {
         FRONT_EJECT(false, false, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], 25.0, 750.0),
         INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], null, null),
         AMP(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 10.0, 435.0),
-        SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 75.0, 1400.0),
-        SPEAKER_CALCULATE(true, true, true, null, 100.0, 1500.0, 1800.0),
+        SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 75.0, 1500.0),
+        SPEAKER_CALCULATE(true, true, true, null, 100.0, 1500.0, 1900.0),
         MANUAL(false, false, false, null, 100.0, 1800.0)
         ;
 
@@ -124,7 +124,7 @@ public final class Constants {
     public static enum IntakeStates {
         INTAKING(0, 2.5, IntakeConstants.INTAKE_SPEED),
         /** The hardware stop angle for the intake when it is idle in degrees*/
-        IDLE(150, 5, 0)
+        IDLE(148, 5, 0)
         ;
         
         /* Angle of the intake in degrees */

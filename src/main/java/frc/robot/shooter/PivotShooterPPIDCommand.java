@@ -25,30 +25,30 @@ import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
 /** A command that moves the shooter pivot to a desired position. */
-public class PivotShooterCommand extends Command {
+public class PivotShooterPPIDCommand extends Command {
     private double shootingAngle;
     private ShooterStates state;
     private ProfiledPIDController ppid;
 
     /**
-    * Creates a new PivotShooterCommand.
+    * Creates a new PivotShooterPPIDCommand.
     * @param state of the shooter to reach
     */
-    public PivotShooterCommand(ShooterStates state) {
-        setName("PivotShooterCommand");
-        // Use addRequirements() here to declare subsystem dependencies.
+    public PivotShooterPPIDCommand(ShooterStates state) {
+        setName("PivotShooterPPIDCommand");
         this.state = state;
         this.ppid = new ProfiledPIDController(ShooterConstants.Pivot.kP_PIVOT, 0, 0,
-            new TrapezoidProfile.Constraints(ShooterConstants.Pivot.MAX_VEL, ShooterConstants.Pivot.MAX_ACCEL)
+        new TrapezoidProfile.Constraints(ShooterConstants.Pivot.MAX_VEL, ShooterConstants.Pivot.MAX_ACCEL)
         );
-
+        
+        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();
         
         this.ppid.reset((pivotPositions[0] + pivotPositions[1]) / 2);
 
@@ -86,7 +86,7 @@ public class PivotShooterCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();
         ShooterSubsystem.getInstance().setPivotSpeed(
             this.ppid.calculate(pivotPositions[0], this.shootingAngle),
             this.ppid.calculate(pivotPositions[1], this.shootingAngle),
@@ -106,7 +106,7 @@ public class PivotShooterCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        double[] pivotPositions = ShooterSubsystem.getInstance().getPivotPositions();
+        double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();
         return Math.abs(pivotPositions[0] - this.shootingAngle) <= ShooterConstants.Pivot.ALLOWED_ERROR
             && Math.abs(pivotPositions[1] - this.shootingAngle) <= ShooterConstants.Pivot.ALLOWED_ERROR;
     }

@@ -10,7 +10,7 @@ import frc.robot.constants.Constants.IntakeStates;
 import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
-import frc.robot.shooter.PivotShooterCommand;
+import frc.robot.shooter.PivotShooterMMCommand;
 import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 
@@ -23,7 +23,7 @@ public class SequencedCommands {
      */
     public static Command getIntakeCommand() {
         return Commands.parallel(
-            new PivotShooterCommand(ShooterStates.INTAKE),
+            new PivotShooterMMCommand(ShooterStates.INTAKE),
             new PivotIntakeCommand(IntakeStates.INTAKING),
             new SpinIntakeCommand(IntakeStates.INTAKING)
         );
@@ -38,7 +38,7 @@ public class SequencedCommands {
         return Commands.sequence(
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.INTAKING),
-                new PivotShooterCommand(ShooterStates.INTAKE)
+                new PivotShooterMMCommand(ShooterStates.INTAKE)
             ),
             new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
             // Will end as soon as there is a note in the SpinIntakeCommand
@@ -48,7 +48,7 @@ public class SequencedCommands {
             ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
-                new PivotShooterCommand(ShooterStates.SPEAKER)
+                new PivotShooterMMCommand(ShooterStates.SPEAKER)
             )
         );
     }
@@ -62,7 +62,7 @@ public class SequencedCommands {
         return Commands.sequence(
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.INTAKING),
-                new PivotShooterCommand(ShooterStates.INTAKE)
+                new PivotShooterMMCommand(ShooterStates.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
@@ -71,7 +71,7 @@ public class SequencedCommands {
             ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
-                new PivotShooterCommand(ShooterStates.SPEAKER)
+                new PivotShooterMMCommand(ShooterStates.SPEAKER)
             )
         );
     }
@@ -85,7 +85,7 @@ public class SequencedCommands {
         return Commands.sequence(
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.INTAKING),
-                new PivotShooterCommand(ShooterStates.INTAKE)
+                new PivotShooterMMCommand(ShooterStates.INTAKE)
             ),
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
@@ -103,7 +103,7 @@ public class SequencedCommands {
         return Commands.sequence(
             new RevUpCommand(ShooterStates.SPEAKER_CALCULATE),
             new CenterSpeakerCommand().withTimeout(1.5),
-            new PivotShooterCommand(ShooterStates.SPEAKER_CALCULATE),
+            new PivotShooterMMCommand(ShooterStates.SPEAKER_CALCULATE),
             new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );
     }
@@ -115,7 +115,7 @@ public class SequencedCommands {
     public static Command getIntakeEjectCommand() {
         return Commands.parallel(
             new PivotIntakeCommand(IntakeStates.INTAKING),
-            new PivotShooterCommand(ShooterStates.FRONT_EJECT),
+            new PivotShooterMMCommand(ShooterStates.FRONT_EJECT),
 
             new SpinIntakeCommand(IntakeStates.INTAKING, false),
             new ShootCommand(ShooterStates.FRONT_EJECT)

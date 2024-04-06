@@ -84,6 +84,7 @@ public class ShooterSubsystem extends SubsystemBase {
         
         configureMotionMagic();
         configureShootingPID();
+        setRotorPositions();
 
         setStatusFrames();
     }
@@ -96,8 +97,8 @@ public class ShooterSubsystem extends SubsystemBase {
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         
         FeedbackConfigs feedbackConfigs = configuration.Feedback;
-        // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-        feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         // Sets the gear ratio from the motor to the mechanism (pivot)
         feedbackConfigs.SensorToMechanismRatio = 1;
         
@@ -156,7 +157,7 @@ public class ShooterSubsystem extends SubsystemBase {
         MotionMagicVoltage control = motionMagicVoltage
             // Select Slot 0 for Motion Magic (should be done by default)
             .withSlot(0)
-            .withPosition(Units.degreesToRotations(position));
+            .withPosition(Units.degreesToRotations(position * ShooterConstants.Pivot.MOTOR_TO_PIVOT_RATIO));
 
         rightPivotMotor.setControl(control);
         leftPivotMotor.setControl(control);
@@ -171,7 +172,7 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void setPivotSpeed(double leftSpeed, double rightSpeed, boolean override) {
         if (!override) {
-            double[] positions = getPivotPositions();
+            double[] positions = getCANcoderPositions();
             leftSpeed = (leftSpeed < 0 && positions[0] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
                 (leftSpeed > 0 && positions[0] >= ShooterConstants.Pivot.ANGLE_LIMITS[1]) ? 0 : leftSpeed;
             rightSpeed = (rightSpeed < 0 && positions[1] <= ShooterConstants.Pivot.ANGLE_LIMITS[0]) ||
@@ -197,11 +198,29 @@ public class ShooterSubsystem extends SubsystemBase {
      * <p> Left [0] and right [1] </p>
      * @return positions in degrees
      */
-    public double[] getPivotPositions() {
+    public double[] getCANcoderPositions() {
         return new double[]{
             Units.rotationsToDegrees(leftCANcoder.getPosition().getValueAsDouble()),
             Units.rotationsToDegrees(rightCANcoder.getPosition().getValueAsDouble())
         };
+    }
+    
+    /**
+     * Sets the positions of the rotors.
+     * <p> Left [0] and right [1] </p>
+     * @param positions in degrees
+     * @apiNote Will multiply input values by the gear ratio
+     */
+    public void setRotorPositions(double[] positions) {
+        leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.Pivot.MOTOR_TO_PIVOT_RATIO));
+        rightPivotMotor.setPosition(Units.degreesToRotations(positions[1] * ShooterConstants.Pivot.MOTOR_TO_PIVOT_RATIO));
+    }
+    
+    /**
+     * Sets the positions of the rotors using the CANcoders (overloaded).
+     */
+    public void setRotorPositions() {
+        setRotorPositions(getCANcoderPositions());
     }
     
     /**
@@ -210,7 +229,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return consistent change for both rotors and CANcoders
      */
     public boolean consistentPositionChange() {
-        double[] currentCANCoder = getPivotPositions();
+        double[] currentCANCoder = getCANcoderPositions();
         double[] currentRotor = new double[]{
             leftPivotMotor.getRotorPosition().getValueAsDouble(),
             rightPivotMotor.getRotorPosition().getValueAsDouble()
@@ -269,19 +288,9 @@ public class ShooterSubsystem extends SubsystemBase {
         //     leftPivotMotor.getRotorPosition().getValueAsDouble(),
         //     rightPivotMotor.getRotorPosition().getValueAsDouble()
         // };
-
-        // System.out.println(consistentPositionChange());
-
-        // DecimalFormat d = new DecimalFormat("#.##");
-        // double[] vel = getShootingVelocities();
-        // System.out.println(
-        //     "left vel : " + d.format(vel[0]) + " right vel : "
-        //     + d.format(vel[1])
-        // );
-
-        // double[] pos = getPivotPositions();
-        // System.out.println("Left : " + Telemetry.D_FORMAT.format(leftPivotMotor.getRotorPosition().getValueAsDouble())
-        //     + " Right : " + Telemetry.D_FORMAT.format(rightPivotMotor.getRotorPosition().getValueAsDouble()));
+        
+        // System.out.println("Left : " + Telemetry.D_FORMAT.format(leftPivotMotor.getPosition().getValueAsDouble())
+        //     + " Right : " + Telemetry.D_FORMAT.format(rightPivotMotor.getPosition().getValueAsDouble()));
     }
 
     private void setStatusFrames() {

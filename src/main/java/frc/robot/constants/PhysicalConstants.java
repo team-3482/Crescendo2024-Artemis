@@ -107,7 +107,7 @@ public final class PhysicalConstants {
 
         /** Motor onfigurations for moving the pivot */
         public static final class Pivot {
-            // public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
+            public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
             /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
             public static final double[] ANGLE_LIMITS = new double[]{35, 63};
             /** Allowed pivot error for the pivot rotation in degrees */

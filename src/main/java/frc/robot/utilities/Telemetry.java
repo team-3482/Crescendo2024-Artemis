@@ -241,7 +241,7 @@ public class Telemetry {
 
                 case 1: {
                     // ShooterSubsystem
-                    double[] pos = ShooterSubsystem.getInstance().getPivotPositions();
+                    double[] pos = ShooterSubsystem.getInstance().getCANcoderPositions();
                     DEFAULT_SHOOTER_PIVOT_POSITIONS.setString("Left    " + Telemetry.D_FORMAT.format(pos[0]) + "    ||    " + Telemetry.D_FORMAT.format(pos[1]) + "    Right");
                     break;
                 }
