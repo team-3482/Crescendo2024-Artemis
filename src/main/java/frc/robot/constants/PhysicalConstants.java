@@ -16,7 +16,7 @@ public final class PhysicalConstants {
     /** Constants of physical attributes of the robot */
     public static final class RobotConstants {
         /** Height of the pivot shaft above the floor */
-        public static final double SHOOTER_PIVOT_HEIGHT = 0.5;
+        public static final double SHOOTER_PIVOT_HEIGHT = 0.6;
         /** Y (not sure if left-right or front-back) distance between wheels in meters */
         public static final double TRACK_WIDTH = Units.inchesToMeters(21.5);
         /** X (not sure if left-right or front-back) distance between wheels in meters */
@@ -109,7 +109,7 @@ public final class PhysicalConstants {
         public static final class Pivot {
             public static final double MOTOR_TO_PIVOT_RATIO = (double) 640 / 3; // 213.33
             /** Lower [0] and upper [1] limits in degrees for the pivot (software stop) */
-            public static final double[] ANGLE_LIMITS = new double[]{35, 63};
+            public static final double[] ANGLE_LIMITS = new double[]{35, 61.5};
             /** Allowed pivot error for the pivot rotation in degrees */
             public static final double ALLOWED_ERROR = 0.5;
             /** P of PPID for the pivot motors */

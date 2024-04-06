@@ -11,7 +11,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.utilities.Telemetry;
 
 public class LimelightSubsystem extends SubsystemBase {
 
@@ -37,7 +39,11 @@ public class LimelightSubsystem extends SubsystemBase {
         super("LimelightSubsystem");
         
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        
+        if (!alliance.isPresent()) {
+            Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
+            return;
+        }
+
         // Target 7 when blue or when no alliance is found, or 7 otherwise
         LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
             alliance.isPresent() && alliance.get() == Alliance.Red ? 4 : 7

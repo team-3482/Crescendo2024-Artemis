@@ -20,6 +20,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.SwerveKinematics;
@@ -119,6 +120,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 if (alliance.isPresent()) {
                     return alliance.get() == DriverStation.Alliance.Red;
                 }
+                Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
                 return false;
             },
             this);

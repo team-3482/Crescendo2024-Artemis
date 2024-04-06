@@ -9,10 +9,12 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
 import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.Telemetry;
 
 /** Constants used throughout the code that are not categorized in other constants files. */
 public final class Constants {
@@ -102,6 +104,9 @@ public final class Constants {
                     else {
                         _rpms = this.rpms[1];
                     }
+                }
+                else {
+                    Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
                 }
             }
 

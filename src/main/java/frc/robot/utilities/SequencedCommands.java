@@ -101,9 +101,13 @@ public class SequencedCommands {
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
-            new RevUpCommand(ShooterStates.SPEAKER_CALCULATE),
-            new CenterSpeakerCommand().withTimeout(1.5),
-            new PivotShooterMMCommand(ShooterStates.SPEAKER_CALCULATE),
+            Commands.deadline(
+                Commands.parallel(
+                    new CenterSpeakerCommand().withTimeout(1.5),
+                    new PivotShooterMMCommand(ShooterStates.SPEAKER_CALCULATE)
+                ),
+                new RevUpCommand(ShooterStates.SPEAKER_CALCULATE)
+            ),
             new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );
     }

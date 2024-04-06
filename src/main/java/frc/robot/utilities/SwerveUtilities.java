@@ -1,5 +1,6 @@
 package frc.robot.utilities;
 
+import java.sql.Driver;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -11,6 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Robot;
 import frc.robot.constants.Positions;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.Positions.StartingPositions;
 
 public class SwerveUtilities {
@@ -69,6 +71,10 @@ public class SwerveUtilities {
      */
     public static Pose2d getStartingPose(StartingPositions startingPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isEmpty()) {
+            Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
+            alliance = Optional.ofNullable(DriverStation.Alliance.Blue);
+        }
         OptionalInt location = startingPosition.equals(StartingPositions.AUTO)
             ? DriverStation.getLocation() : OptionalInt.of(startingPosition.getLocation());
         

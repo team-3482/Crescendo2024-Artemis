@@ -4,13 +4,9 @@
 
 package frc.robot.auto;
 
-import java.util.Optional;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
@@ -27,9 +23,9 @@ public class CenterSpeakerCommand extends Command {
     private PIDController pid;
     /** Used for {@link CenterSpeakerCommand#isFinished()} */
     private double errorRadians;
-    /** Used to avoid repeated calls to DS API */
-    private Optional<Alliance> alliance;
     private double turningSpeed;
+    /** Check to see if ended due to having no tag */
+    private boolean noTag;
 
     public CenterSpeakerCommand() {
         setName("CenterSpeakerCommand");
@@ -54,8 +50,12 @@ public class CenterSpeakerCommand extends Command {
     public void initialize() {
         // End the Command if it starts without seeing an AprilTag
         if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
+            this.noTag = true;
             CommandScheduler.getInstance().cancel(this);
+            return;
         }
+        this.noTag = false;
+
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
         
@@ -71,15 +71,14 @@ public class CenterSpeakerCommand extends Command {
 
         this.pid.reset();
         
-        this.alliance = DriverStation.getAlliance();
-        
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     @Override
     public void execute() {
         // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
-        if (LimelightSubsystem.getInstance().getTargetID() != (alliance.get() == Alliance.Red ? 4 : 7)) return;
+        int tagID = LimelightSubsystem.getInstance().getTargetID();
+        if (tagID != 4 && tagID != 7) return;
 
         this.errorRadians = Units.degreesToRadians(
             LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
@@ -95,7 +94,7 @@ public class CenterSpeakerCommand extends Command {
         SwerveSubsystem.getInstance().stopModules();
         this.pid.close();
         
-        Telemetry.logCommandEnd(getName(), interrupted);
+        Telemetry.logCommandEnd(getName(), interrupted, this.noTag ? "NO TAG SEEN" : "");
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 

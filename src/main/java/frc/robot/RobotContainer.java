@@ -102,9 +102,15 @@ public class RobotContainer {
 
         // Shoot
         NamedCommands.registerCommand("Shoot SPEAKER",
-            new ShootCommand(ShooterStates.SPEAKER));
+            Commands.deadline(
+                new ShootCommand(ShooterStates.SPEAKER),
+                new PivotShooterMMCommand(ShooterStates.SPEAKER)
+            ));
         NamedCommands.registerCommand("Shoot AMP",
-            new ShootCommand(ShooterStates.AMP));
+            Commands.deadline(
+                new ShootCommand(ShooterStates.AMP),
+                new PivotShooterMMCommand(ShooterStates.AMP)
+            ));;
         NamedCommands.registerCommand("Shoot CALCULATE",
             SequencedCommands.getAutoSpeakerShootCommand());
         
@@ -208,7 +214,7 @@ public class RobotContainer {
         ));
         // Rev up both motors to 1000 RPM
         operatorController.a()
-            .whileTrue(new RevUpCommand(1250))
+            .whileTrue(new RevUpCommand(1350))
             .onFalse(Commands.run(
                 () -> ShooterSubsystem.getInstance().setShootingVelocities(),
                 ShooterSubsystem.getInstance().getShootingRequirement()

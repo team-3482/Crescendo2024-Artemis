@@ -17,6 +17,7 @@ import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
 import frc.robot.constants.Positions;
 import frc.robot.constants.Constants.ShooterStates;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
@@ -53,6 +54,7 @@ public class PivotShooterMMCommand extends Command {
 
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
         if (!alliance.isPresent()) {
+            Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
             CommandScheduler.getInstance().cancel(this);
             return;
         }
