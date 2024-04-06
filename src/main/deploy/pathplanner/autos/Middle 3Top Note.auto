@@ -12,28 +12,28 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
+                  "name": "Collect Note CENTER"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "Rev Up CALCULATE"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Collect Note NOCENTER"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot CALCULATE"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot CALCULATE"
           }
         },
         {
@@ -43,28 +43,28 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
+                  "name": "Collect Note CENTER"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "Rev Up CALCULATE"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Collect Note NOCENTER"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot CALCULATE"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot CALCULATE"
           }
         },
         {
