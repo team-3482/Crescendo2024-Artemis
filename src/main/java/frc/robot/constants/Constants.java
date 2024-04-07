@@ -127,7 +127,7 @@ public final class Constants {
     
     /** Stores all intake configuration related data */
     public static enum IntakeStates {
-        INTAKING(0, 2.5, IntakeConstants.INTAKE_SPEED),
+        INTAKING(0, 5, IntakeConstants.INTAKE_SPEED),
         /** The hardware stop angle for the intake when it is idle in degrees*/
         IDLE(148, 5, 0)
         ;

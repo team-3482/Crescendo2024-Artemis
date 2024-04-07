@@ -12,22 +12,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Collect Note CENTER"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Rev Up CALCULATE"
-                }
-              }
-            ]
+            "name": "Collect Note NOCENTER"
           }
         },
         {
@@ -43,22 +30,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Collect Note CENTER"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Rev Up CALCULATE"
-                }
-              }
-            ]
+            "name": "Collect Note NOCENTER"
           }
         },
         {

@@ -113,11 +113,13 @@ public class RobotContainer {
             ));;
         NamedCommands.registerCommand("Shoot CALCULATE",
             SequencedCommands.getAutoSpeakerShootCommand());
+        NamedCommands.registerCommand("Center SPEAKER", 
+            new CenterSpeakerCommand().withTimeout(1.5));
         
         // Rev Up
         NamedCommands.registerCommand("Rev Up SPEAKER",
             new RevUpCommand(ShooterStates.SPEAKER));
-            NamedCommands.registerCommand("Rev Up AMP",
+        NamedCommands.registerCommand("Rev Up AMP",
             new RevUpCommand(ShooterStates.AMP));
         NamedCommands.registerCommand("Rev Up CALCULATE",
             new RevUpCommand(ShooterStates.SPEAKER_CALCULATE));

@@ -19,9 +19,6 @@ public class PivotIntakeCommand extends Command {
     private PIDController pid;
     private boolean up;
 
-    // private boolean brokenEncoderIsItDown;
-    // private Timer brokenEncoderTimer = new Timer();
-
     /**
      * Initializes a new PivotIntakeCommand
      * @param state of the intake
@@ -35,8 +32,6 @@ public class PivotIntakeCommand extends Command {
         this.pid.setTolerance(this.state.getTolerance());
         this.pid.enableContinuousInput(0, 2 * Math.PI);
 
-        // this.brokenEncoderIsItDown = false;
-
         addRequirements(IntakeSubsystem.getInstance().getPivotRequirement());
     }
 
@@ -45,7 +40,6 @@ public class PivotIntakeCommand extends Command {
         this.up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
         this.pid.setP(this.up ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN);
         this.pid.reset();
-        // this.brokenEncoderTimer.restart();
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
@@ -54,7 +48,6 @@ public class PivotIntakeCommand extends Command {
         double speed;
         double position = IntakeSubsystem.getInstance().getPivotPosition();
         if (this.up) {
-            // this.brokenEncoderIsItDown = false;
             speed = this.pid.calculate(
                 Units.degreesToRadians(position),
                 Units.degreesToRadians(this.state.getAngle()));
@@ -63,7 +56,6 @@ public class PivotIntakeCommand extends Command {
             speed = this.pid.calculate(
                 Units.degreesToRadians(position),
                 Units.degreesToRadians(this.state.getAngle()));
-            // this.brokenEncoderIsItDown = true;
         }
         IntakeSubsystem.getInstance().setPivotSpeed(speed);
     }
@@ -72,13 +64,6 @@ public class PivotIntakeCommand extends Command {
     public void end(boolean interrupted) {
         IntakeSubsystem.getInstance().setPivotSpeed(0);
         this.pid.close();
-        
-        // if (this.brokenEncoderIsItDown) {
-        //     IntakeSubsystem.getInstance().resetPivotPosition(0);
-        // }
-        // else {
-        //     IntakeSubsystem.getInstance().resetPivotPosition(IntakeConstants.IntakeState.IDLE.getAngle());
-        // }
 
         Telemetry.logCommandEnd(getName(), interrupted);
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
@@ -86,7 +71,6 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        // return this.brokenEncoderTimer.hasElapsed(1.25);
         return Math.abs(this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition()) <= this.state.getTolerance();
     }
 }

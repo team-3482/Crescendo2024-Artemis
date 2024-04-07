@@ -3,7 +3,6 @@ package frc.robot.utilities;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.auto.CenterNoteCommand;
-import frc.robot.auto.CenterSpeakerCommand;
 import frc.robot.auto.DriveToNoteCommand;
 import frc.robot.constants.Constants.NoteConstants;
 import frc.robot.constants.Constants.IntakeStates;
@@ -11,7 +10,6 @@ import frc.robot.constants.Constants.ShooterStates;
 import frc.robot.intake.PivotIntakeCommand;
 import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterMMCommand;
-import frc.robot.shooter.RevUpCommand;
 import frc.robot.shooter.ShootCommand;
 
 /** A class that stores command chains for use elsewhere */
@@ -67,7 +65,7 @@ public class SequencedCommands {
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
-                new DriveToNoteCommand().withTimeout(3)
+                new DriveToNoteCommand().withTimeout(3.5)
             ),
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.IDLE),
@@ -101,13 +99,7 @@ public class SequencedCommands {
      */
     public static Command getAutoSpeakerShootCommand() {
         return Commands.sequence(
-            Commands.deadline(
-                Commands.parallel(
-                    new CenterSpeakerCommand().withTimeout(1.5),
-                    new PivotShooterMMCommand(ShooterStates.SPEAKER_CALCULATE)
-                ),
-                new RevUpCommand(ShooterStates.SPEAKER_CALCULATE)
-            ),
+            new PivotShooterMMCommand(ShooterStates.SPEAKER_CALCULATE),
             new ShootCommand(ShooterStates.SPEAKER_CALCULATE)
         );
     }
