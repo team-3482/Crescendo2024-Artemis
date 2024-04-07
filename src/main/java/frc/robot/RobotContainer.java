@@ -99,6 +99,8 @@ public class RobotContainer {
             SequencedCommands.getCollectNoteCommand().withTimeout(7.5));
         NamedCommands.registerCommand("Collect Note NOCENTER",
             SequencedCommands.getCollectNoteCommandNoCenter().withTimeout(5));
+        NamedCommands.registerCommand("Intake Pivot and Spin",
+            SequencedCommands.getIntakeCommand());
 
         // Shoot
         NamedCommands.registerCommand("Shoot SPEAKER",

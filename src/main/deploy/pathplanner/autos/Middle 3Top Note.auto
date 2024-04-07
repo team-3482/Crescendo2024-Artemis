@@ -12,9 +12,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Collect Note NOCENTER"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle - M Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Pivot and Spin"
+                }
+              }
+            ]
           }
         },
         {
@@ -24,15 +43,34 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "Middle - M-T Note"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle - M-T Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Pivot and Spin"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Collect Note NOCENTER"
+            "name": "Center SPEAKER"
           }
         },
         {

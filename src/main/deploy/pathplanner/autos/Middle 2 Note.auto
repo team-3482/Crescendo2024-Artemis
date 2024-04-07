@@ -12,9 +12,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Collect Note NOCENTER"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle - M Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Pivot and Spin"
+                }
+              }
+            ]
           }
         },
         {
