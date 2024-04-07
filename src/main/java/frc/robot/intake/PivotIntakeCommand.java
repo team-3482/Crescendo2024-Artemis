@@ -9,6 +9,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.Constants.IntakeStates;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.utilities.Telemetry;
@@ -62,6 +63,9 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        // TODO test auto
+        Telemetry.logMessage("PIVOT INTAKE COMMAND ENDED", LoggingTags.WARNING);
+        
         IntakeSubsystem.getInstance().setPivotSpeed(0);
         this.pid.close();
 

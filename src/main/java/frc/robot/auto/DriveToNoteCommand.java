@@ -13,6 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import frc.robot.constants.Constants.NoteConstants;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
@@ -79,6 +80,9 @@ public class DriveToNoteCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        // TODO test auto
+        Telemetry.logMessage("DRIVE TO NOTE COMMAND ENDED", LoggingTags.WARNING);
+        
         SwerveSubsystem.getInstance().stopModules();
         this.pidController.close();
         

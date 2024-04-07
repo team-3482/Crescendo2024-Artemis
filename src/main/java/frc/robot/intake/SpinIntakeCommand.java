@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.IntakeStates;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
@@ -83,6 +84,9 @@ public class SpinIntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        // TODO test auto
+        Telemetry.logMessage("SPIN INTAKE COMMAND ENDED", LoggingTags.WARNING);
+
         IntakeSubsystem.getInstance().setIntakeSpeed();
         SterilizerSubsystem.getInstance().setSpeed();
 

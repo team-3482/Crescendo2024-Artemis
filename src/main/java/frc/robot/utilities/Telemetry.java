@@ -72,11 +72,22 @@ public class Telemetry {
                 ? "[" + D_FORMAT.format(Timer.getFPGATimestamp()) + " sec] ": "");
         System.out.println(messageTag + message);
     }
+
     /**
-     * Logs the end of a command with an error tag if the command was interrupted or an info tag if the command ended normally 
+     * Prints the string to the console with {@link LoggingTags#INFO} and timestamp.
+     * @param message to be printed to the console
+     * @apiNote if {@link Telemetry#LOG_TIMESTAMPS} is null, it will never log timestamps
+     */
+    public static void logMessage(String message) {
+        logMessage(message, LoggingTags.INFO);
+    }
+
+    /**
+     * Logs the end of a command with {@link LoggingTags#ERROR} if the command was interrupted
+     * or {@link LoggingTags#INFO} if the command ended on its own
      * @param name of the command
      * @param interrupted whether the command was interrupted
-     * @param trailing printed after the name and interruption
+     * @param trailing concatenated after the name and interruption
      */
     public static void logCommandEnd(String name, boolean interrupted, String... trailing) {
         String _trailing = "";
@@ -89,13 +100,6 @@ public class Telemetry {
         logMessage(name + " ended " + _trailing, interrupted ? LoggingTags.ERROR : LoggingTags.INFO);
     }
 
-    /**
-     * Prints the string to the console with a tag and timestamp and no error (overloaded)
-     * @param message to be printed to the console
-     */
-    public static void logMessage(String message) {
-        logMessage(message, LoggingTags.INFO);
-    }
 
     /** Runs {@link Telemetry#initialize()} once */
     private Telemetry() {

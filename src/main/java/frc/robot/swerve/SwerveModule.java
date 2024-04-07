@@ -151,6 +151,9 @@ public class SwerveModule {
         this.turningMotor.set(0);
     }
 
+    /**
+     * Limits the publishing of CAN messages to the bus that we do not use
+     */
     private void setStatusFrames() {
         // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);

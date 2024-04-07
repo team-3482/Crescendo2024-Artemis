@@ -73,6 +73,7 @@ public class SequencedCommands {
             )
         );
     }
+    
     /**
      * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
      * until it has a note in the sterilizer. It does not return the pivots to the idle positions because 
@@ -88,7 +89,7 @@ public class SequencedCommands {
             // Will end as soon as there is a note in the SpinIntakeCommand
             Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
-                new DriveToNoteCommand()
+                new DriveToNoteCommand().withTimeout(3.5)
             )
         );
     }

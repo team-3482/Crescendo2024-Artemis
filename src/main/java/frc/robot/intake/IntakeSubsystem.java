@@ -158,6 +158,9 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {}
 
+    /**
+     * Limits the publishing of CAN messages to the bus that we do not use
+     */
     private void setStatusFrames() {
         // leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());

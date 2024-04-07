@@ -74,9 +74,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
     private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
 
-    private double[] previousCANCoder;
-    private double[] previousRotor;
-
     /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
     public ShooterSubsystem() {
         super("ShooterSubsystem");
@@ -100,6 +97,8 @@ public class ShooterSubsystem extends SubsystemBase {
         feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         // Sets the gear ratio from the motor to the mechanism (pivot)
+        // This is 1 because we use MotionMagic with the rotor,
+        // and we multiply all inputs to go to the right rotor position
         feedbackConfigs.SensorToMechanismRatio = 1;
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
@@ -113,7 +112,7 @@ public class ShooterSubsystem extends SubsystemBase {
         slot0Configs.kI = ShooterConstants.slot0Configs.kI;
         slot0Configs.kD = ShooterConstants.slot0Configs.kD;
         
-        // Set acceleration and vcruise velocity
+        // Set acceleration and cruise velocity
         MotionMagicConfigs motionMagicConfigs = configuration.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = ShooterConstants.CRUISE_SPEED;
         motionMagicConfigs.MotionMagicAcceleration = ShooterConstants.CRUISE_ACCELERATION;
@@ -145,10 +144,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     
     /**
-     * Goes to the position of the pivot using Motion Magic slot 0
-     * @deprecated MotionMagic is broken with CANCoder's innacurate velocities (vibration).
+     * Goes to provided pivot position using Motion Magic slot 0.
      * Use {@link ShooterSubsystem#setPivotSpeed(double, boolean)} instead.
-     * @param position in degrees
+     * @see {@link ShooterSubsystem#setRotorPositions()} to reset rotor positions for maximum accuracy
+     * @param position for the pivot in degrees
      * @apiNote The position is clamped by {@link ShooterConstants#ANGLE_LIMITS}
      */
     public void pivotGoToPosition(double position) {
@@ -222,21 +221,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setRotorPositions() {
         setRotorPositions(getCANcoderPositions());
     }
-    
-    /**
-     * Checks if the change in the rotor positions and CANcoder positions is in the same direction.
-     * @deprecated Doesn't work
-     * @return consistent change for both rotors and CANcoders
-     */
-    public boolean consistentPositionChange() {
-        double[] currentCANCoder = getCANcoderPositions();
-        double[] currentRotor = new double[]{
-            leftPivotMotor.getRotorPosition().getValueAsDouble(),
-            rightPivotMotor.getRotorPosition().getValueAsDouble()
-        };
-        return Math.signum(currentCANCoder[0] - previousCANCoder[0]) == Math.signum(currentRotor[0] - previousRotor[0])
-            && Math.signum(currentCANCoder[1] - previousCANCoder[1]) == Math.signum(currentRotor[1] - previousRotor[1]);
-    }
 
     /**
      * Gets the velocities of the shooter motors. Left is [0] and right is [1]
@@ -262,7 +246,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Stops the shooting motors (overloaded)
      */
     public void setShootingVelocities() {
-        setShootingVelocities(new double[2]);
+        setShootingVelocities(new double[]{0, 0});
     }
 
     /**
@@ -283,16 +267,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // previousCANCoder = getPivotPositions();
-        // previousRotor = new double[]{
-        //     leftPivotMotor.getRotorPosition().getValueAsDouble(),
-        //     rightPivotMotor.getRotorPosition().getValueAsDouble()
-        // };
         
         // System.out.println("Left : " + Telemetry.D_FORMAT.format(leftPivotMotor.getPosition().getValueAsDouble())
         //     + " Right : " + Telemetry.D_FORMAT.format(rightPivotMotor.getPosition().getValueAsDouble()));
     }
 
+    /**
+     * Limits the publishing of CAN messages to the bus that we do not use
+     */
     private void setStatusFrames() {
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);

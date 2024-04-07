@@ -21,7 +21,7 @@ public final class Constants {
     /** Stores all shooter configuration related data */
     public static enum ShooterStates {
         FRONT_EJECT(false, false, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], 25.0, 750.0),
-        INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], null, null),
+        INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], null, null, null),
         AMP(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 10.0, 435.0),
         SPEAKER(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[1], 75.0, 1500.0),
         SPEAKER_CALCULATE(true, true, true, null, 100.0, 1500.0, 1900.0),
@@ -174,14 +174,21 @@ public final class Constants {
     public static final class TelemetryConstants {
         public static enum LoggingTags {
             INFO("INFO"),
-            ERROR("ERROR");
+            ERROR("ERROR"),
+            WARNING("WARNING")
+            ;
 
             String tag;
+
             private LoggingTags(String tag) {
                 this.tag = tag;
             }
-            public String getTag()
-            {
+
+            /**
+             * Concatenates the tag with {@code "["} and {@code "]"}
+             * @return the logging tag
+             */
+            public String getTag() {
                 return "[" + this.tag + "]";
             }
         }    

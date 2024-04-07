@@ -116,6 +116,9 @@ public class SterilizerSubsystem extends SubsystemBase {
             (hasNote() ? LightState.HOLDING_NOTE : LightState.OFF), false);
     }
 
+    /**
+     * Limits the publishing of CAN messages to the bus that we do not use
+     */
     private void setStatusFrames() {
         // feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());

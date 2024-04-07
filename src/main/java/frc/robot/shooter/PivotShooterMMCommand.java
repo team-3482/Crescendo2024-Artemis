@@ -29,11 +29,11 @@ public class PivotShooterMMCommand extends Command {
     private ShooterStates state;
 
     /**
-    * Creates a new PivotShooterCommand.
+    * Creates a new PivotShooterMMCommand.
     * @param state of the shooter to reach
     */
     public PivotShooterMMCommand(ShooterStates state) {
-        setName("PivotShooterCommand");
+        setName("PivotShooterMMCommand");
         this.state = state;
         
         // Use addRequirements() here  to declare subsystem dependencies.
@@ -87,6 +87,9 @@ public class PivotShooterMMCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        // TODO test auto
+        Telemetry.logMessage("PIVOT SHOOTER MM COMMAND ENDED", LoggingTags.WARNING);
+
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
 
         Telemetry.logCommandEnd(getName(), interrupted, "goal " + Telemetry.D_FORMAT.format(this.shootingAngle));
