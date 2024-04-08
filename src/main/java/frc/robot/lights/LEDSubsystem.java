@@ -29,10 +29,10 @@ public class LEDSubsystem extends SubsystemBase {
 
         if(result == null) {
             synchronized (mutex) {
-				result = instance;
-				if (result == null)
-					instance = result = new LEDSubsystem();
-			}
+                result = instance;
+                if (result == null)
+                    instance = result = new LEDSubsystem();
+            }
         }
         return instance;
     }

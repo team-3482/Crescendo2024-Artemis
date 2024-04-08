@@ -40,13 +40,13 @@ public class Telemetry {
 
     public static Telemetry getInstance() {
         Telemetry result = instance;
-		if (result == null) {
-			synchronized (mutex) {
-				result = instance;
-				if (result == null)
-					instance = result = new Telemetry();
-			}
-		}
+        if (result == null) {
+            synchronized (mutex) {
+                result = instance;
+                if (result == null)
+                    instance = result = new Telemetry();
+            }
+        }
         return instance;
     }
 

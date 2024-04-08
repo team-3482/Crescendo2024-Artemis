@@ -17,7 +17,7 @@ import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** An command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
+/** A command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
 public class CenterSpeakerCommand extends Command {
     /** Turning {@link PIDController}, uses DEGREES for calculations */
     private PIDController pid;
@@ -99,8 +99,8 @@ public class CenterSpeakerCommand extends Command {
     }
 
     /**
-    * Ends the command when the error is smaller than tolerance at {@link AprilTagConstants}
-    */
+     * Ends the command when the error is smaller than tolerance at {@link AprilTagConstants}
+     */
     @Override
     public boolean isFinished() {
         return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE);

@@ -16,7 +16,9 @@ import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** Constants used throughout the code that are not categorized in other constants files. */
+/**
+ * Constants used throughout the code that are not categorized in other constants files.
+ */
 public final class Constants {
     /** Stores all shooter configuration related data */
     public static enum ShooterStates {
@@ -165,7 +167,7 @@ public final class Constants {
         }
     }
 
-    /** Tab names in Shuffleboard */
+    /** Tab names in Shuffleboard. */
     public static final class ShuffleboardTabNames {
         public static final String DEFAULT = "Competition";
         public static final String UTILITIES = "Utilities";

@@ -26,10 +26,10 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeSubsystem result = instance;
 
         if (result == null) {
-			synchronized (mutex) {
-				result = instance;
-				if (result == null) {
-					instance = result = new IntakeSubsystem();
+            synchronized (mutex) {
+                result = instance;
+                if (result == null) {
+                    instance = result = new IntakeSubsystem();
                 }
             }
         }

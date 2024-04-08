@@ -37,13 +37,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public static SwerveSubsystem getInstance() {
         SwerveSubsystem result = instance;
-		if (result == null) {
-			synchronized (mutex) {
-				result = instance;
-				if (result == null)
-					instance = result = new SwerveSubsystem();
-			}
-		}
+        if (result == null) {
+            synchronized (mutex) {
+                result = instance;
+                if (result == null)
+                    instance = result = new SwerveSubsystem();
+            }
+        }
         return instance;
     }
 

@@ -26,13 +26,13 @@ public class SterilizerSubsystem extends SubsystemBase {
     private static Object mutex = new Object();
     public static SterilizerSubsystem getInstance() {
         SterilizerSubsystem result = instance;
-		if (result == null) {
-			synchronized (mutex) {
-				result = instance;
-				if (result == null)
-					instance = result = new SterilizerSubsystem();
-			}
-		}
+        if (result == null) {
+            synchronized (mutex) {
+                result = instance;
+                if (result == null)
+                    instance = result = new SterilizerSubsystem();
+            }
+        }
         return instance;
     }
 

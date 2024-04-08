@@ -25,9 +25,9 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightSubsystem result = instance;
         if (result == null) {
             synchronized (mutex) {
-				result = instance;
-				if (result == null) {
-					instance = result = new LimelightSubsystem();
+                result = instance;
+                if (result == null) {
+                    instance = result = new LimelightSubsystem();
                 }
             }
         }

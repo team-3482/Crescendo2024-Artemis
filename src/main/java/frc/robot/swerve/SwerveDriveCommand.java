@@ -114,10 +114,9 @@ public class SwerveDriveCommand extends Command {
 
     /**
      * Calculates and returns D-Pad input
-     *
      * @return the x and y speeds between -1 and 1
      */
-    public double[] calculateDPad() {
+    private double[] calculateDPad() {
         double[] speeds = new double[]{0, 0};
         
         // Up

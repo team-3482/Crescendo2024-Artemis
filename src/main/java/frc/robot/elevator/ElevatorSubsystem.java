@@ -19,13 +19,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public static ElevatorSubsystem getInstance() {
         ElevatorSubsystem result = instance;
-		if (result == null) {
-			synchronized (mutex) {
-				result = instance;
-				if (result == null)
-					instance = result = new ElevatorSubsystem();
-			}
-		}
+        if (result == null) {
+            synchronized (mutex) {
+                result = instance;
+                if (result == null)
+                    instance = result = new ElevatorSubsystem();
+            }
+        }
         return instance;
     }
 

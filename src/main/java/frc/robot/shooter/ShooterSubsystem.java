@@ -37,11 +37,11 @@ public class ShooterSubsystem extends SubsystemBase {
         ShooterSubsystem result = instance;
         if(result == null) {
             synchronized (mutex) {
-				result = instance;
-				if (result == null) {
-					instance = result = new ShooterSubsystem();
+                result = instance;
+                if (result == null) {
+                    instance = result = new ShooterSubsystem();
                 }
-			}
+            }
         }
         return instance;
     }
@@ -74,7 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
     private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
 
-    /** Creates a new ShooterSubsystem, sets pivot positions, and configures Motion Magic for the pivot */
+    /** Creates a new ShooterSubsystem, and configures motors. */
     public ShooterSubsystem() {
         super("ShooterSubsystem");
         // leftShooter.setInverted(true);
@@ -87,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Configures motion magic for the intake pivot talon
+     * Configures motion magic for the shooter pivot talons.
      */
     private void configureMotionMagic() {
         // Shared configurations
@@ -145,10 +145,9 @@ public class ShooterSubsystem extends SubsystemBase {
     
     /**
      * Goes to provided pivot position using Motion Magic slot 0.
-     * Use {@link ShooterSubsystem#setPivotSpeed(double, boolean)} instead.
-     * @see {@link ShooterSubsystem#setRotorPositions()} to reset rotor positions for maximum accuracy
-     * @param position for the pivot in degrees
-     * @apiNote The position is clamped by {@link ShooterConstants#ANGLE_LIMITS}
+     * @see {@link ShooterSubsystem#setRotorPositions()} to reset rotor positions for maximum accuracy.
+     * @param position for the pivot in degrees.
+     * @apiNote The position is clamped by {@link ShooterConstants#ANGLE_LIMITS}.
      */
     public void pivotGoToPosition(double position) {
         position = MathUtil.clamp(position, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
@@ -163,7 +162,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Set the pivot speeds (last resort) between -1.0 and 1.0.
+     * Set the pivot speeds for each motor (last resort) between -1.0 and 1.0.
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
      * @param leftSpeed speed for the left motor
      * @param rightSpeed speed for the right motor
@@ -183,7 +182,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Set the pivot speeds (last resort) between -1.0 and 1.0.
+     * Set the pivot speed for both motor (last resort) between -1.0 and 1.0.
      * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
      * @param speed for both motors
      * @param override the soft limits
