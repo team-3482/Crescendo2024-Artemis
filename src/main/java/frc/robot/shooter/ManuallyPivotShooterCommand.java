@@ -16,24 +16,23 @@ public class ManuallyPivotShooterCommand extends Command {
 
     /**
     * Creates a new ManuallyPivotShooterCommand.
-    * @param leftSpeedSupplier speed from -1.0 to 1.0 to move the left motor
-    * @param rightSpeedSupplier speed from -1.0 to 1.0 to move the right motor
-    * @param swapSides swap suppliers and motors
+    * @param leftSpeedSupplier speed from -1.0 to 1.0 to move the left motor.
+    * @param rightSpeedSupplier speed from -1.0 to 1.0 to move the right motor.
+    * @param swapSides swap left and right suppliers.
     */
     public ManuallyPivotShooterCommand(Supplier<Double> leftSpeedSupplier, Supplier<Double> rightSpeedSupplier, boolean swapSides) {
         setName("ManuallyPivotShooterCommand");
+
         this.leftSpeedSupplier = leftSpeedSupplier;
         this.rightSpeedSupplier = rightSpeedSupplier;
         this.swapSides = swapSides;
-        // Default commands need to require their subsystem.
+        
         addRequirements(ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {}
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         double leftSpeed = leftSpeedSupplier.get();
@@ -62,16 +61,16 @@ public class ManuallyPivotShooterCommand extends Command {
         ShooterSubsystem.getInstance().setPivotSpeed(
             swapSides ? rightSpeed : leftSpeed,
             swapSides ? leftSpeed : rightSpeed,
-            true);
+            true
+        );
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        ShooterSubsystem.getInstance().setPivotSpeed(0, false);
+        ShooterSubsystem.getInstance().setPivotSpeed();
     }
 
-    // Returns true when the command should end. It never ends due to being a default command.
+    // This command will always never end due to being a default command.
     @Override
     public boolean isFinished() {
         return false;

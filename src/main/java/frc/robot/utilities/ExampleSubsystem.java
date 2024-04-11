@@ -7,7 +7,7 @@ package frc.robot.utilities;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ExampleSubsystem extends SubsystemBase {
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static volatile ExampleSubsystem instance;
     private static Object mutex = new Object();
 
@@ -30,8 +30,7 @@ public class ExampleSubsystem extends SubsystemBase {
         super("ExampleSubsystem");
     }
 
+    // This method will be called once per scheduler run
     @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-    }
+    public void periodic() {}
 }

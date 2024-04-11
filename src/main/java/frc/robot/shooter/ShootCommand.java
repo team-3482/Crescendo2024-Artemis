@@ -15,35 +15,35 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** A command that spins the large wheels of the shooter at the desired speed. */
+/**
+ * A command that spins the shooting wheels to a desired speed and
+ * feeds a note to them.
+ */
 public class ShootCommand extends Command {
     private ShooterStates state;
     private boolean invertSpin;
-    /** Move the sterilizer once speeds are within error and stop checking them */
+    /** Move the sterilizer once speeds are within error and then ignore the speeds entirely. */
     private boolean reachedRPM;
-    /** End the command loop using the execute() body */
     private boolean finished;
 
     /**
-    * Creates a new ShootCommand.
-    *
-    * @param state the shooter state to follow
-    */
+     * Creates a new ShootCommand.
+     * @param state the shooter state to follow.
+     */
     public ShootCommand(ShooterStates state) {
         setName("ShootCommand");
+
         this.state = state;
-        // Use addRequirements() here to declare subsystem dependencies.
+        
         addRequirements(ShooterSubsystem.getInstance().getShootingRequirement(), SterilizerSubsystem.getInstance());
     }
     
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         this.finished = false;
 
         this.invertSpin = !this.state.getCalculateAngle()
-            || SwerveSubsystem.getInstance().getHeading() < 180 ?
-                false : true;
+            || SwerveSubsystem.getInstance().getHeading() < 180 ? false : true;
         ShooterSubsystem.getInstance().setShootingVelocities(this.state.getRPMs(this.invertSpin));
 
         this.reachedRPM = false;
@@ -51,23 +51,26 @@ public class ShootCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
-        double[] rpmGoals = this.state.getRPMs(this.invertSpin);
-        System.out.println("Diff : [" + (int) Math.abs(rpmGoals[0] - velocities[0]) + " | " + (int) Math.abs(rpmGoals[1] - velocities[1]) +  "]");
-        
-        if (!this.reachedRPM
-            && ((Math.abs(rpmGoals[0] - velocities[0]) > this.state.getAllowedError()
-            || Math.abs(rpmGoals[1] - velocities[1]) > this.state.getAllowedError())))
-            return;
-        this.reachedRPM = true;
+        if (!this.reachedRPM) {
+            double[] velocities = ShooterSubsystem.getInstance().getShootingVelocities();
+            double[] rpmGoals = this.state.getRPMs(this.invertSpin);
+            System.out.println("Diff : [" + (int) Math.abs(rpmGoals[0] - velocities[0])
+                + " | " + (int) Math.abs(rpmGoals[1] - velocities[1]) +  "]"
+            );
+            
+            if (Math.abs(rpmGoals[0] - velocities[0]) > this.state.getAllowedError()
+                || Math.abs(rpmGoals[1] - velocities[1]) > this.state.getAllowedError())
+                return;
+            this.reachedRPM = true;
+        }
 
         Optional<Boolean>[] hasNote = SterilizerSubsystem.getInstance().getHasNotes();
         SterilizerSubsystem.getInstance().setSpeed(SterilizerConstants.FEEDING_SPEED);
         
         if (!this.state.getAutoEndShooting()) return;
+        
         if (hasNote[0].isEmpty() || hasNote[1].isEmpty()) {
             Timer.delay(1);
             this.finished = true;
@@ -80,7 +83,6 @@ public class ShootCommand extends Command {
         }
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setShootingVelocities();

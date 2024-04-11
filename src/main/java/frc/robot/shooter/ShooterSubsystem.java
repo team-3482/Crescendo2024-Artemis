@@ -190,6 +190,13 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setPivotSpeed(double speed, boolean override) {
         setPivotSpeed(speed, speed, override);
     }
+
+    /**
+     * Set the pivot speed for both motors to 0.
+     */
+    public void setPivotSpeed() {
+        setPivotSpeed(0, true);
+    }
     
     /**
      * Gets the positions of the pivots using the CANCoders.

@@ -23,24 +23,25 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** A command that moves the shooter pivot to a desired position. */
+/**
+ * A command that moves the shooter pivot to a desired position using Motion Magic.
+ */
 public class PivotShooterMMCommand extends Command {
     private double shootingAngle;
     private ShooterStates state;
 
     /**
-    * Creates a new PivotShooterMMCommand.
-    * @param state of the shooter to reach
-    */
+     * Creates a new PivotShooterMMCommand.
+     * @param state of the shooter to reach.
+     */
     public PivotShooterMMCommand(ShooterStates state) {
         setName("PivotShooterMMCommand");
+        
         this.state = state;
         
-        // Use addRequirements() here  to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         ShooterSubsystem.getInstance().setRotorPositions();
@@ -59,20 +60,20 @@ public class PivotShooterMMCommand extends Command {
             return;
         }
 
-        // Calculating shooter angles based off current bot position
+        // Calculating shooter angles based off current bot position.
         Translation3d point = Positions.SPEAKER_TARGETS.get(DriverStation.getAlliance().get());
         Pose2d botpose = SwerveSubsystem.getInstance().getPose();
 
-        // Calculates horizontal distance to speaker
+        // Calculates horizontal distance to speaker.
         double dist = Math.sqrt(
             Math.pow(point.getX() - botpose.getX(), 2) +
             Math.pow(point.getY() - botpose.getY(), 2)
         );
         
-        // Calculates angle from bot distance to speaker height
+        // Calculates angle from bot to speaker height.
         this.shootingAngle = Units.radiansToDegrees(Math.atan((point.getZ() - RobotConstants.SHOOTER_PIVOT_HEIGHT) / dist));
         
-        // Checks if the angle is within the current bounds, if not, ends the command 
+        // Clamps the angle within the pivot limits.
         this.shootingAngle = MathUtil.clamp(this.shootingAngle, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
         
         ShooterSubsystem.getInstance().pivotGoToPosition(this.shootingAngle);
@@ -80,23 +81,17 @@ public class PivotShooterMMCommand extends Command {
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {}
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        // TODO test auto
-        Telemetry.logMessage("PIVOT SHOOTER MM COMMAND ENDED", LoggingTags.WARNING);
-
-        ShooterSubsystem.getInstance().setPivotSpeed(0, false);
+        ShooterSubsystem.getInstance().setPivotSpeed();
 
         Telemetry.logCommandEnd(getName(), interrupted, "goal " + Telemetry.D_FORMAT.format(this.shootingAngle));
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();

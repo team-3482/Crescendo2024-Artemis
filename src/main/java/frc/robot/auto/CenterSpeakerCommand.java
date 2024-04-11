@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import frc.robot.constants.Constants.AprilTagConstants;
 import frc.robot.lights.LEDSubsystem;
@@ -17,92 +16,95 @@ import frc.robot.limelight.LimelightSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** A command to turn the bot until the speaker AprilTag is centered in front of the shooter. */
+/**
+ * A command that turns the bot until the speaker's AprilTag is centered in front of the shooter.
+ * @see {@link LimelightSubsystem} and {@link LimelightConstants#SHOOTER_LLIGHT}.
+ */
 public class CenterSpeakerCommand extends Command {
-    /** Turning {@link PIDController}, uses DEGREES for calculations */
-    private PIDController pid;
-    /** Used for {@link CenterSpeakerCommand#isFinished()} */
+    /** Uses radians for calculations. */
+    private PIDController turningPID;
+    /** Used with end condition in {@link CenterSpeakerCommand#isFinished()}. */
     private double errorRadians;
-    private double turningSpeed;
-    /** Check to see if ended due to having no tag */
+    /** Check used in {@link CenterSpeakerCommand#end(boolean)} to log if ended early due to seeing no tag. */
     private boolean noTag;
 
+    /**
+     * Creates a new CenterSpeakerCommand().
+     */
     public CenterSpeakerCommand() {
         setName("CenterSpeakerCommand");
 
-        this.pid = new PIDController(
-            AprilTagConstants.PPID.KP_HIGH,
-            AprilTagConstants.PPID.KI,
-            AprilTagConstants.PPID.KD,
-            (double) 1 / 30
+        this.turningPID = new PIDController(
+            AprilTagConstants.PID.KP_HIGH,
+            AprilTagConstants.PID.KI,
+            AprilTagConstants.PID.KD,
+            (double) 1 / 30 // This period should somewhat account for LL framerate and latency.
         );
-        this.pid.setTolerance(Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE));
-        this.pid.enableContinuousInput(0, 360);
+        this.turningPID.setTolerance(Units.degreesToRadians(AprilTagConstants.PID.TOLERANCE));
+        this.turningPID.enableContinuousInput(0, 360);
         
-        // Adds the swerve subsyetm to requirements to ensure that it is the only class
-        // modifying its data at a single time
-        // Do not require limelight subsystem because it is getter functions only
         addRequirements(SwerveSubsystem.getInstance()); 
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // End the Command if it starts without seeing an AprilTag
+        // End the Command if it starts without seeing an AprilTag.
         if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.SHOOTER_LLIGHT)) {
             this.noTag = true;
-            CommandScheduler.getInstance().cancel(this);
+            this.cancel();
             return;
         }
         this.noTag = false;
 
         this.errorRadians = Units.degreesToRadians(
-            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
+            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT)
+        );
         
+        // Workaround to initial speeds being too low/high for PID.
+        // This is not ideal.
         if (Math.abs(Units.radiansToDegrees(this.errorRadians)) >= 15) {
-            this.pid.setP(AprilTagConstants.PPID.KP_HIGH);
+            this.turningPID.setP(AprilTagConstants.PID.KP_HIGH);
         }
         else if (Math.abs(Units.radiansToDegrees(this.errorRadians)) >= 5) {
-            this.pid.setP(AprilTagConstants.PPID.KP_LOW);
+            this.turningPID.setP(AprilTagConstants.PID.KP_LOW);
         }
         else {
-            this.pid.setP(AprilTagConstants.PPID.KP_LOWEST);
+            this.turningPID.setP(AprilTagConstants.PID.KP_LOWEST);
         }
 
-        this.pid.reset();
-        
+        this.turningPID.reset();
+
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
     @Override
     public void execute() {
-        // Skip loops when the LL is not getting proper data, otherwise errorDegrees is 0
+        // Skip loops when the LL is not getting the right data, otherwise tx is wrong.
         int tagID = LimelightSubsystem.getInstance().getTargetID();
         if (tagID != 4 && tagID != 7) return;
 
         this.errorRadians = Units.degreesToRadians(
-            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT));
+            LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.SHOOTER_LLIGHT)
+        );
 
-        this.turningSpeed = this.pid.calculate(this.errorRadians, 0) * AprilTagConstants.TURNING_SPEED_COEFFIECENT;
+        double turningSpeed = this.turningPID.calculate(this.errorRadians, 0) * AprilTagConstants.TURNING_SPEED_COEFFIECENT;
 
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0, 0, this.turningSpeed);
-        SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
+        SwerveSubsystem.getInstance().setChassisSpeeds(
+            new ChassisSpeeds(0, 0, turningSpeed)
+        );
     }
 
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        this.pid.close();
+        this.turningPID.close();
         
         Telemetry.logCommandEnd(getName(), interrupted, this.noTag ? "NO TAG SEEN" : "");
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    /**
-     * Ends the command when the error is smaller than tolerance at {@link AprilTagConstants}
-     */
     @Override
     public boolean isFinished() {
-        return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.PPID.TOLERANCE);
+        return Math.abs(this.errorRadians) <= Units.degreesToRadians(AprilTagConstants.PID.TOLERANCE);
     }
 }

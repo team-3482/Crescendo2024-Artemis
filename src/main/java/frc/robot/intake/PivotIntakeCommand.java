@@ -9,26 +9,28 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.Constants.IntakeStates;
-import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.utilities.Telemetry;
 
-/** A command to move the intake to a specific position. */
+/**
+ * A command to move the intake to a specific position.
+ */
 public class PivotIntakeCommand extends Command {
     private IntakeStates state;
+    /** Uses radians for calculations. */
     private PIDController pid;
-    private boolean up;
 
     /**
-     * Initializes a new PivotIntakeCommand
-     * @param state of the intake
+     * Creates a new PivotIntakeCommand.
+     * @param state of the intake.
      */
     public PivotIntakeCommand(IntakeStates state) {
         setName("PivotIntakeCommand");
+        
         this.state = state;
         
-        // Set at initialization
+        // P is set in the initialize() method.
         this.pid = new PIDController(0, 0, 0);
         this.pid.setTolerance(this.state.getTolerance());
         this.pid.enableContinuousInput(0, 2 * Math.PI);
@@ -38,34 +40,27 @@ public class PivotIntakeCommand extends Command {
 
     @Override
     public void initialize() {
-        this.up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
-        this.pid.setP(this.up ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN);
+        // Whether or not the intake is moving upwards.
+        boolean up = this.state.getAngle() - IntakeSubsystem.getInstance().getPivotPosition() > 0;
+        // Uses a different P value on the way up due to acting against gravity.
+        this.pid.setP(up ? IntakeConstants.PIVOT_PID_P_UP : IntakeConstants.PIVOT_PID_P_DOWN);
         this.pid.reset();
+        
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
     @Override
     public void execute() {
-        double speed;
-        double position = IntakeSubsystem.getInstance().getPivotPosition();
-        if (this.up) {
-            speed = this.pid.calculate(
-                Units.degreesToRadians(position),
-                Units.degreesToRadians(this.state.getAngle()));
-        }
-        else {
-            speed = this.pid.calculate(
-                Units.degreesToRadians(position),
-                Units.degreesToRadians(this.state.getAngle()));
-        }
+        double speed = this.pid.calculate(
+            Units.degreesToRadians(IntakeSubsystem.getInstance().getPivotPosition()),
+            Units.degreesToRadians(this.state.getAngle())
+        );
+        
         IntakeSubsystem.getInstance().setPivotSpeed(speed);
     }
 
     @Override
     public void end(boolean interrupted) {
-        // TODO test auto
-        Telemetry.logMessage("PIVOT INTAKE COMMAND ENDED", LoggingTags.WARNING);
-        
         IntakeSubsystem.getInstance().setPivotSpeed(0);
         this.pid.close();
 

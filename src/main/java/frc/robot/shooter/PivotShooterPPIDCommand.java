@@ -25,28 +25,33 @@ import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** A command that moves the shooter pivot to a desired position. */
+/**
+ * A command that moves the shooter pivot to a desired position
+ * using a {@link ProfiledPIDController}.
+ * @deprecated Use MotionMagic instead.
+ * This uses CANcoders which have too much error due to vibrations in the pivot.
+ */
 public class PivotShooterPPIDCommand extends Command {
     private double shootingAngle;
     private ShooterStates state;
     private ProfiledPIDController ppid;
 
     /**
-    * Creates a new PivotShooterPPIDCommand.
-    * @param state of the shooter to reach
-    */
+     * Creates a new PivotShooterPPIDCommand.
+     * @param state of the shooter to reach.
+     */
     public PivotShooterPPIDCommand(ShooterStates state) {
         setName("PivotShooterPPIDCommand");
+        
         this.state = state;
-        this.ppid = new ProfiledPIDController(ShooterConstants.Pivot.kP_PIVOT, 0, 0,
-        new TrapezoidProfile.Constraints(ShooterConstants.Pivot.MAX_VEL, ShooterConstants.Pivot.MAX_ACCEL)
+        this.ppid = new ProfiledPIDController(
+            ShooterConstants.Pivot.kP_PIVOT, 0, 0,
+            new TrapezoidProfile.Constraints(ShooterConstants.Pivot.MAX_VEL, ShooterConstants.Pivot.MAX_ACCEL)
         );
         
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(ShooterSubsystem.getInstance().getPivotRequirement());
     }
     
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();
@@ -66,26 +71,25 @@ public class PivotShooterPPIDCommand extends Command {
             return;
         }
 
-        // Calculating shooter angles based off current bot position
+        // Calculating shooter angles based off current bot position.
         Translation3d point = Positions.SPEAKER_TARGETS.get(DriverStation.getAlliance().get());
         Pose2d botpose = SwerveSubsystem.getInstance().getPose();
 
-        // Calculates horizontal distance to speaker
+        // Calculates horizontal distance to speaker.
         double dist = Math.sqrt(
             Math.pow(point.getX() - botpose.getX(), 2) +
             Math.pow(point.getY() - botpose.getY(), 2)
         );
         
-        // Calculates angle from bot distance to speaker height
+        // Calculates angle from bot to speaker height.
         this.shootingAngle = Units.radiansToDegrees(Math.atan((point.getZ() - RobotConstants.SHOOTER_PIVOT_HEIGHT) / dist));
         
-        // Checks if the angle is within the current bounds, if not, ends the command 
+        // Clamps the angle within the pivot limits.
         this.shootingAngle = MathUtil.clamp(this.shootingAngle, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
         
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();
@@ -96,7 +100,6 @@ public class PivotShooterPPIDCommand extends Command {
         );
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         ShooterSubsystem.getInstance().setPivotSpeed(0, false);
@@ -105,7 +108,6 @@ public class PivotShooterPPIDCommand extends Command {
         LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         double[] pivotPositions = ShooterSubsystem.getInstance().getCANcoderPositions();

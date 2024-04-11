@@ -25,37 +25,37 @@ import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.swerve.SwerveSubsystem;
 
-/** A class that generates pathfinding commands. */
+/**
+ * A class that generates pathfinding commands.
+ */
 public final class PathingCommands {
     private static final PathConstraints CONSTRAINTS = new PathConstraints(
         AutonConstraints.MAX_LINEAR_VELOCITY,
         AutonConstraints.MAX_LINEAR_ACCELERATION,
         AutonConstraints.MAX_ANGULAR_VELOCITY,
-        AutonConstraints.MAX_ANGULAR_ACCELERATION);
+        AutonConstraints.MAX_ANGULAR_ACCELERATION
+    );
     
     /**
      * This class should only be used for static getters. Do not initialize it.
-     * @throws Exception This class should not be initialized
      */
-    private PathingCommands() throws Exception {
-        throw new Exception("This class should not be initialized");
-    }
+    private PathingCommands() {}
 
     /**
-     * Calculates a position using {@link Autobuilder#pathfindToPose()}
-     * @param targetPosition
-     * @return the Pathfinding command or {@link Commands#none()} if no alliance is found
+     * Creates a path using {@link AutoBuilder#pathfindToPose()}.
+     * @param targetPosition to pathfind to.
+     * @return the Pathfinding command or {@link Commands#none()} if no alliance is found.
      */
     public static Command getPathfindCommand(PathfindingPosition targetPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+        if (alliance.isEmpty()) {
+            LEDSubsystem.getInstance().setCommandStopState(true);
             return Commands.none();
         }
         
         Pose2d targetPose = Positions.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
         
-        Command path = AutoBuilder.pathfindToPose(targetPose, PathingCommands.CONSTRAINTS, 0, 0.1);
+        Command path = AutoBuilder.pathfindToPose(targetPose, PathingCommands.CONSTRAINTS);
         path.setName("PathfindCommand");
 
         LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
@@ -63,21 +63,21 @@ public final class PathingCommands {
     }
 
     /**
-     * Calculates a position using {@link PathPlannerPath#bezierFromPoses(Pose2d...)}
-     * @param targetPosition
-     * @return the Bezier command or {@link Commands#none()} if no alliance is found
+     * Creates a path using {@link PathPlannerPath#bezierFromPoses(Pose2d...)}.
+     * @param targetPosition to pathfind to.
+     * @return the Bezier command or {@link Commands#none()} if no alliance is found.
      */
     public static Command getBezierCommand(PathfindingPosition targetPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
+        if (alliance.isEmpty()) {
+            LEDSubsystem.getInstance().setCommandStopState(true);;
             return Commands.none();
         }
         
         Pose2d botPose = SwerveSubsystem.getInstance().getPose();
-        // The rotation component for endPos is used for the GoalEndState rotation
+        // The rotation component for endPos is used for the GoalEndState rotation.
         Pose2d endPos = Positions.PATHFIND_POSITIONS.get(alliance.get()).get(targetPosition);
-        // The travelRotation represents the direction of travel
+        // The travelRotation represents the direction of travel.
         Rotation2d travelRotation = endPos.getRotation();
         
         Pose2d startPos = new Pose2d(botPose.getTranslation(), travelRotation);
@@ -89,7 +89,7 @@ public final class PathingCommands {
             PathingCommands.CONSTRAINTS,
             new GoalEndState(0, endPos.getRotation())
         );
-        // Prevent this path from being flipped on the red alliance, since the given positions are already correct
+        // Prevent this path from being flipped on the red alliance, since the given positions are already correct.
         bezierPath.preventFlipping = true;
     
         Command path = AutoBuilder.followPath(bezierPath);

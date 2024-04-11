@@ -12,11 +12,13 @@ import frc.robot.intake.SpinIntakeCommand;
 import frc.robot.shooter.PivotShooterMMCommand;
 import frc.robot.shooter.ShootCommand;
 
-/** A class that stores command chains for use elsewhere */
+/**
+ * A class that stores command chains for use elsewhere.
+ */
 public class SequencedCommands {
     /**
-     * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
-     * infinitely or until it has a note in the sterilizer.
+     * Creates a command that moves the shooter and intake to intaking positions
+     * and then runs the intaking command until it has a note in the sterilizer.
      * @return the command
      */
     public static Command getIntakeCommand() {
@@ -28,8 +30,9 @@ public class SequencedCommands {
     }
 
     /**
-     * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
-     * until it has a note in the sterilizer or the limelight does not see the note anymore.
+     * Creates a command that moves the shooter and intake to intaking positions,
+     * runs the intaking command, center center the bot on the note and drives to it,
+     * and upon intaking the note will return intake and shooter back to their idle positions.
      * @return the command
      */
     public static Command getCollectNoteCommand() {
@@ -39,7 +42,7 @@ public class SequencedCommands {
                 new PivotShooterMMCommand(ShooterStates.INTAKE)
             ),
             new CenterNoteCommand().withTimeout(NoteConstants.CENTERING_TIMEOUT),
-            // Will end as soon as there is a note in the SpinIntakeCommand
+            // Will end as soon as there is a note in the sterilizer.
             Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
                 new DriveToNoteCommand().withTimeout(3.5)
@@ -52,8 +55,7 @@ public class SequencedCommands {
     }
     
     /**
-     * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
-     * until it has a note in the sterilizer
+     * Runs exactly like {@link SequencedCommands#getCollectNoteCommand()} but omits {@link CenterNoteCommand}.
      * @return the command
      */
     public static Command getCollectNoteCommandNoCenter() {
@@ -62,7 +64,7 @@ public class SequencedCommands {
                 new PivotIntakeCommand(IntakeStates.INTAKING),
                 new PivotShooterMMCommand(ShooterStates.INTAKE)
             ),
-            // Will end as soon as there is a note in the SpinIntakeCommand
+            // Will end as soon as there is a note in the sterilizer.
             Commands.race(
                 new SpinIntakeCommand(IntakeStates.INTAKING),
                 new DriveToNoteCommand().withTimeout(3.5)
@@ -75,12 +77,11 @@ public class SequencedCommands {
     }
     
     /**
-     * Creates a command that moves the shooter and intake to intaking positions and then turns on the motors
-     * until it has a note in the sterilizer. It does not return the pivots to the idle positions because 
-     * other commands will move them if they need the pivots to be moved (decreses time required for command)
+     * Runs exactly like {@link SequencedCommands#getCollectNoteCommandNoCenter()}
+     * but does not return the shooter and intake to their idle positions.
      * @return the command
      */
-    public static Command getAutonCollectNoteCommand() {
+    public static Command getCollectNoteCommandNoCenterNoIdle() {
         return Commands.sequence(
             Commands.parallel(
                 new PivotIntakeCommand(IntakeStates.INTAKING),
@@ -95,7 +96,7 @@ public class SequencedCommands {
     }
 
     /**
-     * Creates a command that shoots a note into the speaker automatically from the current position.
+     * Creates a command that pivots the shooter and shoots a note into the speaker from the current position.
      * @return the command
      */
     public static Command getAutoSpeakerShootCommand() {
@@ -106,7 +107,7 @@ public class SequencedCommands {
     }
 
     /**
-     * Creates a command that shoots notes immediately after picking them up and doesn't close the intake
+     * Creates a command that shoots notes immediately after picking them up and never ends.
      * @return the command
      */
     public static Command getIntakeEjectCommand() {

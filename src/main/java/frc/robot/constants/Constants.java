@@ -208,7 +208,7 @@ public final class Constants {
     /** Constants for autos that use the shooter limelight */
     public static final class AprilTagConstants {
         /** PID constants for controlling the turning speed during centering */
-        public static final class PPID {
+        public static final class PID {
             /** Tolerance for the PID controller in degrees */
             public static final double TOLERANCE = 3;
             public static final double KP_HIGH = 1;

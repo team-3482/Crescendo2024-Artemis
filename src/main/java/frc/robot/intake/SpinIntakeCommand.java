@@ -8,32 +8,35 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.Constants.IntakeStates;
-import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.SterilizerConstants;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.utilities.Telemetry;
 
-/** A command to spin the rollers in the intake using the current {@link IntakeStates}. */
+/**
+ * A command to spin the rollers in the intake.
+ * */
 public class SpinIntakeCommand extends Command {
     private IntakeStates state;
     private boolean stopForNote;
     private boolean finished;
 
     /**
-     * Initializes a new SpinIntakeCommand
-     * @param state state of the intake
+     * Creates a new SpinIntakeCommand.
+     * @param state state of the intake.
      * @param stopForNote stop the command when a note is in the sterilizer.
-     * @apiNote if stofForNote is false, this subsystem will NOT run the sterilizer.
-     * Use it in conjunction with {@link ShootCommmand}
+     * @apiNote if {@code stopForNote} is {@code false}, this subsystem will NOT run the sterilizer.
+     * Use it in conjunction with {@link ShootCommmand}.
      */
     public SpinIntakeCommand(IntakeStates state, boolean stopForNote) {
         setName("IntakeCommand");
+
         this.state = state;
         this.stopForNote = stopForNote;
 
-        // Don't require anything because this command is run in parallel multiple times
+        // Dont't require the Sterilizer when not stopping for notes,
+        // otherwise it conflicts with parallel commands that require it.
         if (stopForNote) {
             addRequirements(IntakeSubsystem.getInstance().getIntakingRequirement(), SterilizerSubsystem.getInstance());
         }
@@ -43,8 +46,8 @@ public class SpinIntakeCommand extends Command {
     }
 
     /**
-     * Initializes a new SpinIntakeCommand that stops for notes (overloaded)
-     * @param state state of the intake
+     * Creates a new SpinIntakeCommand that stops for notes.
+     * @param state state of the intake.
      */
     public SpinIntakeCommand(IntakeStates state) {
         this(state, true);
@@ -53,6 +56,7 @@ public class SpinIntakeCommand extends Command {
     @Override
     public void initialize() {
         this.finished = false;
+
         LEDSubsystem.getInstance().setLightState(LightState.CMD_RUNNING);
     }
 
@@ -83,11 +87,7 @@ public class SpinIntakeCommand extends Command {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        // TODO test auto
-        Telemetry.logMessage("SPIN INTAKE COMMAND ENDED", LoggingTags.WARNING);
-
-        IntakeSubsystem.getInstance().setIntakeSpeed();
+    public void end(boolean interrupted) {IntakeSubsystem.getInstance().setIntakeSpeed();
         SterilizerSubsystem.getInstance().setSpeed();
 
         Telemetry.logCommandEnd(getName(), interrupted);
