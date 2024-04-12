@@ -44,7 +44,7 @@ public final class PathingCommands {
     /**
      * Creates a path using {@link AutoBuilder#pathfindToPose()}.
      * @param targetPosition to pathfind to.
-     * @return the Pathfinding command or {@link Commands#none()} if no alliance is found.
+     * @return The Pathfinding command or {@link Commands#none()} if no alliance is found.
      */
     public static Command getPathfindCommand(PathfindingPosition targetPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
@@ -65,7 +65,7 @@ public final class PathingCommands {
     /**
      * Creates a path using {@link PathPlannerPath#bezierFromPoses(Pose2d...)}.
      * @param targetPosition to pathfind to.
-     * @return the Bezier command or {@link Commands#none()} if no alliance is found.
+     * @return The Bezier command or {@link Commands#none()} if no alliance is found.
      */
     public static Command getBezierCommand(PathfindingPosition targetPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();

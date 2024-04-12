@@ -13,7 +13,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * Positions used for initialization or calculations.
+ * A class that stores positions used for initialization and calculations.
  */
 public final class Positions {
     /** SPEAKER positions to target */
@@ -38,29 +38,29 @@ public final class Positions {
             this.location = position;
         }
         /**
-         * Gets the human-readable name of the position
-         * @return the name
+         * Gets the human-readable name of the position.
+         * @return the name.
          */
         public String getName() {
             return this.name;
         }
         /**
-         * Gets the integer location based on {@link DriverStation#getLocation()}
-         * @return the location
+         * Gets the integer location based on {@link DriverStation#getLocation()}.
+         * @return the location.
          */
         public int getLocation() {
             return this.location;
         }
         /**
-         * Gets an array of the {@link StartingPositions}
-         * @return the array
+         * Gets an array of the {@link StartingPositions}.
+         * @return the array.
          */
         public static StartingPositions[] getStartingPositions() {
             return new StartingPositions[]{TOP, MIDDLE, BOTTOM, AUTO};
         }
     }
 
-    /** Initial bot positions used for initializing odometry, blue-alliance relative */
+    /** Initial bot positions used for initializing odometry, blue-alliance relative. */
     public static final Map<DriverStation.Alliance, Map<Integer, Pose2d>> STARTING_POSITIONS = Map.ofEntries(
         Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
             Map.entry(3, new Pose2d(new Translation2d(0.75, 6.66), Rotation2d.fromDegrees(60))),
@@ -72,7 +72,7 @@ public final class Positions {
             Map.entry(1, new Pose2d(new Translation2d(15.8, 4.50), Rotation2d.fromDegrees(60)))))
     );
 
-    /** Names used to organize pathfinding positions in {@link Positions#PATHFIND_POSITIONS} */
+    /** Names used to organize pathfinding positions in {@link Positions#PATHFIND_POSITIONS}. */
     public static enum PathfindingPosition {
         SPEAKER_TOP,
         SPEAKER_MIDDLE,
@@ -80,7 +80,7 @@ public final class Positions {
         AMP
     }
 
-    /** Position the robot should line up to, blue-alliance relative */
+    /** Position the robot should line up to, blue-alliance relative. */
     public static final Map<DriverStation.Alliance, Map<PathfindingPosition, Pose2d>> PATHFIND_POSITIONS = Map.ofEntries(
         Map.entry(DriverStation.Alliance.Blue, Map.ofEntries(
             Map.entry(PathfindingPosition.SPEAKER_TOP, STARTING_POSITIONS.get(DriverStation.Alliance.Blue).get(StartingPositions.TOP.getLocation())),

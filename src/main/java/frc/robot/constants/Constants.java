@@ -20,7 +20,7 @@ import frc.robot.utilities.Telemetry;
  * Constants used throughout the code that are not categorized in other constants files.
  */
 public final class Constants {
-    /** Stores all shooter configuration related data */
+    /** Stores all shooter configuration related data. */
     public static enum ShooterStates {
         FRONT_EJECT(false, false, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], 25.0, 750.0),
         INTAKE(false, true, false, ShooterConstants.Pivot.ANGLE_LIMITS[0], null, null, null),
@@ -38,13 +38,13 @@ public final class Constants {
         Double allowedError;
 
         /**
-         * Creates a new ShooterState
+         * Creates a new ShooterState.
          * @param calculateAngle
          * @param autoEndShooting
          * @param spin
          * @param angle
          * @param allowedError
-         * @param RPMS - Put lower RPM first and higher second
+         * @param RPMS Put lower RPM first and higher second.
          */
         private ShooterStates(boolean calculateAngle, boolean autoEndShooting, boolean spin,
             Double angle, Double allowedError, Double... RPMS) {
@@ -57,33 +57,33 @@ public final class Constants {
         }
 
         /**
-         * Whether or not to automatically calculate shooting angles
-         * @return calculateAngle
+         * Whether or not to automatically calculate shooting angles.
+         * @return calculateAngle.
          */
         public boolean getCalculateAngle() {
             return this.calculateAngle;
         }
 
         /**
-         * Whether or not to stop the sterilizer when no note is detected
-         * @return autoEndShooting
+         * Whether or not to stop the sterilizer when no note is detected.
+         * @return autoEndShooting.
          */
         public boolean getAutoEndShooting() {
             return this.autoEndShooting;
         }
 
         /**
-         * The angle the shooter should be at for this state
-         * @return the angle
+         * The angle the shooter should be at for this state.
+         * @return the angle.
          */
         public double getAngle() {
             return this.positionAngle;
         }
 
         /**
-         * The RPMs for this state
-         * @param invert inverts highRPM in [0] and [1]
-         * @return the RPMs
+         * The RPMs for this state.
+         * @param invert inverts highRPM in [0] and [1].
+         * @return the RPMs.
          */
         public double[] getRPMs(boolean invert) {
             double _rpms = this.rpms[0];
@@ -94,7 +94,7 @@ public final class Constants {
                     Translation3d point = Positions.SPEAKER_TARGETS.get(DriverStation.getAlliance().get());
                     Pose2d botpose = SwerveSubsystem.getInstance().getPose();
                     
-                    // Calculates horizontal distance to speaker
+                    // Calculates horizontal distance to speaker.
                     double dist = Math.sqrt(
                         Math.pow(point.getX() - botpose.getX(), 2) +
                         Math.pow(point.getY() - botpose.getY(), 2)
@@ -119,61 +119,73 @@ public final class Constants {
         }
 
         /**
-         * The tolerance for this state's angle
-         * @return the allowed error
+         * The tolerance for this state's angle.
+         * @return the allowed error.
          */
         public double getAllowedError() {
             return this.allowedError;
         }
     }
     
-    /** Stores all intake configuration related data */
+    /** Stores all intake configuration related data. */
     public static enum IntakeStates {
         INTAKING(0, 5, IntakeConstants.INTAKE_SPEED),
-        /** The hardware stop angle for the intake when it is idle in degrees*/
+        /** The hardware stop angle for the intake when it is idle in degrees. */
         IDLE(148, 5, 0)
         ;
         
-        /* Angle of the intake in degrees */
+        /* Angle of the intake in degrees. */
         double intakeAngle;
         double tolerance;
         double speed;
 
+        /**
+         * Creates a new IntakeStates.
+         * @param intakeAngle
+         * @param tolerance in degrees.
+         * @param speed to spin the wheels at.
+         */
         private IntakeStates(double intakeAngle, double tolerance, double speed) {
             this.intakeAngle = intakeAngle;
             this.tolerance = tolerance;
             this.speed = speed;
         }
         /**
-         * The angle of this state
-         * @return the angle
+         * The angle of this state.
+         * @return the angle.
          */
         public double getAngle() {
             return this.intakeAngle;
         }
         /**
-         * The tolerance for movement to this angle
-         * @return the tolerance
+         * The tolerance for movement to this angle.
+         * @return the tolerance.
          */
         public double getTolerance() {
             return this.tolerance;
         }
         /**
-         * The speed at which to spin the intake
-         * @return the speed
+         * The speed at which to spin the intake.
+         * @return the speed.
          */
         public double getSpeed() {
             return this.speed;
         }
     }
 
-    /** Tab names in Shuffleboard. */
+    /**
+     * Tab names in Shuffleboard.
+     */
     public static final class ShuffleboardTabNames {
         public static final String DEFAULT = "Competition";
         public static final String UTILITIES = "Utilities";
     }
 
+    /**
+     * Constants used for {@link Telemetry}. 
+     */
     public static final class TelemetryConstants {
+        /** Tags used when logging information. */
         public static enum LoggingTags {
             INFO("INFO"),
             ERROR("ERROR"),
@@ -187,8 +199,8 @@ public final class Constants {
             }
 
             /**
-             * Concatenates the tag with {@code "["} and {@code "]"}
-             * @return the logging tag
+             * Concatenates the tag with {@code "["} and {@code "]"}.
+             * @return the logging tag.
              */
             public String getTag() {
                 return "[" + this.tag + "]";
@@ -196,20 +208,24 @@ public final class Constants {
         }    
     }
 
-    /** Values used for running autonomous code */
+    /**
+     * Values used for running autonomous code.
+     */
     public static final class AutonConstraints {
-        // These are used for on-the-fly paths
+        // These are used for constraints for {@link PathfindingCommands}.
         public static final double MAX_LINEAR_VELOCITY = SwerveKinematics.DRIVE_SPEED_COEFFICENT;
         public static final double MAX_LINEAR_ACCELERATION = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
         public static final double MAX_ANGULAR_VELOCITY = SwerveKinematics.TURNING_SPEED_COEFFIECENT;
         public static final double MAX_ANGULAR_ACCELERATION = SwerveKinematics.TURNING_SLEW_RATE_LIMIT / 3;
     }
 
-    /** Constants for autos that use the shooter limelight */
+    /**
+     * Constants for autos that use the shooter limelight.
+     */
     public static final class AprilTagConstants {
-        /** PID constants for controlling the turning speed during centering */
+        /** PID constants for controlling the turning speed during centering. */
         public static final class PID {
-            /** Tolerance for the PID controller in degrees */
+            /** Tolerance for the PID controller in degrees. */
             public static final double TOLERANCE = 3;
             public static final double KP_HIGH = 1;
             public static final double KP_LOW = 1.5;
@@ -222,21 +238,23 @@ public final class Constants {
         public static final double TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
     }
 
-    /** Constants for autos that use the intake limelight */
+    /**
+     * Constants for autos that use the intake limelight.
+     */
     public static final class NoteConstants {
-        /** The rate of change limit (units per second) for turning limiter in orbit mode */
+        /** The rate of change limit (units per second) for turning when centering. */
         public static final double NOTE_TURNING_SLEW_RATE_LIMIT = SwerveKinematics.TURNING_SLEW_RATE_LIMIT;
-        /** The rate limit in units per second for driving in orbit mode (x and y) */
+        /** The rate limit in units per second for driving to notes. */
         public static final double NOTE_DRIVE_SLEW_RATE_LIMIT = SwerveKinematics.DRIVE_SLEW_RATE_LIMIT;
-        /** The input speed the bot should have when driving to a note (between 0.0 and 1.0) */
+        /** The input speed the bot should have when driving to a note (between 0.0 and 1.0). */
         public static final double NOTE_DRIVE_INPUT_SPEED = (double) 1 / 3;
 
-        /** Time limit for the centering command in seconds */
+        /** Time limit for the centering command in seconds. */
         public static final double CENTERING_TIMEOUT = 1.5;
 
-        /** PID constants for controlling the turning speed during centering */
+        /** PID constants for controlling the turning speed during centering. */
         public static final class PID {
-            /** Tolerance for the PID controller in degrees */
+            /** Tolerance for the PID controller in degrees. */
             public static final double TOLERANCE = 5;
             public static final double KP = 0.6;
             public static final double KI = 0;
@@ -244,15 +262,15 @@ public final class Constants {
         };
     }
 
-    /** Constants for the controller and any controller related assignments */
+    /** Constants for the controller and any controller related assignments. */
     public static final class ControllerConstants {
-        /** DriverStation ID of the driver controller */
+        /** DriverStation ID of the driver controller. */
         public static final int DRIVE_CONTROLLER_ID = 0;
-        /** DriverStation ID of the operator controller */
+        /** DriverStation ID of the operator controller. */
         public static final int OPERATOR_CONTROLLER_ID = 1;
-        /** Removes input around the joystick's center (eliminates stick drift) */
+        /** Removes input around the joystick's center (eliminates stick drift). */
         public static final double DEADBAND = 0.075;
-        /** Whether or not to accept directional pad input for movement */
+        /** Whether or not to accept directional pad input for movement. */
         public static final boolean DPAD_DRIVE_INPUT = true;
     }
 }

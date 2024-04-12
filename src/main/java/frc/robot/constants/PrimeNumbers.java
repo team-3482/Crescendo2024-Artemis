@@ -1,5 +1,8 @@
 package frc.robot.constants;
 
+/**
+ * A class that stores prime numbers to be used with CAN messages so they do not overlap.
+ */
 public final class PrimeNumbers {
     private static final int[] primeNumbers = new int[]{
         10177, 10193, 10321, 10337, 10711, 10771, 10949, 11177, 11351,
@@ -15,12 +18,13 @@ public final class PrimeNumbers {
         29671, 29723, 30103, 30119, 30203, 30313, 30557, 31391, 31513, 32299, 32309, 32341, 32363,
         32503, 32531, 32573, 32693
     };
+    
     private static int primeNumberIndex = 0;
 
     /**
-     * Gets the next prime number in the list and increases the counter.
-     * @return 5-digit prime number
-     * @throws ArrayIndexOutOfBoundsException when the robot is ouf of prime numbers
+     * Gets the next prime number in the array.
+     * @return 5-digit prime number.
+     * @throws ArrayIndexOutOfBoundsException when the robot is ouf of prime numbers.
      */
     public static int getNextPrimeNumber() {
         return primeNumbers[primeNumberIndex++];

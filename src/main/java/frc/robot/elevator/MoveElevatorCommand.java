@@ -16,8 +16,8 @@ public class MoveElevatorCommand extends Command {
 
     /**
      * Creates a new MoveElevatorCommand.
-     * @param positiveSpeedSupplier speed from 0 to 1.0 to move the motors in the negative direction
-     * @param negativeSpeedSupplier speed from 0 to 1.0 to move the motors in the positive direction 
+     * @param positiveSpeedSupplier speed from 0 to 1.0 to move the motors in the negative direction.
+     * @param negativeSpeedSupplier speed from 0 to 1.0 to move the motors in the positive direction.
      */
     public MoveElevatorCommand(Supplier<Double> positiveSpeedSupplier, Supplier<Double> negativeSpeedSupplier) {
         setName("MoveElevatorCommand");
@@ -34,9 +34,9 @@ public class MoveElevatorCommand extends Command {
     @Override
     public void execute() {
         double posSpeed = this.positiveSpeedSupplier.get();
-            posSpeed = posSpeed < 0.05 ? 0 : posSpeed; // Deadband for trigger
+            posSpeed = posSpeed < 0.05 ? 0 : posSpeed; // Deadband for trigger.
         double negSpeed = this.negativeSpeedSupplier.get();
-            negSpeed = negSpeed < 0.05 ? 0 : negSpeed; // Deadband for trigger
+            negSpeed = negSpeed < 0.05 ? 0 : negSpeed; // Deadband for trigger.
         double speed;
         
         if (posSpeed != 0 && negSpeed != 0) {
