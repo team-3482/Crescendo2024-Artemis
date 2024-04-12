@@ -20,8 +20,11 @@ import frc.robot.constants.PrimeNumbers;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 
+/**
+ * A subsytem that moves the sterilizer and queries laser data.
+ */
 public class SterilizerSubsystem extends SubsystemBase {
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static volatile SterilizerSubsystem instance;
     private static Object mutex = new Object();
     public static SterilizerSubsystem getInstance() {
@@ -40,16 +43,25 @@ public class SterilizerSubsystem extends SubsystemBase {
     private LaserCan backLaser = new LaserCan(SterilizerConstants.BACK_LASER_ID);
     private LaserCan frontLaser = new LaserCan(SterilizerConstants.FRONT_LASER_ID);
 
-    /** Creates a new SterilizerSubsystem. LaserCAN is configured in the GrappleHook app */
+    /**
+     * Creates a new SterilizerSubsystem.
+     * @apiNote LaserCAN should be configured in the GrappleHook app.
+     */
     public SterilizerSubsystem() {
         super("SterilizerSubsystem");
 
         setStatusFrames();
     }
+
+    @Override
+    public void periodic() {
+        LEDSubsystem.getInstance().setLightState(
+            (hasNote() ? LightState.HOLDING_NOTE : LightState.OFF), false);
+    }
     
     /**
-     * Gets the distances of notes from each laser.
-     * @return measurements, back laser [0] and front laser [1]
+     * Gets the distances measured by each laser.
+     * @return measurements, back laser [0] and front laser [1].
      * @apiNote empty optional when the measurement is invalid.
      */
     public OptionalInt[] getLaserMeasurements() {
@@ -59,7 +71,6 @@ public class SterilizerSubsystem extends SubsystemBase {
         OptionalInt[] measurements = new OptionalInt[]{
             backMm != null && backMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
                 OptionalInt.of(backMm.distance_mm) : OptionalInt.empty(),
-            // OptionalInt.empty()
             frontMm != null && frontMm.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT ?
                 OptionalInt.of(frontMm.distance_mm) : OptionalInt.empty()
         };
@@ -69,7 +80,7 @@ public class SterilizerSubsystem extends SubsystemBase {
 
     /**
      * Checks the distances of {@link SterilizerSubsystem#getLaserMeasurements()} against the measurements for a note.
-     * @return has notes, back laser [0] and front laser [1]
+     * @return has notes, back laser [0] and front laser [1].
      * @apiNote empty optional when the measurement is invalid.
      */
     public Optional<Boolean>[] getHasNotes() {
@@ -85,39 +96,32 @@ public class SterilizerSubsystem extends SubsystemBase {
     }
 
     /**
-     * Checks if either of {@link SterilizerSubsystem#getHasNotes()} is true
-     * @return if either laser sees a note
-     * @apiNote will still return false if both measurements are invalid
+     * Checks if either of {@link SterilizerSubsystem#getHasNotes()} is true.
+     * @return if either laser sees a note.
+     * @apiNote Treats invalid measurements as {@code false}.
      */
     public boolean hasNote() {
         Optional<Boolean>[] notes = getHasNotes();
-
         return (notes[0].isPresent() && notes[0].get()) || (notes[1].isPresent() && notes[1].get());
     }
     
     /**
-     * Spins the sterilizer at the given speed
-     * @param speed from -1.0 to 1.0
+     * Spins the sterilizer at the given speed.
+     * @param speed from -1.0 to 1.0. Positive speeds are towards the shooting wheels.
      */
     public void setSpeed(double speed) {
         feederMotor.set(speed);
     }
 
     /**
-     * Stops the sterilizer (overloaded)
+     * Stops the sterilizer.
      */
     public void setSpeed() {
         setSpeed(0);
     }
 
-    @Override
-    public void periodic() {
-        LEDSubsystem.getInstance().setLightState(
-            (hasNote() ? LightState.HOLDING_NOTE : LightState.OFF), false);
-    }
-
     /**
-     * Limits the publishing of CAN messages to the bus that we do not use
+     * Limits the publishing of CAN messages to the bus.
      */
     private void setStatusFrames() {
         // feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);

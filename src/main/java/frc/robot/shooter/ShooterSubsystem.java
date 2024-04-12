@@ -29,8 +29,11 @@ import frc.robot.constants.PhysicalConstants.RobotConstants;
 import frc.robot.constants.PhysicalConstants.ShooterConstants;
 import frc.robot.constants.PrimeNumbers;
 
+/**
+ * A subsystem that moves and controls the shooter.
+ */
 public class ShooterSubsystem extends SubsystemBase {    
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static volatile ShooterSubsystem instance;
     private static Object mutex = new Object();
     public static ShooterSubsystem getInstance() {
@@ -46,12 +49,18 @@ public class ShooterSubsystem extends SubsystemBase {
         return instance;
     }
 
+    /**
+     * This subsystem is used only for Command requirements.
+     */
     private class PivotRequirement extends SubsystemBase {
         public PivotRequirement() {
             setName("Shooter - Pivot Requirement");
         }
     }
 
+    /**
+     * This subsystem is used only for Command requirements.
+     */
     private class ShootingRequirement extends SubsystemBase {
         public ShootingRequirement() {
             setName("Shooter - Shooting Requirement");
@@ -74,9 +83,12 @@ public class ShooterSubsystem extends SubsystemBase {
     private CANcoder rightCANcoder = new CANcoder(ShooterConstants.RIGHT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
     private CANcoder leftCANcoder = new CANcoder(ShooterConstants.LEFT_CANCODER_ID, RobotConstants.SWERVE_CAN_BUS);
 
-    /** Creates a new ShooterSubsystem, and configures motors. */
+    /**
+     * Creates a new ShooterSubsystem, and configures motors.
+     */
     public ShooterSubsystem() {
         super("ShooterSubsystem");
+        
         // leftShooter.setInverted(true);
         
         configureMotionMagic();
@@ -86,8 +98,11 @@ public class ShooterSubsystem extends SubsystemBase {
         setStatusFrames();
     }
 
+    @Override
+    public void periodic() {}
+
     /**
-     * Configures motion magic for the shooter pivot talons.
+     * Configures motion magic for the shooter pivot Talons.
      */
     private void configureMotionMagic() {
         // Shared configurations
@@ -96,15 +111,16 @@ public class ShooterSubsystem extends SubsystemBase {
         FeedbackConfigs feedbackConfigs = configuration.Feedback;
         feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         // feedbackConfigs.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-        // Sets the gear ratio from the motor to the mechanism (pivot)
+
+        // Sets the gear ratio from the motor to the mechanism (pivot).
         // This is 1 because we use MotionMagic with the rotor,
-        // and we multiply all inputs to go to the right rotor position
+        // and we multiply all inputs to go to the right rotor position.
         feedbackConfigs.SensorToMechanismRatio = 1;
         
         MotorOutputConfigs motorOutputConfigs = configuration.MotorOutput;
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         
-        // Set Motion Magic gains in slot0
+        // Set Motion Magic gains in slot 0.
         Slot0Configs slot0Configs = configuration.Slot0;
         slot0Configs.kS = ShooterConstants.slot0Configs.kS;
         slot0Configs.kV = ShooterConstants.slot0Configs.kV;
@@ -112,24 +128,24 @@ public class ShooterSubsystem extends SubsystemBase {
         slot0Configs.kI = ShooterConstants.slot0Configs.kI;
         slot0Configs.kD = ShooterConstants.slot0Configs.kD;
         
-        // Set acceleration and cruise velocity
+        // Set acceleration and cruise velocity.
         MotionMagicConfigs motionMagicConfigs = configuration.MotionMagic;
         motionMagicConfigs.MotionMagicCruiseVelocity = ShooterConstants.CRUISE_SPEED;
         motionMagicConfigs.MotionMagicAcceleration = ShooterConstants.CRUISE_ACCELERATION;
         motionMagicConfigs.MotionMagicJerk = ShooterConstants.MOTION_MAGIC_JERK;
         
-        // Motor-specific configurations
-        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Right motor not inverted
+        // Motor-specific configurations.
+        motorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive; // Right motor not inverted.
         feedbackConfigs.FeedbackRemoteSensorID = this.rightCANcoder.getDeviceID();
         this.rightPivotMotor.getConfigurator().apply(configuration);
         
-        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Left motor inverted
+        motorOutputConfigs.Inverted = InvertedValue.CounterClockwise_Positive; // Left motor inverted.
         feedbackConfigs.FeedbackRemoteSensorID = this.leftCANcoder.getDeviceID();
         this.leftPivotMotor.getConfigurator().apply(configuration);
     }
 
     /**
-     * Configures PID for both shooting motors
+     * Configures PID for both shooting motors.
      */
     private void configureShootingPID() {
         // Left shooter
@@ -145,15 +161,15 @@ public class ShooterSubsystem extends SubsystemBase {
     
     /**
      * Goes to provided pivot position using Motion Magic slot 0.
-     * @see {@link ShooterSubsystem#setRotorPositions()} to reset rotor positions for maximum accuracy.
      * @param position for the pivot in degrees.
+     * @see {@link ShooterSubsystem#setRotorPositions()} to reset rotor positions for best accuracy.
      * @apiNote The position is clamped by {@link ShooterConstants#ANGLE_LIMITS}.
      */
     public void pivotGoToPosition(double position) {
         position = MathUtil.clamp(position, ShooterConstants.Pivot.ANGLE_LIMITS[0], ShooterConstants.Pivot.ANGLE_LIMITS[1]);
 
         MotionMagicVoltage control = motionMagicVoltage
-            // Select Slot 0 for Motion Magic (should be done by default)
+            // Select Slot 0 for Motion Magic (should be done by default).
             .withSlot(0)
             .withPosition(Units.degreesToRotations(position * ShooterConstants.Pivot.MOTOR_TO_PIVOT_RATIO));
 
@@ -163,10 +179,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * Set the pivot speeds for each motor (last resort) between -1.0 and 1.0.
-     * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
-     * @param leftSpeed speed for the left motor
-     * @param rightSpeed speed for the right motor
-     * @param override the soft limits
+     * @param leftSpeed speed for the left motor. Positive is up.
+     * @param rightSpeed speed for the right motor. Positive is up.
+     * @param override the soft limits.
+     * @apiNote Will respect soft limits for each pivot at {@link ShooterConstants#PIVOT_ANGLE_LIMITS}.
      */
     public void setPivotSpeed(double leftSpeed, double rightSpeed, boolean override) {
         if (!override) {
@@ -182,17 +198,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Set the pivot speed for both motor (last resort) between -1.0 and 1.0.
-     * Will set the speed to 0 for each motor individually per {@link ShooterConstants} {@code PIVOT_ANGLE_LIMITS}
-     * @param speed for both motors
-     * @param override the soft limits
+     * Set the pivot speed for both motors (last resort) between -1.0 and 1.0.
+     * @param speed for both motors. Positive is up.
+     * @param override the soft limits.
+     * @apiNote Will respect soft limits for each pivot at {@link ShooterConstants#PIVOT_ANGLE_LIMITS}.
      */
     public void setPivotSpeed(double speed, boolean override) {
         setPivotSpeed(speed, speed, override);
     }
 
     /**
-     * Set the pivot speed for both motors to 0.
+     * Stops the shooter pivot.
      */
     public void setPivotSpeed() {
         setPivotSpeed(0, true);
@@ -200,8 +216,7 @@ public class ShooterSubsystem extends SubsystemBase {
     
     /**
      * Gets the positions of the pivots using the CANCoders.
-     * <p> Left [0] and right [1] </p>
-     * @return positions in degrees
+     * @return positions in degrees, left [0] and right [1].
      */
     public double[] getCANcoderPositions() {
         return new double[]{
@@ -212,9 +227,8 @@ public class ShooterSubsystem extends SubsystemBase {
     
     /**
      * Sets the positions of the rotors.
-     * <p> Left [0] and right [1] </p>
-     * @param positions in degrees
-     * @apiNote Will multiply input values by the gear ratio
+     * @param positions in degrees, left [0] and right [1].
+     * @apiNote Will multiply input values by the gear ratio.
      */
     public void setRotorPositions(double[] positions) {
         leftPivotMotor.setPosition(Units.degreesToRotations(positions[0] * ShooterConstants.Pivot.MOTOR_TO_PIVOT_RATIO));
@@ -222,15 +236,15 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     
     /**
-     * Sets the positions of the rotors using the CANcoders (overloaded).
+     * Sets the positions of the rotors using the CANcoders.
      */
     public void setRotorPositions() {
         setRotorPositions(getCANcoderPositions());
     }
 
     /**
-     * Gets the velocities of the shooter motors. Left is [0] and right is [1]
-     * @return velocities in RPM
+     * Gets the velocities of the shooting motors.
+     * @return velocities in RPM, left [0] and right [1].
      */
     public double[] getShootingVelocities() {
         return new double[]{
@@ -240,8 +254,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the velocities of the shooter motors. Left is [0] and right is [1]
-     * @param velocities between -1.0 and 1.0
+     * Sets the velocities of the shooting motors. 
+     * @param velocities between -1.0 and 1.0, left [0] and right [1].
      */
     public void setShootingVelocities(double[] velocities) {
         leftPID.setReference(velocities[0], ControlType.kVelocity);
@@ -249,37 +263,30 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * Stops the shooting motors (overloaded)
+     * Stops the shooting motors.
      */
     public void setShootingVelocities() {
         setShootingVelocities(new double[]{0, 0});
     }
 
     /**
-     * Returns a subsystem to be used with Command requirements
-     * @return pivot subsystem
+     * Returns a subsystem to be used with Command requirements.
+     * @return pivot subsystem.
      */
     public Subsystem getPivotRequirement() {
         return this.pivotRequirement;
     }
 
     /**
-     * Returns a subsystem to be used with Command requirements
-     * @return shooting subsystem
+     * Returns a subsystem to be used with Command requirements.
+     * @return shooting subsystem.
      */
     public Subsystem getShootingRequirement() {
         return this.shootingRequirement;
     }
 
-    @Override
-    public void periodic() {
-        
-        // System.out.println("Left : " + Telemetry.D_FORMAT.format(leftPivotMotor.getPosition().getValueAsDouble())
-        //     + " Right : " + Telemetry.D_FORMAT.format(rightPivotMotor.getPosition().getValueAsDouble()));
-    }
-
     /**
-     * Limits the publishing of CAN messages to the bus that we do not use
+     * Limits the publishing of CAN messages to the bus.
      */
     private void setStatusFrames() {
         // leftShooter.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);

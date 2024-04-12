@@ -17,8 +17,11 @@ import frc.robot.constants.PhysicalConstants.IntakeConstants;
 import frc.robot.constants.PrimeNumbers;
 import frc.robot.constants.Constants.IntakeStates;
 
+/**
+ * A subsystem that controls the intake.
+ */
 public class IntakeSubsystem extends SubsystemBase {
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static volatile IntakeSubsystem instance;
     private static Object mutex = new Object();
 
@@ -36,33 +39,37 @@ public class IntakeSubsystem extends SubsystemBase {
         return instance;
     }
 
+    /**
+     * This subsystem is used only for Command requirements.
+     */
     private class PivotRequirement extends SubsystemBase {
         public PivotRequirement() {
-            setName("Intake - Pivot Requirement");
+            super("Intake - Pivot Requirement");
         }
     }
-
+    
+    /**
+     * This subsystem is used only for Command requirements.
+     */
     private class IntakingRequirement extends SubsystemBase {
         public IntakingRequirement() {
-            setName("Intake - Intaking Requirement");
+            super("Intake - Intaking Requirement");
         }
     }
 
-    // private SubsystemBase pivotRequirement = new SubsystemBase("Intake - Pivot Requirement") {};
     private PivotRequirement pivotRequirement = new PivotRequirement();
-    // private SubsystemBase intakingRequirement = new SubsystemBase("Intake - Intaking Requirement") {};
     private IntakingRequirement intakingRequirement = new IntakingRequirement();
 
-    /** Leader for the intake pivot */
+    /** Leader for the intake pivot. */
     private CANSparkFlex leftPivotMotor = new CANSparkFlex(IntakeConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
-    /** Follower of {@link IntakeSubsystem#leftPivotMotor} for the intake pivot */
+    /** Follower for the intake pivot. */
     private CANSparkFlex rightPivotMotor = new CANSparkFlex(IntakeConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
 
-    /** Vortex - leader of {@link IntakeSubsystem#bottomIntakeMotor} for intaking */
+    /** Vortex - leader for intaking. */
     private CANSparkFlex topIntakeMotor = new CANSparkFlex(IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
-    /** Neo - Follower for intaking*/
+    /** Neo - follower for intaking. */
     private CANSparkMax bottomIntakeMotor = new CANSparkMax(IntakeConstants.BOTTOM_MOTOR_ID, MotorType.kBrushless);
-    /** Through bore encoder in absolute mode */
+    /** Through bore encoder in absolute mode. */
     private SparkAbsoluteEncoder pivotEncoder = bottomIntakeMotor.getAbsoluteEncoder();
 
     public IntakeSubsystem() {
@@ -74,53 +81,59 @@ public class IntakeSubsystem extends SubsystemBase {
         topIntakeMotor.setInverted(true);
         bottomIntakeMotor.follow(topIntakeMotor, true);
         
-        pivotEncoder.setInverted(true);  // Inverted so the IntakeState.IDLE position is positive
+        // Inverted so that positive angles are up
+        pivotEncoder.setInverted(true);
 
         setStatusFrames();
     }
 
+    @Override
+    public void periodic() {}
+
     /**
      * Sets the speeds of the top and bottom intaking motors.
-     * @param speed of the intake motors between -1.0 and 1.0
+     * @param speed of the intake motors between -1.0 and 1.0. Positive speeds move towards the sterilizer.
      */
     public void setIntakeSpeed(double speed) {
         topIntakeMotor.set(speed);
     }
 
     /**
-     * Sets the speeds of the top and bottom intaking motors to 0. (overloaded)
+     * Sets the speeds of the top and bottom intaking motors to 0.
      */
     public void setIntakeSpeed() {
         setIntakeSpeed(0);
     }
 
     /**
-     * Set pivot motors to a specific speed when position is within the bounds provided by
-     * {@link IntakeStates#INTAKING} and {@link IntakeStates#IDLE}
-     * @param speed between -1.0 and 1.0
-     * @param safe stop when at the soft stops
+     * Set pivot motors to a specific speed.
+     * @param speed between -1.0 and 1.0. Positive speeds are up.
+     * @param safe stop when at the soft stops.
+     * @see {@link IntakeStates#INTAKING} and {@link IntakeStates#IDLE} for soft stops.
      */
     public void setPivotSpeed(double speed, boolean safe) {
         if (safe) {
             double position = getPivotPosition();
-            speed = 
+            speed =
                 (speed < 0 && Math.abs(IntakeStates.INTAKING.getAngle() - position) <= 1) ||
                 (speed > 0 && IntakeStates.IDLE.getAngle() - position <= 1)
                     ? 0 : speed;
         }
+
         leftPivotMotor.set(speed);
     }
 
     /**
-     * Set pivot motors to a specific speed safely (overloaded)
-     * @param speed between -1.0 and 1.0
+     * Set pivot motors to a specific speed within soft stops.
+     * @param speed between -1.0 and 1.0.
+     * @see {@link IntakeStates#INTAKING} and {@link IntakeStates#IDLE} for soft stops.
      */
     public void setPivotSpeed(double speed) {
         setPivotSpeed(speed, true);
     }
 
     /**
-     * Set pivot motors to 0 (overloaded)
+     * Set pivot motors to a speed of 0.
      */
     public void setPivotSpeed() {
         setPivotSpeed(0);
@@ -129,37 +142,33 @@ public class IntakeSubsystem extends SubsystemBase {
     /**
      * Gets the absolute position of the through bore encoder.
      * @return position of the intake in degrees.
-     * @apiNote 0 is at hard stop when extended.
+     * @apiNote 0 is at the hard stop when fully extended.
      */
     public double getPivotPosition() {
         double position = Units.rotationsToDegrees(this.pivotEncoder.getPosition());
-        // Because it's an absolute encoder, make sure it isn't returning values like 359 or 358
-        if (position > 350)
-            position = 0;
+        // Because it's an absolute encoder, make sure it isn't returning values like 359
+        if (position > 350) position = 0;
         return position;
     }
 
     /**
-     * Returns a subsystem to be used with Command requirements
-     * @return pivot subsystem
+     * Returns a subsystem to be used with Command requirements.
+     * @return pivot subsystem.
      */
     public Subsystem getPivotRequirement() {
         return this.pivotRequirement;
     }
 
     /**
-     * Returns a subsystem to be used with Command requirements
-     * @return intaking subsystem
+     * Returns a subsystem to be used with Command requirements.
+     * @return intaking subsystem.
      */
     public Subsystem getIntakingRequirement() {
         return this.intakingRequirement;
     }
 
-    @Override
-    public void periodic() {}
-
     /**
-     * Limits the publishing of CAN messages to the bus that we do not use
+     * Limits the publishing of CAN messages to the bus.
      */
     private void setStatusFrames() {
         // leftPivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);

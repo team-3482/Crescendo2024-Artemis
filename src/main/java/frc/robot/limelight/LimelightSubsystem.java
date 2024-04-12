@@ -15,9 +15,11 @@ import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
 import frc.robot.constants.PhysicalConstants.LimelightConstants;
 import frc.robot.utilities.Telemetry;
 
+/**
+ * A subsystem that is mainly used to get data from Limelights.
+ */
 public class LimelightSubsystem extends SubsystemBase {
-
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static volatile LimelightSubsystem instance;
     private static Object mutex = new Object();
 
@@ -34,64 +36,54 @@ public class LimelightSubsystem extends SubsystemBase {
         return instance;
     }
 
-    /** Creates a new LimelightSubsystem. */
+    /**
+     * Creates a new LimelightSubsystem.
+     */
     public LimelightSubsystem() {
         super("LimelightSubsystem");
         
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (!alliance.isPresent()) {
+        if (alliance.isEmpty()) {
             Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
             return;
         }
 
-        // Target 7 when blue or when no alliance is found, or 7 otherwise
-        LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid").setInteger(
-            alliance.isPresent() && alliance.get() == Alliance.Red ? 4 : 7
-        );
+        // Target 7 when blue or when no alliance is found, and 4 for red side.
+        LimelightHelpers.getLimelightNTTableEntry(LimelightConstants.SHOOTER_LLIGHT, "priorityid")
+            .setInteger(alliance.isPresent() && alliance.get() == Alliance.Red ? 4 : 7);
     }
 
+    @Override
+    public void periodic() {}
+
     /**
-     * Horizontal Offset From Crosshair To Target
-     *
-     * @return offset
+     * Horizontal offset from crosshair to target.
+     * @return offset in degrees.
      */
     public double getHorizontalOffset(String limelight) {
         return LimelightHelpers.getTX(limelight);
     }
 
     /**
-     * Vertical Offset From Crosshair To Target
-     *
-     * @return offset
+     * Vertical offset from crosshair to target.
+     * @return offset in degrees.
      */
     public double getVerticalOffset(String limelight) {
         return LimelightHelpers.getTY(limelight);
     }
 
     /**
-     * Target Area (0% of image to 100% of image)
-     * (uses LimelightConstants.BACK_LIMELIGHT)
-     *
-     * @return area
-     */
-    public double getTargetArea() {
-        return LimelightHelpers.getTA(LimelightConstants.INTAKE_LLIGHT);
-    }
-
-    /**
-     * Wheter the Limelight has a target
-     *
-     * @return offset
+     * Whether the Limelight has a target.
+     * @return has a target.
      */
     public boolean hasTarget(String limelight) {
         return LimelightHelpers.getTV(limelight);
     }
 
     /**
-     * Gets the ID of the nearest AprilTag or 0 if not found
-     * (using LimelightConstants.FRONT_LIMELIGHT)
-     *
-     * @return ID
+     * Gets the ID of the nearest AprilTag or 0 if not found.
+     * @return the ID.
+     * @apiNote Uses {@link LimelightConstants#SHOOTER_LLIGHT}.
      */
     public int getTargetID() {
         return (int) NetworkTableInstance.getDefault().getTable(LimelightConstants.SHOOTER_LLIGHT)
@@ -99,34 +91,28 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     /**
-     * Gets the botpose relative to the current blue alliance
-     * (using LimelightConstants.FRONT_LIMELIGHT)
-     *
-     * @return botpose
+     * Gets the botpose relative to the blue alliance.
+     * @return botpose.
      */
     public Pose2d getBotpose() {
-        // return new Pose2d();
         return LimelightHelpers.getBotPose2d_wpiBlue(LimelightConstants.SHOOTER_LLIGHT);
     }
 
     /**
-     * Gets the amount of April Tags in view
-     * (using LimelightConstants.SHOOTER_LLight)
-     * @return amount of April Tags in view
+     * Gets the amount of AprilTags in view.
+     * @return amount.
+     * @apiNote Uses {@link LimelightConstants#SHOOTER_LLIGHT}.
      */
     public int getVisibleTags() {
         return (int) LimelightHelpers.getBotPose_wpiBlue(LimelightConstants.SHOOTER_LLIGHT)[7];
     }
 
     /**
-     * Gets the latency of the limelight to be used for odometry
-     * @return latency in seconds
+     * Gets the latency of the limelight.
+     * @return latency in seconds.
      */
     public double getLatency(String limelight) {
         return LimelightHelpers.getLatency_Pipeline(limelight) / 1000
             - LimelightHelpers.getLatency_Capture(limelight) / 1000;
     }
-
-    @Override
-    public void periodic() {}
 }

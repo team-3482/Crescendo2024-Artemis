@@ -17,11 +17,10 @@ import frc.robot.constants.Positions.StartingPositions;
 public class SwerveUtilities {
     
     /**
-     * Team 254 implementation to fix Swerve Drive skew 
-     * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8
-     *
+     * Team 254 implementation to fix Swerve Drive skew.
      * @param transform
-     * @return
+     * @return no idea.
+     * @see https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8.
      */
     public static Twist2d log(Pose2d transform) {
         final double kEps = 1E-9;
@@ -44,10 +43,10 @@ public class SwerveUtilities {
     }
 
     /**
-     * Team 254 implementation to fix Swerve Drive skew 
-     * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8
-     * @param originalSpeeds Original Chasis speeds
-     * @return Corrected chasis speeds
+     * Team 254 implementation to fix Swerve Drive skew .
+     * @param originalSpeeds Original Chasis speeds.
+     * @return Corrected chasis speeds.
+     * @see https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8.
      */
     public static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
         final double LOOP_TIME_S = Robot.kDefaultPeriod;
@@ -64,9 +63,9 @@ public class SwerveUtilities {
     }
 
     /**
-     * Grab the starting position of the robot
-     * @param startingPosition override the alliance position-based starting position
-     * @return the starting position
+     * Get the starting position of the robot.
+     * @param startingPosition override the alliance position-based starting position.
+     * @return the starting position.
      */
     public static Pose2d getStartingPose(StartingPositions startingPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();

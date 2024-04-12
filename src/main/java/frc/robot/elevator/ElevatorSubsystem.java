@@ -12,8 +12,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.PhysicalConstants.ElevatorConstants;
 import frc.robot.constants.PrimeNumbers;
 
+/**
+ * A subsystem used to control the climbing mechanism on the robot.
+ */
 public class ElevatorSubsystem extends SubsystemBase {
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static ElevatorSubsystem instance;
     private static Object mutex = new Object();
 
@@ -32,7 +35,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     private CANSparkMax rightClimbMotor = new CANSparkMax(ElevatorConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
     private CANSparkMax leftClimbMotor = new CANSparkMax(ElevatorConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
 
-    /** Creates a new ElevatorSubsystem. Moves the climb mechanism. */
+    /**
+     * Creates a new ElevatorSubsystem.
+     */
     public ElevatorSubsystem() {
         super("ElevatorSubsystem");
 
@@ -40,27 +45,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         setStatusFrames();
     }
+
+    @Override
+    public void periodic() {}
     
     /**
-     * Sets the speed of the motors to move the climb mechanism
-     * @param speed from -1.0 to 1.0
+     * Sets the speed of the motors to move the climb mechanism.
+     * @param speed from -1.0 to 1.0. Positive speeds are up.
      */
     public void setSpeed(double speed) {
         rightClimbMotor.set(speed);
     }
     
     /**
-     * Stops the motors that move the climb mechanism (overloaded)
+     * Stops the motors that move the climb mechanism
      */
     public void setSpeed() {
         setSpeed(0);
     }
 
-    @Override
-    public void periodic() {}
-
     /**
-     * Limits the publishing of CAN messages to the bus that we do not use
+     * Limits the publishing of CAN messages to the bus.
      */
     private void setStatusFrames() {
         // leftClimbMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);

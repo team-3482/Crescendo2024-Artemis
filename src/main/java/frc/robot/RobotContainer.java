@@ -40,7 +40,7 @@ import frc.robot.utilities.SequencedCommands;
 import frc.robot.utilities.Telemetry;
 
 public class RobotContainer {
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static RobotContainer instance;
     public static RobotContainer getInstance() {
         if (instance == null) {
@@ -154,7 +154,7 @@ public class RobotContainer {
         // Double rectangle
         driveController.back().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().resetOdometryLimelight()));
         // Burger
-        driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().zeroHeading()));
+        driveController.start().onTrue(Commands.runOnce(() -> SwerveSubsystem.getInstance().setHeading()));
         
         driveController.leftBumper().onTrue(new CenterSpeakerCommand().withTimeout(1));
         driveController.rightBumper()

@@ -19,8 +19,11 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
+/**
+ * A subsystem used to change the colors of the LED strip below the robot.
+ */
 public class LEDSubsystem extends SubsystemBase {
-    // Thread-safe singleton design pattern
+    // Thread-safe singleton design pattern.
     private static volatile LEDSubsystem instance;
     private static Object mutex = new Object();
 
@@ -37,12 +40,10 @@ public class LEDSubsystem extends SubsystemBase {
         return instance;
     }
 
-    // LED Buffer
     private AddressableLEDBuffer ledBuffer;
-    // LED 
     private AddressableLED ledStrip;
 
-    private double lastLedUpdate = 0.0;
+    private double lastLedUpdate;
     private LightState state;
     private Color previousColor;
 
@@ -56,7 +57,7 @@ public class LEDSubsystem extends SubsystemBase {
         .getEntry();
     
     /**
-     * Creates and initializes a new LEDSubsystem
+     * Creates a new LEDSubsystem.
      */
     private LEDSubsystem() {
         super("LEDSubsystem");
@@ -76,7 +77,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() { 
-        // Updates the color effect and gets the chosen color
+        // Updates the color effect and gets the chosen color.
         if (this.state.interval != Double.POSITIVE_INFINITY) {
             double timestamp = Timer.getFPGATimestamp();
             if (timestamp - this.lastLedUpdate >= this.state.interval) {
@@ -85,14 +86,15 @@ public class LEDSubsystem extends SubsystemBase {
             }
         }
 
-        // Updates the lights only if the light state changes
+        // Updates the lights only if the light state should change.
         if (!this.state.getColor().equals(this.previousColor)) {
             updateLights();
         }
     };
 
     /**
-     * Updates the light colors of the light strips
+     * Loops through the LEDs on the light strip and updates their color.
+     * Also updates the Shuffleboard widget for the LED status.
      */
     private void updateLights() {
         Color color = this.state.getColor();
@@ -101,6 +103,7 @@ public class LEDSubsystem extends SubsystemBase {
             SB_D_LED_ENTRY.setBoolean(false);
         }
         else {
+            // The only way to display a color in Shuffleboard is by changing the color of a boolean widget.
             SB_D_LED_WIDGET.withProperties(Map.of("colorWhenTrue", color.getHexadecimal()));
             SB_D_LED_ENTRY.setBoolean(true);
         }
@@ -110,83 +113,86 @@ public class LEDSubsystem extends SubsystemBase {
         }
 
         this.ledStrip.setData(this.ledBuffer);
-
-        this.previousColor = this.state.getColor();
-    }
-
-    /**
-     * Sets the state of the lights on the bot.
-     * @param state Desired {@link LightState}
-     */
-    public void setLightState(LightState state) {
-        System.out.println("LED State changed:" + state);
-        this.setLightState(state, true);
+        this.previousColor = color;
     }
 
     /**
      * Sets the state of the lights on the bot. 
-     * If ovverideCurrent is true, it will override current colors, otherwise it will only change colors if the current state is off
-     * @param state Desired {@link LightState}
-     * @param overrideCurrentState Whether the lights should overide the current lightt state or not.
+     * @param state desired state.
+     * @param overrideCurrentState whether the current light state should be overriden.
      */
     public void setLightState(LightState state, boolean overrideCurrentState) {
         if (overrideCurrentState || (!overrideCurrentState && this.state.equals(LightState.OFF))) {
+            System.out.println("LED State changed: " + state);
             this.state = state;
         }
     }
 
     /**
-     * Reset the lights to the default {@link LightState}.
-     * @param commandInterrupted set warning lights instead if true
+     * Sets the state of the lights on the bot and overrides it.
+     * @param state desired state.
      */
-    public void setCommandStopState(boolean commandInterrupted) {
-        if (commandInterrupted) {
-            this.setLightState(LightState.WARNING);
+    public void setLightState(LightState state) {
+        setLightState(state, true);
+    }
+
+    /**
+     * Reset the lights to {@link LightState#OFF} or {@link LightState#WARNING}.
+     * @param warning set warning lights
+     */
+    public void setCommandStopState(boolean warning) {
+        if (warning) {
+            setLightState(LightState.WARNING);
         }
         else {
-            this.setLightState(SterilizerSubsystem.getInstance().hasNote() == true ? LightState.HOLDING_NOTE : LightState.OFF);
+            setLightState(SterilizerSubsystem.getInstance().hasNote() == true ? LightState.HOLDING_NOTE : LightState.OFF);
         }
     }
     
     public enum LightState { 
-        OFF (Double.POSITIVE_INFINITY, Color.off()),
-        WARNING (0.2, new Color(255, 0, 0), Color.off()),
+        OFF(Double.POSITIVE_INFINITY, Color.off()),
+        WARNING(0.2, new Color(255, 0, 0), Color.off()),
         
-        /** Command is considered not autonoumous if the human driver has control over the robot movement during the command */
-        CMD_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
-        /** Command is considered autonoumous if the human driver does not have control over the robot movement during the command */
-        AUTO_RUNNING (Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
+        /** Command is considered not autonoumous if the driver has control over the robot movement during the command. */
+        CMD_RUNNING(Double.POSITIVE_INFINITY, new Color(0, 255, 0)),
+        /** Command is considered autonoumous if the driver does not have control over the robot movement during the command. */
+        AUTO_RUNNING(Double.POSITIVE_INFINITY, new Color(0, 0, 255)),
         
         HOLDING_NOTE(Double.POSITIVE_INFINITY, new Color(255, 127, 0))
         ;
         
         Color[] colors;
         double interval;
-        int currentColorIndex;        
+        int currentColorIndex;
+        
         /**
-         * @param interval
-         * @param colors
+         * @param interval in seconds.
+         * @param colors to display.
          */
         private LightState(double interval, Color... colors) {
             this.colors = colors;
             this.interval = interval;
             this.currentColorIndex = 0;
         }
+        
         /**
-         * Gets the current color from array
-         * @return current color
+         * Gets the current color.
+         * @return current color.
          */
         public Color getColor() {
             return this.colors[this.currentColorIndex];
         }
+        
         /**
-         * Updates the current color index to get the next color in the color array
+         * Updates the current color index to get the next color in the color array.
          */
         public void cycleColors() {
-            if(this.currentColorIndex >= this.colors.length - 1) {
-                this.currentColorIndex = -1; // set to -1 to ensure doesnt skip first color
+            if (this.currentColorIndex >= this.colors.length - 1) {
+                this.currentColorIndex = 0; 
             }
-            this.currentColorIndex++;
+            else {
+                this.currentColorIndex++;
+            }
         }
     }
 }
