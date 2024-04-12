@@ -1,37 +1,31 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.4,
-      "y": 5.55
-    },
-    "rotation": 180.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Pos 2 - Ring 2"
+            "name": "Shoot SPEAKER"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.5
+            "waitTime": 8.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Ring 2 - Outside Community"
+            "pathName": "Top - Out of the way"
           }
         }
       ]
     }
   },
-  "folder": "Pos 2",
+  "folder": "Top",
   "choreoAuto": false
 }

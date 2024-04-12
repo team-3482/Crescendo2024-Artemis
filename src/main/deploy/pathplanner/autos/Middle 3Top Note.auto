@@ -1,0 +1,93 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle - M Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Pivot and Spin"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot CALCULATE"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Middle - M-T Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Pivot and Spin"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Center SPEAKER"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot CALCULATE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top - Outside Community"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Middle",
+  "choreoAuto": false
+}

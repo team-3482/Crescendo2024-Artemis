@@ -12,14 +12,14 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "2m turn"
+            "name": "Shoot SPEAKER"
           }
         }
       ]
     }
   },
-  "folder": "Other",
+  "folder": null,
   "choreoAuto": false
 }

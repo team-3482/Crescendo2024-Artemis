@@ -1,25 +1,25 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.9418338836677673,
-      "y": 6.884683769367539
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot SPEAKER"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "3482 Logo"
+            "pathName": "Bottom - Out of the way"
           }
         }
       ]
     }
   },
-  "folder": "Other",
+  "folder": "Bottom",
   "choreoAuto": false
 }

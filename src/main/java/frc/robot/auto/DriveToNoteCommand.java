@@ -4,91 +4,98 @@
 
 package frc.robot.auto;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.NoteConstants;
-import frc.robot.Constants.SwerveKinematics;
+import frc.robot.constants.PhysicalConstants.LimelightConstants;
+import frc.robot.constants.Constants.NoteConstants;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
 import frc.robot.lights.LEDSubsystem;
 import frc.robot.lights.LEDSubsystem.LightState;
 import frc.robot.limelight.LimelightSubsystem;
+import frc.robot.shooter.SterilizerSubsystem;
 import frc.robot.swerve.SwerveSubsystem;
+import frc.robot.utilities.Telemetry;
 
-/** An example command that uses an example subsystem. */
+/**
+ * A command that drives the bot forward until there is a note in the sterilizer.
+ * @see {@link SterilizerSubsystem#getHasNotes()} for the front laser.
+ */
 public class DriveToNoteCommand extends Command {
-    private final String LIMELIGHT = LimelightConstants.BACK_LIMELIGHT;
-
-    private final SlewRateLimiter driveLimiter;
+    /** Limits the driving acceleration of the robot. */
+    private final SlewRateLimiter drivingLimiter;
+    /** Limits the turning acceleration of the robot. */
     private final SlewRateLimiter turningLimiter;
-    private PIDController pidController;
+    /** Uses radians for calculations. */
+    private PIDController turningPID;
 
     /**
-    * Creates a new CenterNoteCommand.
-    *
-    * @param subsystem The subsystem used by this command.
-    */
+     * Creates a new CenterNoteCommand.
+     */
     public DriveToNoteCommand() {
-        this.driveLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
+        setName("DriveToNoteCommand");
+        
+        this.drivingLimiter = new SlewRateLimiter(NoteConstants.NOTE_DRIVE_SLEW_RATE_LIMIT);
         this.turningLimiter = new SlewRateLimiter(NoteConstants.NOTE_TURNING_SLEW_RATE_LIMIT);
 
-        this.pidController = new PIDController(
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KP,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KI,
-            NoteConstants.TURNING_SPEED_PID_CONTROLLER.KD);
-        this.pidController.setTolerance(NoteConstants.TURNING_SPEED_PID_CONTROLLER.TOLERANCE);
+        this.turningPID = new PIDController(
+            NoteConstants.PID.KP,
+            NoteConstants.PID.KI,
+            NoteConstants.PID.KD
+        );
+        this.turningPID.setTolerance(NoteConstants.PID.TOLERANCE);
 
-        // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(SwerveSubsystem.getInstance());
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        if (!LimelightSubsystem.getInstance().hasTarget(LIMELIGHT)) {
+        if (!LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT)) {
             LEDSubsystem.getInstance().setLightState(LightState.WARNING);
             return;
         }
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_ORANGE);
-        pidController.reset();
+        this.turningPID.reset();
+
+        LEDSubsystem.getInstance().setLightState(LightState.AUTO_RUNNING);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        LEDSubsystem.getInstance().setLightState(LightState.SOLID_BLUE);
-
-        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset();
-
-        double turningSpeed = pidController.calculate(Units.degreesToRadians(errorDegrees), 0);
+        boolean hasTarget = LimelightSubsystem.getInstance().hasTarget(LimelightConstants.INTAKE_LLIGHT);
+        double errorDegrees = LimelightSubsystem.getInstance().getHorizontalOffset(LimelightConstants.INTAKE_LLIGHT);
+        
+        double turningSpeed = this.turningPID.calculate(Units.degreesToRadians(errorDegrees), 0);
         turningSpeed = turningLimiter.calculate(turningSpeed) * SwerveKinematics.TURNING_SPEED_COEFFIECENT;
-        double drivingSpeed = driveLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
+        
+        double drivingSpeed = drivingLimiter.calculate(NoteConstants.NOTE_DRIVE_INPUT_SPEED)
             * SwerveKinematics.DRIVE_SPEED_COEFFICENT;
-
-        // Negative drivingSpeed because the note detection occurs opposite of the heading
-        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(-drivingSpeed, 0, turningSpeed);
-        SwerveSubsystem.getInstance().setChassisSpeeds(chassisSpeeds);
+        
+        if (!hasTarget) {
+            turningSpeed = 0;
+            drivingSpeed /= 3;
+        }
+        
+        SwerveSubsystem.getInstance().setChassisSpeeds(
+            new ChassisSpeeds(drivingSpeed, 0, turningSpeed)
+        );
     }
 
-    // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.getInstance().stopModules();
-        if (interrupted) {
-            LEDSubsystem.getInstance().setLightState(LightState.WARNING);
-        }
-        else {
-            LEDSubsystem.getInstance().setLightState(LightState.OFF);
-        }
+        this.turningPID.close();
+        
+        Telemetry.logCommandEnd(getName(), interrupted);
+        LEDSubsystem.getInstance().setCommandStopState(interrupted);
     }
 
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return LimelightSubsystem.getInstance().getTargetArea() >= 30
-        || !LimelightSubsystem.getInstance().hasTarget(LIMELIGHT); 
-        // Simulate intakeSubsystem.getLaser() or something
+        Optional<Boolean> frontLaser = SterilizerSubsystem.getInstance().getHasNotes()[1];
+        return frontLaser.isPresent() && frontLaser.get();
     }
 }

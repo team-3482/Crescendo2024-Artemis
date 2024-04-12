@@ -3,6 +3,7 @@ package frc.robot.swerve;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -10,41 +11,41 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Constants.PhysicalConstants;
-import frc.robot.Constants.SwerveKinematics;
-import frc.robot.Constants.SwerveModuleConstants;
+import frc.robot.constants.PhysicalConstants.RobotConstants;
+import frc.robot.constants.PhysicalConstants.SwerveKinematics;
+import frc.robot.constants.PrimeNumbers;
 
+/**
+ * A class to represent each swerve module and its components.
+ */
 public class SwerveModule {
-    // Instances of the drivng and turning motor for the module
     private CANSparkMax driveMotor;
     private CANSparkMax turningMotor;
 
-    // Instance of the encoder used for turning of the module
     private CANcoder turningEncoder;
 
-    // Instance of PIDcontroller - used to calculate value for turning motor
+    /** Calculations are in radians. */
     private PIDController turningPidController;
 
-    // Instances of values used to help calculate encoder positions for the turning motor
     private boolean absoluteEncoderReversed;
 
     /**
-    * Creates an Instance of the Swerve Module with the specified options
-    * 
-    * @param driveMotorID            - CAN ID for the driving SparkMax
-    * @param turningMotorID          - CAN ID for the turning SparkMax
-    * @param turningEncoderID        - CAN ID for the turning encoder (on the
-    *                                swerve CAN bus)
-    * @param driveMotorReversed      - is the driving motor inverted?
-    * @param turningMotorReversed    - is the turning motor inverted?
-    * @param absoluteEncoderReversed - is the turning encoder inverted?
-    */
-    public SwerveModule(int driveMotorID, int turningMotorID, int turningEncoderID,
-            boolean driveMotorReversed, boolean turningMotorReversed,
-            boolean absoluteEncoderReversed) {
+     * Creates a SwerveModule.
+     * @param driveMotorID            - CAN ID for the driving SparkMax.
+     * @param turningMotorID          - CAN ID for the turning SparkMax.
+     * @param turningEncoderID        - CAN ID for the turning encoder (on the swerve CAN bus).
+     * @param driveMotorReversed      - is the driving motor inverted?
+     * @param turningMotorReversed    - is the turning motor inverted?
+     * @param absoluteEncoderReversed - is the turning encoder inverted?
+     */
+    public SwerveModule(
+        int driveMotorID, int turningMotorID, int turningEncoderID,
+        boolean driveMotorReversed, boolean turningMotorReversed,
+        boolean absoluteEncoderReversed
+    ) {
         this.absoluteEncoderReversed = absoluteEncoderReversed;
 
-        // Initializes the driving and turning motor
+        // Initializes the driving and turning motor.
         this.driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         this.driveMotor.setIdleMode(IdleMode.kBrake);
         this.driveMotor.setInverted(driveMotorReversed);
@@ -53,91 +54,81 @@ public class SwerveModule {
         this.turningMotor.setIdleMode(IdleMode.kBrake);
         this.turningMotor.setInverted(turningMotorReversed);
 
-        // Initializes the turning encoder on the specific CAN bus
-        this.turningEncoder = new CANcoder(turningEncoderID, SwerveModuleConstants.SWERVE_CAN_BUS);
+        // Initializes the turning encoder on the specific CAN bus.
+        this.turningEncoder = new CANcoder(turningEncoderID, RobotConstants.SWERVE_CAN_BUS);
 
-        // Initializes the PID controller using the determined values
+        // Initializes the PID controller using the determined values.
         this.turningPidController = new PIDController(
             SwerveKinematics.TURNING_PID_CONTROLLER.KP,
             SwerveKinematics.TURNING_PID_CONTROLLER.KI,
-            SwerveKinematics.TURNING_PID_CONTROLLER.KD);
+            SwerveKinematics.TURNING_PID_CONTROLLER.KD
+        );
 
-        // Makes the values continuous, so that 0 == 360 degrees
+        // Makes the values continuous, because input from the CANcoders
+        // is from -180 to 180, and they are equal.
         this.turningPidController.enableContinuousInput(-Math.PI, Math.PI);
+
+        setStatusFrames();
     }
 
     /**
-    * Returns the turning position of the CANcoder
-    * 
-    * @return position of the turning CANcoder (in radians)
-    */
+     * Gets position of the turning CANcoder.
+     * @return position in radians.
+     */
     public double getTurningPosition() {
-        return getAbsoluteEncoderRad();
-    }
-
-    /**
-    * Returns the speed of the turning encoder
-    * 
-    * @return speed of the turning encoder (radians/second)
-    */
-    public double getTurningVelocity() {
-        // Gets velocity as rotations/second
-        double velocity = this.turningEncoder.getVelocity().getValueAsDouble();
-        // Turn rotations into radians
-        return Units.rotationsToRadians(velocity);
-    }
-
-    /**
-    * Returns the turning position of the CANcoder
-    * 
-    * @return position of the turning CANcoder (in radians)
-    */
-    public double getAbsoluteEncoderRad() {
-        // Gets position as rotation
+        // Gets position as a rotation.
         double angle = this.turningEncoder.getAbsolutePosition().getValueAsDouble();
-        // Turn rotations to radians
+        // Turn rotations to radians.
         return Units.rotationsToRadians(angle) * (this.absoluteEncoderReversed ? -1.0 : 1.0);
     }
 
     /**
-    * Returns the current state of the swerve module
-    * 
-    * @return current state of the swerve module
-    */
+     * Gets the speed of the turning CANcoder.
+     * @return speed in radians/second.
+     */
+    public double getTurningVelocity() {
+        // Gets velocity as rotations/second.
+        double velocity = this.turningEncoder.getVelocity().getValueAsDouble();
+        // Turn rotations into radians.
+        return Units.rotationsToRadians(velocity);
+    }
+
+    /**
+     * Gets the current state of the swerve module.
+     * @return state.
+     */
     public SwerveModuleState getState() {
-        // Gets drive velocity as rotations/min (CANSparkMax)
+        // Gets drive velocity as rotations/min (CANSparkMax).
         double velocity = this.driveMotor.getEncoder().getVelocity();
-        // The ratio turns rotations/min into radians/second
-        // it also makes sure that the odometry getting values from this gets meters correctly
-        velocity *= PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        // The ratio turns rotations/min into radians/second.
+        // It also makes sure that the odometry getting values from this gets meters correctly.
+        velocity *= RobotConstants.SWERVE_WHEEL_DIAMETER * RobotConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModuleState(velocity, new Rotation2d(getTurningPosition()));
     }
   
     /**
-    * Returns the current position of the swerve module
-    *
-    * @return current state of the swerve module
-    */
+     * Gets the current position of the swerve module.
+     * @return position.
+     */
     public SwerveModulePosition getPosition() {
-        // Gets drive position as rotations
+        // Gets drive position as rotations.
         double positionRot = this.driveMotor.getEncoder().getPosition();
-        // Turns rotations to radians
-        double positionMeters = positionRot * PhysicalConstants.SWERVE_WHEEL_DIAMETER * PhysicalConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
+        // Turns rotations to radians.
+        double positionMeters = positionRot * RobotConstants.SWERVE_WHEEL_DIAMETER * RobotConstants.SWERVE_MOTOR_TO_WHEEL_RATIO;
         return new SwerveModulePosition(positionMeters, new Rotation2d(getTurningPosition()));
     }
 
     /**
-     * Zeros the position of the driving encoder
+     * Zeros the position of the driving encoder.
      */
     public void zeroDriveEncoder() {
         this.driveMotor.getEncoder().setPosition(0);
     }
 
     /**
-    * Sets the current state to a desired state
-    * 
-    * @param state - desired state of the swerve module
-    */
+     * Sets the current state to a desired state.
+     * @param state desired state.
+     */
     public void setDesiredState(SwerveModuleState state) {
         state = SwerveModuleState.optimize(state, getState().angle);
 
@@ -149,27 +140,34 @@ public class SwerveModule {
     }
 
     /**
-    * Stops the swerve module by stopping both the turning and driving motor
-    */
+     * Stops the swerve module.
+     */
     public void stop() {
         this.driveMotor.set(0);
         this.turningMotor.set(0);
     }
-      
+
     /**
-    * Gets the voltage of the driving motor
-    *
-    * @return drive voltage
-    */
-    public double getDriveVoltage() {
-        return this.driveMotor.getBusVoltage() * this.driveMotor.getAppliedOutput();
-    }
-      
-    /** Gets the voltage of the turning motor
-    *
-    * @return turn voltage
-    */
-    public double getTurnVoltage() {
-        return this.turningMotor.getBusVoltage() * this.turningMotor.getAppliedOutput();
+     * Limits the publishing of CAN messages to the bus.
+     */
+    private void setStatusFrames() {
+        // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 20);
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
+        // driveMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        
+        // turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PrimeNumbers.getNextPrimeNumber());
+        turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, PrimeNumbers.getNextPrimeNumber());
+        // turningMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus7, 250);
+        
     }
 }

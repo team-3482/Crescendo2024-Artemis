@@ -9,16 +9,18 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants.AutonConstants;
+import frc.robot.Robot;
+import frc.robot.constants.Positions;
+import frc.robot.constants.Constants.TelemetryConstants.LoggingTags;
+import frc.robot.constants.Positions.StartingPositions;
 
 public class SwerveUtilities {
     
     /**
-     * Team 254 implementation to fix Swerve Drive skew 
-     * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8
-     *
+     * Team 254 implementation to fix Swerve Drive skew.
      * @param transform
-     * @return
+     * @return no idea.
+     * @see https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8.
      */
     public static Twist2d log(Pose2d transform) {
         final double kEps = 1E-9;
@@ -41,14 +43,13 @@ public class SwerveUtilities {
     }
 
     /**
-     * Team 254 implementation to fix Swerve Drive skew 
-     * https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8
-     * 
-     * @param originalSpeeds - Original Chasis speeds
-     * @return Corrected chasis speeds
+     * Team 254 implementation to fix Swerve Drive skew .
+     * @param originalSpeeds Original Chasis speeds.
+     * @return Corrected chasis speeds.
+     * @see https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8.
      */
     public static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
-        final double LOOP_TIME_S = 0.02;
+        final double LOOP_TIME_S = Robot.kDefaultPeriod;
         Pose2d futureRobotPose = new Pose2d(
             originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
             originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
@@ -62,20 +63,32 @@ public class SwerveUtilities {
     }
 
     /**
-     * Grab the starting position of the robot
-     * 
-     * @return the starting position
+     * Get the starting position of the robot.
+     * @param startingPosition override the alliance position-based starting position.
+     * @return the starting position.
      */
-    public static Pose2d getStartingPosition() {
+    public static Pose2d getStartingPose(StartingPositions startingPosition) {
         Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
-        OptionalInt location = DriverStation.getLocation();
-        Pose2d startingPosition;
-        if (!location.isPresent() || !alliance.isPresent()) {
-            startingPosition = new Pose2d();
+        if (alliance.isEmpty()) {
+            Telemetry.logMessage("DriverStation alliance is not present", LoggingTags.ERROR);
+            alliance = Optional.ofNullable(DriverStation.Alliance.Blue);
+        }
+        OptionalInt location = startingPosition.equals(StartingPositions.AUTO)
+            ? DriverStation.getLocation() : OptionalInt.of(startingPosition.getLocation());
+        
+        Pose2d pose;
+        if (!alliance.isPresent()) {
+            pose = new Pose2d();
+        }
+        else if (!startingPosition.equals(StartingPositions.AUTO)) {
+            pose = Positions.STARTING_POSITIONS.get(alliance.get()).get(startingPosition.getLocation());
+        }
+        else if (location.isPresent()) {
+            pose = Positions.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
         }
         else {
-            startingPosition = AutonConstants.STARTING_POSITIONS.get(alliance.get()).get(location.getAsInt());
+            pose = new Pose2d();
         }
-        return startingPosition;
+        return pose;
     }
 }
