@@ -1,4 +1,4 @@
-# Arrowbotics (3482) Crescendo 2024 Code
+# Arrowbotics (3482) Crescendo 2024 Code for `Artemis`
 
 ![Codacy grade](https://img.shields.io/codacy/grade/43885e08690845c9a2acb9bca30089c8?style=flat-square&logo=codacy)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/team-3482/Crescendo2024?style=flat-square)
@@ -10,7 +10,7 @@
 
 `main` is now for off-season code for Artemis. The archive of our on-season code is in `onseason-archive`.
 
-To view the new code for our other, new off-season bot, go to [this repository](https://github.com/team-3482/Crescendo2024-Bot-2)
+To view the new code for our other, new off-season bot, go to [Crescendo2024-Bot-2](https://github.com/team-3482/Crescendo2024-Bot-2)
 
 ## Resources
 
