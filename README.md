@@ -1,4 +1,4 @@
-# Arrowbotics (FRC 3482) Official Crescendo 2024 Code
+# Arrowbotics (3482) Crescendo 2024 Code
 
 ![Codacy grade](https://img.shields.io/codacy/grade/43885e08690845c9a2acb9bca30089c8?style=flat-square&logo=codacy)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/team-3482/Crescendo2024?style=flat-square)
@@ -8,7 +8,9 @@
 ![Phoenix 6 Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fteam-3482%2FCrescendo2024%2Fmain%2Fvendordeps%2FPhoenix6.json&query=%24.version&style=flat-square&label=Phoenix%206&color=%2396C93D)
 ![PathplannerLib Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fteam-3482%2FCrescendo2024%2Fmain%2Fvendordeps%2FPathplannerLib.json&query=%24.version&style=flat-square&label=PathplannerLib&color=%233A51BB)
 
-All on-season code is tracked in this repository. Different branches are for testing new features.
+`main` is now for off-season code for Artemis. The archive of our on-season code is in `onseason-archive`.
+
+To view the new code for our other, new off-season bot, go to [this repository](https://github.com/team-3482/Crescendo2024-Bot-2)
 
 ## Resources
 
