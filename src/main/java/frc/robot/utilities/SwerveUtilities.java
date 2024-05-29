@@ -49,7 +49,7 @@ public class SwerveUtilities {
      * @see https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/8.
      */
     public static ChassisSpeeds correctForDynamics(ChassisSpeeds originalSpeeds) {
-        final double LOOP_TIME_S = Robot.kDefaultPeriod;
+        final double LOOP_TIME_S = Robot.defaultPeriodSecs;
         Pose2d futureRobotPose = new Pose2d(
             originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
             originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,

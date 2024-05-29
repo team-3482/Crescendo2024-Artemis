@@ -181,3 +181,6 @@ ctre_sim/
 simgui-ds.json
 simgui.json
 networktables.json
+
+# build constants
+src/main/java/frc/robot/BuildConstants.java

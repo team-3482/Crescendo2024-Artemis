@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2024.3.2"
+    id "com.peterabeles.gversion" version "1.10"
 }
 
 java {
@@ -27,6 +28,16 @@ configurations.all {
 task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
     mainClass = "org.littletonrobotics.junction.CheckInstall"
     classpath = sourceSets.main.runtimeClasspath
+}
+
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+  srcDir       = "src/main/java/"
+  classPackage = "frc.robot"
+  className    = "BuildConstants"
+  dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+  timeZone     = "America/Los_Angeles" // Use preferred time zone
+  indent       = "  "
 }
 
 compileJava.finalizedBy checkAkitInstall
