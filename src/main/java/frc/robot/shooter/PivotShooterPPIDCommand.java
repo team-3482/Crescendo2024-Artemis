@@ -31,6 +31,7 @@ import frc.robot.utilities.Telemetry;
  * @deprecated Use MotionMagic instead.
  * This uses CANcoders which have too much error due to vibrations in the pivot.
  */
+@Deprecated
 public class PivotShooterPPIDCommand extends Command {
     private double shootingAngle;
     private ShooterStates state;
