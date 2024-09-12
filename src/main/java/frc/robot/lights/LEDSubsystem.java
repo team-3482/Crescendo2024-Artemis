@@ -123,7 +123,7 @@ public class LEDSubsystem extends SubsystemBase {
      */
     public void setLightState(LightState state, boolean overrideCurrentState) {
         if (overrideCurrentState || (!overrideCurrentState && this.state.equals(LightState.OFF))) {
-            System.out.println("LED State changed: " + state);
+            // System.out.println("LED State changed: " + state);
             this.state = state;
         }
     }
