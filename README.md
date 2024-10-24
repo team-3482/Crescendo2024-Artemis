@@ -10,7 +10,7 @@
 
 `main` is now for off-season code for Artemis. The archive of our on-season code is in `onseason-archive`.
 
-To view the new code for our other, new off-season bot, go to [Crescendo2024-Bot-2](https://github.com/team-3482/Crescendo2024-Bot-2)
+To view the new code for our other, new off-season bot, go to [Crescendo2024-Apollo](https://github.com/team-3482/Crescendo2024-Apollo)
 
 ## Resources
 
